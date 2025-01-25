@@ -3,7 +3,13 @@ import { Colors } from "@/constants";
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-export const Brand = ({ color = Colors.colorBrand.burntSienna[600], size = 25, outline = "#7C87FF" }) => (
+interface Props {
+	color?: string;
+	size?: number;
+	outline?: string;
+}
+
+export const Brand = ({ color = Colors.colorBrand.burntSienna[600], size = 25, outline = "#7C87FF" }: Props) => (
 	<Svg
 		fill="none"
 		viewBox="0 0 255 255"

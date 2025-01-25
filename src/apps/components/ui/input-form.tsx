@@ -1,13 +1,10 @@
 import { Borders, Colors, Styles, Texts } from "@/constants";
 import { useState } from "react";
-import { StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from "react-native";
+import { StyleProp, Text, TextInput, TextInputProps, View, ViewStyle } from "react-native";
 import { Press } from "../press";
 
-interface Props {
+interface Props extends React.PropsWithChildren<TextInputProps> {
 	label: string;
-	value?: string;
-	onChange?: (value: string) => void;
-	placeholder?: string;
 
 	left?: React.ReactNode;
 	onLeftPress?: () => void;
@@ -19,12 +16,12 @@ interface Props {
 	required?: boolean;
 
 	style?: StyleProp<ViewStyle>
-}
+} 
 
 export const InputForm = ({
 	label,
 	value,
-	onChange,
+	onChangeText,
 	placeholder,
 	left,
 	onLeftPress,
@@ -37,7 +34,7 @@ export const InputForm = ({
 	const [isFocus, setIsFocus] = useState(false);
 
 	return (
-		<View style={[Styles.gap8, Styles.px8, style]}>
+		<View style={[Styles.gap8, style]}>
 			<Text style={[Texts.bold16, { color: Colors.colorBrand.midnightBlue[950] }]}>
 				{label}
 				{required && <Text style={[Texts.bold18, { color: Colors.colorBrand.burntSienna[500] }]}> *</Text>}
@@ -53,7 +50,7 @@ export const InputForm = ({
 				{left && <View style={{ padding: 10 }}>{left}</View>}
 				<TextInput
 					value={value}
-					onChangeText={onChange}
+					onChangeText={onChangeText}
 					placeholder={placeholder}
 					secureTextEntry={secureTextEntry}
 					style={[Styles.flex]}
@@ -73,11 +70,3 @@ export const InputForm = ({
 	);
 };
 
-const styles = StyleSheet.create({
-	input: {
-		borderWidth: 1,
-		borderColor: "black",
-		padding: 10,
-		margin: 10,
-	},
-});
