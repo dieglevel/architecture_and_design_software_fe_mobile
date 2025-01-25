@@ -25,6 +25,7 @@
           "web": {
                "favicon": "./src/assets/images/logo.png"
           },
-          "jsEngine": "hermes"
+          "jsEngine": "hermes",
+          "plugins": ["expo-font"]
      }
 }
