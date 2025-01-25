@@ -6,9 +6,10 @@ interface Props {
 	delayPressIn?: number;
 	onPress?: () => void;
 	style?: ViewStyle;
+	disabled?: boolean;
 }
 
-export const Press = ({ children, delayPressIn = 100, onPress, style }: Props) => {
+export const Press = ({ children, delayPressIn = 100, onPress, style, disabled }: Props) => {
 	const scaleAnim = useRef(new Animated.Value(1)).current;
 
 	const handlePressIn = () => {
@@ -41,6 +42,7 @@ export const Press = ({ children, delayPressIn = 100, onPress, style }: Props) =
 			onPressOut={handlePressOut}
 			delayPressIn={delayPressIn} // Độ trễ nhấn
 			onPress={handlePress} // Hàm xử lý khi nhấn
+			disabled={disabled}
 		>
 			<Animated.View
 				style={[
