@@ -7,6 +7,7 @@ import { navigate } from "@/libs/navigation/navigationService";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export const SignupScreen = () => {
 	const [phone, setPhone] = useState<string>("");
@@ -14,6 +15,7 @@ export const SignupScreen = () => {
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
+	const [toggleCheckBox, setToggleCheckBox] = useState<boolean>(false);
 
 	const { height } = Dimensions.get("window");
 
@@ -90,21 +92,15 @@ export const SignupScreen = () => {
 						style={{ marginTop: 10 }}
 						required
 					/>
-					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						<Press>
-							<Text
-								style={[
-									Texts.regular16,
-									{
-										color: Colors.colorBrand.burntSienna[500],
-										textAlign: "right",
-										marginTop: 8,
-									},
-								]}
-							>
-								Quên mật khẩu?
-							</Text>
-						</Press>
+					<View style={{ flexDirection: "row", justifyContent: "flex-end", marginTop: 8 }}>
+						<BouncyCheckbox
+							size={20}
+							fillColor={Colors.gray[500]}
+							onPress={(isChecked: boolean) => {}}
+						/>
+						<Text style={[Texts.regular14, { color: Colors.gray[500] }]}>
+							Tôi đồng ý với Chính sách Bảo mật và Các Điều khoản
+						</Text>
 					</View>
 
 					<Button
@@ -117,7 +113,7 @@ export const SignupScreen = () => {
 					</Button>
 
 					<View style={{ flexDirection: "row", justifyContent: "center", gap: 4, marginTop: 16 }}>
-						<Text style={[Texts.regular16, { color: Colors.gray[500] }]}>Bạn chưa có tài khoản?</Text>
+						<Text style={[Texts.regular16, { color: Colors.gray[500] }]}>Đã có tài khoản?</Text>
 						<Press
 							onPress={() => {
 								navigate("LoginScreen");
