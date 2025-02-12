@@ -1,17 +1,34 @@
 import { Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
 import { Close, Eye, EyeOff } from "@/assets/svgs";
+import { Calendar } from "@/assets/svgs/calendar";
 import { Colors, Texts } from "@/constants";
+import { navigate } from "@/libs/navigation/navigationService";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
+import DateTimePicker from "react-native-modal-datetime-picker";
 
 export const SignupScreen = () => {
 	const [phone, setPhone] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
 
 	const { height } = Dimensions.get("window");
+
+	const showDatePicker = () => {
+		setDatePickVisible(true);
+	};
+
+	const hideDatePicker = () => {
+		setDatePickVisible(false);
+	};
+
+	const handleConfirm = (date: any) => {
+		console.warn("A date has been picked: ", date);
+		hideDatePicker();
+	};
 
 	return (
 		<SafeAreaView>
@@ -42,7 +59,17 @@ export const SignupScreen = () => {
 						label="Ngày sinh"
 						placeholder="DD/MM/YY"
 						required
+						right={<Calendar />}
+						onRightPress={showDatePicker}
 					/>
+
+					<DateTimePicker
+						isVisible={isDatePickVisible}
+						onConfirm={handleConfirm}
+						mode="date"
+						onCancel={hideDatePicker}
+					/>
+
 					<InputForm
 						label="Số điện thoại"
 						value={phone}
@@ -91,7 +118,11 @@ export const SignupScreen = () => {
 
 					<View style={{ flexDirection: "row", justifyContent: "center", gap: 4, marginTop: 16 }}>
 						<Text style={[Texts.regular16, { color: Colors.gray[500] }]}>Bạn chưa có tài khoản?</Text>
-						<Press>
+						<Press
+							onPress={() => {
+								navigate("LoginScreen");
+							}}
+						>
 							<Text style={[Texts.regular16, { color: Colors.colorBrand.burntSienna[500] }]}>
 								Đăng nhập
 							</Text>
