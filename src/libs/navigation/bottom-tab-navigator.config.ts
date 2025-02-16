@@ -5,6 +5,8 @@ export const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export type RootTabParamList = {
 	HomeScreen: undefined;
+	SearchScreen: undefined;
+	MessageScreen: undefined;
 	UserScreen: undefined;
 };
 
