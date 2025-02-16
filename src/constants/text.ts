@@ -46,6 +46,11 @@ export const Texts = StyleSheet.create({
 		fontWeight: "normal",
 		fontFamily: "ShopeeRegular",
 	},
+	regular14: {
+		fontSize: 14,
+		fontWeight: "normal",
+		fontFamily: "ShopeeRegular",
+	},
 	regular16: {
 		fontSize: 16,
 		fontWeight: "normal",
