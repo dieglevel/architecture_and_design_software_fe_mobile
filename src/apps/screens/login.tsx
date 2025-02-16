@@ -2,6 +2,7 @@ import { Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
 import { Close, Eye, EyeOff } from "@/assets/svgs";
 import { Colors, Texts } from "@/constants";
+import { navigate } from "@/libs/navigation/navigationService";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 
@@ -54,7 +55,7 @@ export const LoginScreen = () => {
 						required
 					/>
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						<Press>
+						<Press onPress={() => navigate("ForgotPassowrdScreen")}>
 							<Text
 								style={[
 									Texts.regular16,
@@ -73,7 +74,7 @@ export const LoginScreen = () => {
 					<Button
 						style={{ marginTop: 8 }}
 						onPress={() => {
-							console.log("adu");
+							navigate("BottomTabScreenApp");
 						}}
 					>
 						Đăng nhập
@@ -81,7 +82,7 @@ export const LoginScreen = () => {
 
 					<View style={{ flexDirection: "row", justifyContent: "center", gap: 4, marginTop: 16 }}>
 						<Text style={[Texts.regular16, { color: Colors.gray[500] }]}>Bạn chưa có tài khoản?</Text>
-						<Press>
+						<Press onPress={() => navigate("RegisterScreen")}>
 							<Text style={[Texts.regular16, { color: Colors.colorBrand.burntSienna[500] }]}>
 								Đăng ký
 							</Text>
