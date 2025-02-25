@@ -1,6 +1,6 @@
 import { Colors } from "@/constants";
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 interface TourItemProps {
 	image: string;
@@ -15,7 +15,7 @@ export const TourItem: React.FC<TourItemProps> = ({ image, name, rating, price, 
 	const discountedPrice = price - (price * discount) / 100;
 
 	return (
-		<View style={[styles.container, discount > 0 && styles.containerDiscount]}>
+		<TouchableOpacity style={[styles.container, discount > 0 && styles.containerDiscount]}>
 			<Image
 				source={{ uri: image }}
 				style={styles.image}
@@ -50,7 +50,7 @@ export const TourItem: React.FC<TourItemProps> = ({ image, name, rating, price, 
 				</View>
 			</View>
 			{discount > 0 && <Text style={styles.discountBadge}>-{discount}%</Text>}
-		</View>
+		</TouchableOpacity>
 	);
 };
 

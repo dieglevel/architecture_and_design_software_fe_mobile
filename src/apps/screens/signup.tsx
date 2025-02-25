@@ -15,7 +15,6 @@ export const SignupScreen = () => {
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
-	const [toggleCheckBox, setToggleCheckBox] = useState<boolean>(false);
 
 	const { height } = Dimensions.get("window");
 

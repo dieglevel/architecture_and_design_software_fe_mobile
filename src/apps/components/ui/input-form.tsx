@@ -15,8 +15,8 @@ interface Props extends React.PropsWithChildren<TextInputProps> {
 	secureTextEntry?: boolean;
 	required?: boolean;
 
-	style?: StyleProp<ViewStyle>
-} 
+	style?: StyleProp<ViewStyle>;
+}
 
 export const InputForm = ({
 	label,
@@ -47,7 +47,14 @@ export const InputForm = ({
 					{ flexDirection: "row", alignItems: "center", maxHeight: 40 },
 				]}
 			>
-				{left && <View style={{ padding: 10 }}>{left}</View>}
+				{left && (
+					<Press
+						onPress={onLeftPress}
+						style={{ maxHeight: 25, maxWidth: 25 }}
+					>
+						{left}
+					</Press>
+				)}
 				<TextInput
 					value={value}
 					onChangeText={onChangeText}
@@ -69,4 +76,3 @@ export const InputForm = ({
 		</View>
 	);
 };
-
