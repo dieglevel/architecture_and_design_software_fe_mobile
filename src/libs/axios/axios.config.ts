@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export const api = axios.create({
-	baseURL: process.env.EXPO_PUBLIC_BACKEND_URL, // Không cần nối port nữa
-	timeout: 5000, // Tuỳ chỉnh timeout
+	baseURL: process.env.EXPO_PUBLIC_BACKEND_URL,
+	timeout: 5000,
 	headers: { "Content-Type": "application/json" },
 });
 

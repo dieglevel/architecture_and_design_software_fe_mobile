@@ -2,17 +2,34 @@ import { Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
 import { Close, Eye, EyeOff } from "@/assets/svgs";
 import { Colors, Texts } from "@/constants";
+import { setAccessToken } from "@/libs/axios/axios.config";
 import { navigate } from "@/libs/navigation/navigationService";
+import { login } from "@/services/authService";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 
 export const LoginScreen = () => {
-	const [phone, setPhone] = useState<string>("");
+	const [username, setUsername] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
 	const { height } = Dimensions.get("window");
+
+	const handleLogin = async () => {
+		try {
+			// const result = await login({ username, password });
+			// console.log("Login result:", result);
+			// if (result.statusCode === 200 && result.data) {
+			// 	// Lưu token vào axios
+			// 	setAccessToken(result.data.accessToken);
+			// 	// Chuyển hướng về trang chủ
+			// }
+			navigate("BottomTabScreenApp");
+		} catch (error) {
+			console.error("Login failed:", error);
+		}
+	};
 
 	return (
 		<SafeAreaView>
@@ -35,10 +52,10 @@ export const LoginScreen = () => {
 						</Text>
 					</View>
 					<InputForm
-						label="Số điện thoại"
-						value={phone}
-						onChangeText={setPhone}
-						placeholder="Nhập số điện thoại"
+						label="Tên đăng nhập"
+						value={username}
+						onChangeText={setUsername}
+						placeholder="Nhập tên đăng nhập"
 						required
 					/>
 					<InputForm
@@ -46,7 +63,7 @@ export const LoginScreen = () => {
 						placeholder="Nhập mật khẩu"
 						value={password}
 						onChangeText={setPassword}
-						secureTextEntry={isShowPassword}
+						secureTextEntry={!isShowPassword}
 						right={isShowPassword ? <Eye /> : <EyeOff />}
 						onRightPress={() => {
 							setIsShowPassword(!isShowPassword);
@@ -74,7 +91,7 @@ export const LoginScreen = () => {
 					<Button
 						style={{ marginTop: 8 }}
 						onPress={() => {
-							navigate("BottomTabScreenApp");
+							handleLogin();
 						}}
 					>
 						Đăng nhập
