@@ -23,6 +23,7 @@ export const BottomTabScreenApp = () => {
 				tabBarActiveTintColor: "#E67E22",
 				tabBarInactiveTintColor: "gray",
 				tabBarShowLabel: false,
+				headerShown: false,
 			})}
 		>
 			<Tab.Screen

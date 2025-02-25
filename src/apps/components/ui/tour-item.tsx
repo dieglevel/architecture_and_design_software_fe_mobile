@@ -32,7 +32,7 @@ export const TourItem: React.FC<TourItemProps> = ({ image, name, rating, price, 
 					<Text style={styles.duration}>⏱ {duration}</Text>
 				</View>
 				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-					<Text style={styles.rating}>⭐ {rating.toFixed(1)}</Text>
+					<Text style={styles.rating}>⭐ ({rating.toFixed(1)})</Text>
 
 					<Text style={styles.price}>
 						{discount > 0 ? (
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
 
 	rating: {
 		fontSize: 14,
-		color: "#FFD700",
+		color: "#000",
 	},
 	duration: {
 		fontSize: 14,
