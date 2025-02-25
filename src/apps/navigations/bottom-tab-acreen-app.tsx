@@ -1,6 +1,10 @@
 import { HomeScreen, SearchScreen, MessageScreen, UserScreen } from "@/apps/screens";
 import { Tab } from "@/libs/navigation";
 import { Ionicons } from "@expo/vector-icons";
+import HomeStack from "../stacks/home-stack";
+import SearchStack from "../stacks/search-stack";
+import MessageStack from "../stacks/message-stack";
+import UserStack from "../stacks/user-stack";
 
 export const BottomTabScreenApp = () => {
 	return (
@@ -8,10 +12,10 @@ export const BottomTabScreenApp = () => {
 			screenOptions={({ route }) => ({
 				tabBarIcon: ({ color, size }) => {
 					let iconName: any;
-					if (route.name === "HomeScreen") iconName = "home";
-					else if (route.name === "SearchScreen") iconName = "search";
-					else if (route.name === "MessageScreen") iconName = "chatbubble";
-					else if (route.name === "UserScreen") iconName = "person";
+					if (route.name === "HomeStack") iconName = "home";
+					else if (route.name === "SearchStack") iconName = "search";
+					else if (route.name === "MessageStack") iconName = "chatbubble";
+					else if (route.name === "UserStack") iconName = "person";
 					return (
 						<Ionicons
 							name={iconName}
@@ -27,20 +31,20 @@ export const BottomTabScreenApp = () => {
 			})}
 		>
 			<Tab.Screen
-				name="HomeScreen"
-				component={HomeScreen}
+				name="HomeStack"
+				component={HomeStack}
 			/>
 			<Tab.Screen
-				name="SearchScreen"
-				component={SearchScreen}
+				name="SearchStack"
+				component={SearchStack}
 			/>
 			<Tab.Screen
-				name="MessageScreen"
-				component={MessageScreen}
+				name="MessageStack"
+				component={MessageStack}
 			/>
 			<Tab.Screen
-				name="UserScreen"
-				component={UserScreen}
+				name="UserStack"
+				component={UserStack}
 			/>
 		</Tab.Navigator>
 	);
