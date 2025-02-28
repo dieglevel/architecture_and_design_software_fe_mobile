@@ -1,4 +1,5 @@
 import { Colors } from "@/constants";
+import { navigate } from "@/libs/navigation/navigationService";
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
@@ -15,7 +16,10 @@ export const TourItem: React.FC<TourItemProps> = ({ image, name, rating, price, 
 	const discountedPrice = price - (price * discount) / 100;
 
 	return (
-		<TouchableOpacity style={[styles.container, discount > 0 && styles.containerDiscount]}>
+		<TouchableOpacity
+			style={[styles.container, discount > 0 && styles.containerDiscount]}
+			onPress={() => navigate("TourDetailScreen")}
+		>
 			<Image
 				source={{ uri: image }}
 				style={styles.image}

@@ -5,17 +5,14 @@ import { Press } from "../press";
 
 interface Props extends React.PropsWithChildren<TextInputProps> {
 	label: string;
-
 	left?: React.ReactNode;
 	onLeftPress?: () => void;
-
 	right?: React.ReactNode;
 	onRightPress?: () => void;
-
 	secureTextEntry?: boolean;
 	required?: boolean;
-
 	style?: StyleProp<ViewStyle>;
+	validator?: (text: string) => string | null; // Hàm kiểm tra
 }
 
 export const InputForm = ({
@@ -30,8 +27,22 @@ export const InputForm = ({
 	secureTextEntry,
 	required,
 	style,
+	validator,
 }: Props) => {
 	const [isFocus, setIsFocus] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+	const validateInput = (text: string) => {
+		if (validator) {
+			const error = validator(text);
+			setErrorMessage(error);
+		}
+	};
+
+	const handleBlur = () => {
+		setIsFocus(false);
+		validateInput(value as string);
+	};
 
 	return (
 		<View style={[Styles.gap8, style]}>
@@ -42,6 +53,7 @@ export const InputForm = ({
 			<View
 				style={[
 					isFocus ? Borders.borderFocus : Borders.border,
+					errorMessage ? { borderColor: Colors.colorBrand.burntSienna[500] } : {},
 					Styles.px8,
 					Styles.gap8,
 					{ flexDirection: "row", alignItems: "center", maxHeight: 40 },
@@ -57,12 +69,15 @@ export const InputForm = ({
 				)}
 				<TextInput
 					value={value}
-					onChangeText={onChangeText}
+					onChangeText={(text) => {
+						onChangeText?.(text);
+						validateInput(text);
+					}}
 					placeholder={placeholder}
 					secureTextEntry={secureTextEntry}
 					style={[Styles.flex]}
 					onFocus={() => setIsFocus(true)}
-					onBlur={() => setIsFocus(false)}
+					onBlur={handleBlur}
 				/>
 				{right && (
 					<Press
@@ -73,6 +88,9 @@ export const InputForm = ({
 					</Press>
 				)}
 			</View>
+			{errorMessage && (
+				<Text style={{ color: Colors.colorBrand.burntSienna[500], fontSize: 12 }}>{errorMessage}</Text>
+			)}
 		</View>
 	);
 };

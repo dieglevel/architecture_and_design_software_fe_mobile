@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 
 export const SignupScreen = () => {
+	// Params
 	const [name, setName] = useState<string>("");
 	const [dateOfBirth, setDateOfBirth] = useState<string>("");
 	const [phone, setPhone] = useState<string>("");
@@ -19,9 +20,18 @@ export const SignupScreen = () => {
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
+	const [checked, setChecked] = useState<boolean>(false);
 
 	const { height } = Dimensions.get("window");
 
+	const [errors, setErrors] = useState<Object>({
+		name: null,
+		dob: null,
+		phone: null,
+		password: null,
+	});
+
+	// Functions
 	const showDatePicker = () => {
 		setDatePickVisible(true);
 	};
@@ -67,6 +77,25 @@ export const SignupScreen = () => {
 	const validatePassword = (text: string) => {
 		const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 		return regex.test(text) ? null : "Mật khẩu ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt";
+	};
+
+	// SubmitAPI
+	const handeRegister = () => {
+		const newErrors = {
+			name: validateName(name),
+			dob: validateDOB(dateOfBirth),
+			phone: validatePhone(phone),
+			password: validatePassword(password),
+		};
+		setErrors(newErrors);
+
+		// Nếu không có lỗi nào
+		if (Object.values(newErrors).every((error) => error === null)) {
+			console.log("Gửi API đăng ký");
+			// Gọi API đăng ký ở đây
+		} else {
+			console.log("Thông tin không hợp lệ");
+		}
 	};
 
 	return (
@@ -145,7 +174,7 @@ export const SignupScreen = () => {
 							size={20}
 							fillColor={Colors.gray[500]}
 							onPress={(isChecked: boolean) => {
-								isChecked;
+								setChecked(isChecked);
 							}}
 							text="Tôi đồng ý với Chính sách Bảo mật và Các Điều khoản"
 							iconStyle={{ borderColor: Colors.gray[500] }}

@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HomeScreen } from "../screens";
+import { HomeScreen, TourDetailScreen } from "../screens";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,11 +13,11 @@ export default function HomeStack() {
 				options={{ headerShown: false }}
 			/>
 
-			{/* <Stack.Screen
-        name="PlayList"
-        component={PlayList}
-        options={{ headerShown: false }}
-      /> */}
+			<Stack.Screen
+				name="TourDetailScreen"
+				component={TourDetailScreen}
+				options={{ headerShown: true }}
+			/>
 		</Stack.Navigator>
 	);
 }
