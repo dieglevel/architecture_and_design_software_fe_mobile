@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
 import { navigationRef } from "@/libs/navigation/navigationService";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
+import Toast from "react-native-toast-message";
 
 export const RootScreenApp = () => {
 	const insets = useSafeAreaInsets();
@@ -35,6 +36,7 @@ export const RootScreenApp = () => {
 					component={ForgotPasswordScreen} // Add RegisterScreen here
 				/>
 			</Stack.Navigator>
+			<Toast />
 		</NavigationContainer>
 	);
 };
