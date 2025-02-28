@@ -18,13 +18,13 @@ export const LoginScreen = () => {
 
 	const handleLogin = async () => {
 		try {
-			// const result = await login({ username, password });
-			// console.log("Login result:", result);
-			// if (result.statusCode === 200 && result.data) {
-			// 	// Lưu token vào axios
-			// 	setAccessToken(result.data.accessToken);
-			// 	// Chuyển hướng về trang chủ
-			// }
+			const result = await login({ password, username });
+			console.log("Login result:", result);
+			if (result.statusCode === 200 && result.data) {
+				// Lưu token vào axios
+				setAccessToken(result.data.accessToken);
+				// Chuyển hướng về trang chủ
+			}
 			navigate("BottomTabScreenApp");
 		} catch (error) {
 			console.error("Login failed:", error);
