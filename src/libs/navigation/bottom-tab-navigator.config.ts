@@ -4,8 +4,10 @@ import { NavigationProp, RouteProp } from "@react-navigation/native";
 export const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export type RootTabParamList = {
-	HomeScreen: undefined;
-	UserScreen: undefined;
+	HomeStack: undefined;
+	SearchStack: undefined;
+	MessageStack: undefined;
+	UserStack: undefined;
 };
 
 declare global {
