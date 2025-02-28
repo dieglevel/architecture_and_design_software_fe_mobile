@@ -5,6 +5,8 @@ export const Stack = createNativeStackNavigator<RootStackParamList>();
 export type RootStackParamList = {
 	BottomTabScreenApp: undefined;
 	LoginScreen: undefined;
+	RegisterScreen: undefined;
+	ForgotPassowrdScreen: undefined;
 	// Register: undefined;
 	// ProductDetail: { productId: string };
 	// SubCategory: { categoryId: string };
@@ -15,6 +17,7 @@ export type RootStackParamList = {
 	// PaymentResult: undefined;
 	// Cart: { productId: string; callback: () => void };
 	// ChatAdmin: { userId: string };
+	TourDetailScreen: undefined;
 };
 
 declare global {
