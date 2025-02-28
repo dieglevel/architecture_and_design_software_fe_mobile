@@ -11,6 +11,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { register } from "@/services/authService";
+import Toast from "react-native-toast-message";
 
 export const SignupScreen = () => {
 	// Params
@@ -123,7 +124,18 @@ export const SignupScreen = () => {
 				});
 				console.log("Register result:", result);
 				if (result.statusCode === 200 && result.data) {
+					Toast.show({
+						type: "success",
+						text1: "✅ Thành công",
+						text2: "Đăng ký tài khoản thành công!",
+					});
 					navigate("LoginScreen");
+				} else {
+					Toast.show({
+						type: "error",
+						text1: "❌Lỗi",
+						text2: result.message || "Đã xảy ra lỗi!",
+					});
 				}
 			} catch (error) {
 				console.error("Register failed:", error);
