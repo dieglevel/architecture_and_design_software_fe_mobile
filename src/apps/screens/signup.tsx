@@ -8,8 +8,12 @@ import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
 
 export const SignupScreen = () => {
+	const [name, setName] = useState<string>("");
+	const [dateOfBirth, setDateOfBirth] = useState<string>("");
 	const [phone, setPhone] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 
@@ -26,9 +30,43 @@ export const SignupScreen = () => {
 		setDatePickVisible(false);
 	};
 
-	const handleConfirm = (date: any) => {
-		console.warn("A date has been picked: ", date);
+	const handleConfirm = (date: Date) => {
+		const formattedDate = format(date, "dd/MM/yyyy", { locale: vi }); // Định dạng ngày tháng
+		setDateOfBirth(formattedDate);
+		validateDOB(formattedDate);
 		hideDatePicker();
+	};
+
+	const validatePhone = (text: string) =>
+		/^(0|\+84)(3[2-9]|5[2689]|7[0-9]|8[1-9]|9[0-9])[0-9]{7}$/.test(text) ? null : "Số điện thoại không hợp lệ!";
+	const validateName = (text: string) => {
+		return /^[a-zA-ZÀ-Ỹà-ỹ\s]+$/.test(text.trim()) ? null : "Họ và tên không hợp lệ!";
+	};
+	const validateDOB = (text: string) => {
+		const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+		if (!dateRegex.test(text)) return "Ngày sinh phải có định dạng dd/MM/yyyy!";
+
+		const [day, month, year] = text.split("/").map(Number);
+		const birthDate = new Date(year, month - 1, day);
+		const today = new Date();
+
+		// Tính ngày cách đây 16 năm
+		const sixteenYearsAgo = new Date();
+		sixteenYearsAgo.setFullYear(today.getFullYear() - 16);
+
+		if (birthDate >= today) {
+			return "Ngày sinh không hợp lệ!";
+		}
+
+		if (birthDate > sixteenYearsAgo) {
+			return "Người dùng phải trên 16 tuổi!";
+		}
+
+		return null;
+	};
+	const validatePassword = (text: string) => {
+		const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+		return regex.test(text) ? null : "Mật khẩu ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt";
 	};
 
 	return (
@@ -54,21 +92,30 @@ export const SignupScreen = () => {
 					<InputForm
 						label="Họ và tên"
 						placeholder="Nhập họ và tên"
+						onChangeText={setName}
+						value={name}
+						validator={validateName}
 						required
 					/>
 					<InputForm
 						label="Ngày sinh"
-						placeholder="DD/MM/YY"
+						placeholder="DD/MM/YYYY"
+						onChangeText={setDateOfBirth}
+						value={dateOfBirth}
 						required
 						right={<Calendar />}
 						onRightPress={showDatePicker}
+						validator={validateDOB}
 					/>
 
 					<DateTimePicker
 						isVisible={isDatePickVisible}
 						onConfirm={handleConfirm}
 						mode="date"
+						display="compact"
 						onCancel={hideDatePicker}
+						maximumDate={new Date()}
+						minimumDate={new Date(1900, 0, 1)}
 					/>
 
 					<InputForm
@@ -77,17 +124,19 @@ export const SignupScreen = () => {
 						onChangeText={setPhone}
 						placeholder="Nhập số điện thoại"
 						required
+						validator={validatePhone}
 					/>
 					<InputForm
 						label="Nhập mật khẩu"
 						placeholder="Nhập mật khẩu"
 						value={password}
 						onChangeText={setPassword}
-						secureTextEntry={isShowPassword}
+						secureTextEntry={!isShowPassword}
 						right={isShowPassword ? <Eye /> : <EyeOff />}
 						onRightPress={() => {
 							setIsShowPassword(!isShowPassword);
 						}}
+						validator={validatePassword}
 						style={{ marginTop: 10 }}
 						required
 					/>
@@ -95,11 +144,17 @@ export const SignupScreen = () => {
 						<BouncyCheckbox
 							size={20}
 							fillColor={Colors.gray[500]}
-							onPress={(isChecked: boolean) => {}}
+							onPress={(isChecked: boolean) => {
+								isChecked;
+							}}
+							text="Tôi đồng ý với Chính sách Bảo mật và Các Điều khoản"
+							iconStyle={{ borderColor: Colors.gray[500] }}
+							textStyle={[
+								Texts.regular14,
+								{ color: Colors.gray[500], textDecorationLine: "none" },
+							]}
+							style={{ marginTop: 8, flex: 1 }}
 						/>
-						<Text style={[Texts.regular14, { color: Colors.gray[500] }]}>
-							Tôi đồng ý với Chính sách Bảo mật và Các Điều khoản
-						</Text>
 					</View>
 
 					<Button
