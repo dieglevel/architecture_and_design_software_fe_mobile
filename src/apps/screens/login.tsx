@@ -7,6 +7,7 @@ import { navigate } from "@/libs/navigation/navigationService";
 import { login } from "@/services/authService";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 export const LoginScreen = () => {
 	const [username, setUsername] = useState<string>("");
@@ -23,11 +24,25 @@ export const LoginScreen = () => {
 			if (result.statusCode === 200 && result.data) {
 				// Lưu token vào axios
 				setAccessToken(result.data.accessToken);
-				// Chuyển hướng về trang chủ
+				Toast.show({
+					type: "success",
+					text1: "✅ Thành công",
+					text2: "Đăng nhập vào ứng dụng thành công!",
+				});
+				navigate("BottomTabScreenApp");
+			} else {
+				Toast.show({
+					type: "error",
+					text1: "❌ Thất bại",
+					text2: result.message,
+				});
 			}
-			navigate("BottomTabScreenApp");
-		} catch (error) {
-			console.error("Login failed:", error);
+		} catch (error: any) {
+			Toast.show({
+				type: "error",
+				text1: "❌ Thất bại",
+				text2: error,
+			});
 		}
 	};
 
