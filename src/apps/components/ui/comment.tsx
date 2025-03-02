@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { Colors } from "@/constants";
 
 interface CommentProps {
 	avatar: string;
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	name: {
-		fontWeight: "bold",
+		color: Colors.colorBrand.midnightBlue[950],
 		fontSize: 16,
 		marginBottom: 4,
 	},
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
 		color: "#999",
 	},
 	comment: {
+		textAlign: "justify",
 		fontSize: 14,
 		color: "#333",
 		lineHeight: 20,

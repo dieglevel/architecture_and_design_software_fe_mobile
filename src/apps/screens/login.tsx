@@ -19,24 +19,24 @@ export const LoginScreen = () => {
 
 	const handleLogin = async () => {
 		try {
-			const result = await login({ password, username });
-			console.log("Login result:", result);
-			if (result.statusCode === 200 && result.data) {
-				// Lưu token vào axios
-				setAccessToken(result.data.accessToken);
-				Toast.show({
-					type: "success",
-					text1: "✅ Thành công",
-					text2: "Đăng nhập vào ứng dụng thành công!",
-				});
-				navigate("BottomTabScreenApp");
-			} else {
-				Toast.show({
-					type: "error",
-					text1: "❌ Thất bại",
-					text2: result.message,
-				});
-			}
+			// const result = await login({ password, username });
+			// console.log("Login result:", result);
+			// if (result.statusCode === 200 && result.data) {
+			// 	// Lưu token vào axios
+			// 	setAccessToken(result.data.accessToken);
+			// 	Toast.show({
+			// 		type: "success",
+			// 		text1: "✅ Thành công",
+			// 		text2: "Đăng nhập vào ứng dụng thành công!",
+			// 	});
+			navigate("BottomTabScreenApp");
+			// } else {
+			// 	Toast.show({
+			// 		type: "error",
+			// 		text1: "❌ Thất bại",
+			// 		text2: result.message,
+			// 	});
+			// }
 		} catch (error: any) {
 			Toast.show({
 				type: "error",
