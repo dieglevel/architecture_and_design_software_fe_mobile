@@ -8,6 +8,7 @@ import { TourItem } from "../components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScheduleItem from "../components/ui/schedule";
 import Comment from "../components/ui/comment";
+import TourInfo from "../components/ui/more-infors";
 
 export const TourDetailScreen = () => {
 	const schedules = [
@@ -72,12 +73,6 @@ export const TourDetailScreen = () => {
 		},
 	];
 
-	const Info = () => (
-		<View style={styles.scene}>
-			<Text>Thông tin khác</Text>
-		</View>
-	);
-
 	const renderScene = ({ route }: { route: any }) => {
 		switch (route.key) {
 			case "schedule":
@@ -113,7 +108,27 @@ export const TourDetailScreen = () => {
 					</ScrollView>
 				);
 			case "info":
-				return <Info />;
+				return (
+					<TourInfo
+						transport={[
+							"Vé máy bay khứ hồi Vietjet Air bao gồm 7kg hành lý xách tay + 20kg hành lý ký gửi.",
+							"Xe du lịch hiện đại, điều hòa, đưa đón tham quan.",
+							"Tàu câu cá và lặn ngắm san hô với đầy đủ dụng cụ.",
+						]}
+						accommodation={[
+							"Khách sạn 3 sao tiêu chuẩn (2-3 khách/phòng).",
+							"Phòng tiện nghi điều hòa, tivi, nóng lạnh.",
+						]}
+						others={[
+							"Ăn uống theo lịch trình tham quan.",
+							"Vé vào cửa các điểm tham quan.",
+							"HDV nhiệt tình, kinh nghiệm.",
+							"Nước uống lạnh phục vụ du lịch.",
+							"Bảo hiểm du lịch mức cao nhất.",
+							"Y tế dự phòng trên xe.",
+						]}
+					/>
+				);
 			default:
 				return null;
 		}

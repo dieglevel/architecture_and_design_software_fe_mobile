@@ -4,3 +4,4 @@ export * from "./tour-item";
 export * from "./comment";
 export * from "./rating";
 export * from "./schedule";
+export * from "./more-infors";
