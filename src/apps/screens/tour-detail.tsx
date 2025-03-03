@@ -1,12 +1,49 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "../components";
 import { FontAwesome } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
-import { Tab } from "@/libs/navigation";
-import { TourDetailTabs } from "./tour-detail-tabs";
+import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import { useState } from "react";
 import RatingTour from "../components/ui/rating";
+import { Colors, Texts } from "@/constants";
 
 export const TourDetailScreen = () => {
+	const Schedule = () => (
+		<View style={styles.scene}>
+			<Text>Lịch trình</Text>
+		</View>
+	);
+
+	const Info = () => (
+		<View style={styles.scene}>
+			<Text>Thông tin khác</Text>
+		</View>
+	);
+
+	const renderScene = ({ route }: { route: any }) => {
+		switch (route.key) {
+			case "schedule":
+				return <Schedule />;
+			case "review":
+				return (
+					<RatingTour
+						rating={4.9}
+						ratingDetails={ratingDetails}
+					/>
+				);
+			case "info":
+				return <Info />;
+			default:
+				return null;
+		}
+	};
+
+	const [index, setIndex] = useState(0);
+	const [routes] = useState<Array<Object>>([
+		{ key: "schedule", title: "Lịch trình" },
+		{ key: "review", title: "Đánh giá" },
+		{ key: "info", title: "Thông tin khác" },
+	]);
+
 	const tourList = [
 		{
 			id: "1",
@@ -67,21 +104,18 @@ export const TourDetailScreen = () => {
 	];
 
 	return (
-		<SafeAreaView style={{ alignItems: "stretch", backgroundColor: "#fff" }}>
+		<SafeAreaView style={{ backgroundColor: "#fff", alignItems: "stretch" }}>
 			<View style={styles.container}>
-				{/* Ảnh Tour */}
 				<Image
 					source={{
 						uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 					}}
 					style={styles.image}
 				/>
-				{/* Nội dung */}
+
 				<View style={styles.content}>
 					<Text style={styles.title}>Tour Côn Đảo 3N2Đ</Text>
 					<Text style={styles.description}>HCM - Grand World - Câu Cá - Lặn Ngắm San Hô</Text>
-
-					{/* Địa điểm và đánh giá */}
 					<View style={styles.row}>
 						<Text style={styles.location}>Kiên Giang</Text>
 						<View style={styles.ratingContainer}>
@@ -94,29 +128,45 @@ export const TourDetailScreen = () => {
 							<Text style={styles.reviews}>(24 đánh giá)</Text>
 						</View>
 					</View>
-
-					{/* Nút hành động
-					<View style={styles.buttonContainer}>
-						<TouchableOpacity style={styles.primaryButton}>
-							<Text style={styles.primaryButtonText}>Lịch trình</Text>
-						</TouchableOpacity>
-						<TouchableOpacity>
-							<Text style={styles.secondaryButton}>Đánh giá</Text>
-						</TouchableOpacity>
-						<TouchableOpacity>
-							<Text style={styles.secondaryButton}>Thông tin khác</Text>
-						</TouchableOpacity>
-					</View> */}
 				</View>
-				{/* Tabs */}
-				<View style={{ flex: 1 }}>
-					<TourDetailTabs />
-				</View>
-				<RatingTour
-					rating={4.9}
-					ratingDetails={ratingDetails}
-				/>
 			</View>
+
+			<TabView
+				initialLayout={{ width: 360 }}
+				navigationState={{ index, routes }}
+				renderScene={renderScene}
+				onIndexChange={setIndex}
+				renderTabBar={(props) => (
+					<TabBar
+						{...props}
+						indicatorStyle={{ backgroundColor: "#ff6347" }}
+						style={styles.tabBar}
+						activeColor="#fff"
+						inactiveColor="#7D7D7D"
+						renderTabBarItem={({ route }) => {
+							const isFocused =
+								props.navigationState.index === props.navigationState.routes.indexOf(route);
+							return (
+								<TouchableOpacity
+									style={[styles.tabItem, isFocused && styles.activeTab]}
+									onPress={() => {
+										props.jumpTo(route.key); // Chuyển tab khi bấm
+									}}
+								>
+									<Text style={[styles.tabText, isFocused && styles.activeTabText]}>
+										{route.title}
+									</Text>
+								</TouchableOpacity>
+							);
+						}}
+						contentContainerStyle={{ justifyContent: "space-evenly" }}
+						indicatorContainerStyle={{ display: "none" }}
+					/>
+				)}
+			/>
+			<Text style={[Texts.bold16, { color: Colors.colorBrand.midnightBlue[950], alignSelf: "flex-start" }]}>
+				Có thể bạn sẽ thích
+			</Text>
 		</SafeAreaView>
 	);
 };
@@ -170,25 +220,31 @@ const styles = StyleSheet.create({
 		color: "red",
 		marginLeft: 4,
 	},
-	buttonContainer: {
-		flexDirection: "row",
-		marginTop: 8,
+	scene: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
-	primaryButton: {
-		backgroundColor: "#FF6F61",
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-		borderRadius: 5,
+	tabBar: {
+		backgroundColor: "#fff",
+		elevation: 2,
 	},
-	primaryButtonText: {
-		color: "#fff",
-		fontSize: 12,
+
+	tabItem: {
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 10,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	activeTab: {
+		backgroundColor: "#ff6347", // Màu nền cam khi chọn
+	},
+	tabText: {
+		color: "#7D7D7D",
 		fontWeight: "bold",
 	},
-	secondaryButton: {
-		color: "#666",
-		fontSize: 12,
-		marginLeft: 15,
-		fontWeight: "bold",
+	activeTabText: {
+		color: "#fff", // Màu trắng khi active
 	},
 });
