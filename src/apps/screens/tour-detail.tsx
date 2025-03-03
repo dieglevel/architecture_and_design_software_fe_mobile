@@ -1,17 +1,76 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "../components";
+import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useState } from "react";
 import RatingTour from "../components/ui/rating";
 import { Colors, Texts } from "@/constants";
+import { TourItem } from "../components/ui";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ScheduleItem from "../components/ui/schedule";
+import Comment from "../components/ui/comment";
 
 export const TourDetailScreen = () => {
-	const Schedule = () => (
-		<View style={styles.scene}>
-			<Text>Lịch trình</Text>
-		</View>
-	);
+	const schedules = [
+		{
+			day: "Ngày 1",
+			route: "TP. Hồ Chí Minh - Incheon - Seoul",
+			meals: "02 (trưa, tối)",
+			description:
+				"Sáng sớm: HDV đón Quý khách tại Cổng D2 Ga đi QT Sân bay TSN làm thủ tục xuất cảnh đi Paris...",
+		},
+		{
+			day: "Ngày 2",
+			route: "Seoul - Nami Island",
+			meals: "03 (sáng, trưa, tối)",
+			description: "Tham quan đảo Nami, địa điểm nổi tiếng trong phim Bản tình ca mùa đông...",
+		},
+		{
+			day: "Ngày 3",
+			route: "Seoul City Tour",
+			meals: "03 (sáng, trưa, tối)",
+			description:
+				"Tham quan Cung điện Gyeongbokgung, bảo tàng dân gian quốc gia và Nhà Xanh Phủ Tổng Thống...",
+		},
+		{
+			day: "Ngày 4",
+			route: "Seoul - Everland",
+			meals: "03 (sáng, trưa, tối)",
+			description: "Khởi hành đi công viên Everland – một trong những công viên giải trí lớn nhất Hàn Quốc...",
+		},
+		{
+			day: "Ngày 5",
+			route: "Seoul - TP. Hồ Chí Minh",
+			meals: "02 (sáng, trưa)",
+			description: "Tham quan mua sắm tại cửa hàng nhân sâm, mỹ phẩm. Đáp chuyến bay về lại Việt Nam...",
+		},
+	];
+
+	const commentData = [
+		{
+			id: "1",
+			avatar: "https://i.pravatar.cc/150?img=1",
+			name: "Phung Anh Minh",
+			date: "10/11/2022",
+			rating: 5,
+			comment: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+		},
+		{
+			id: "2",
+			avatar: "https://i.pravatar.cc/150?img=2",
+			name: "Nguyen Van A",
+			date: "15/02/2023",
+			rating: 4,
+			comment: "Great service and amazing experience. Will definitely recommend to others!",
+		},
+		{
+			id: "3",
+			avatar: "https://i.pravatar.cc/150?img=3",
+			name: "Tran Thi B",
+			date: "05/05/2023",
+			rating: 3,
+			comment: "It was a decent experience. Could improve the customer service a bit more.",
+		},
+	];
 
 	const Info = () => (
 		<View style={styles.scene}>
@@ -22,13 +81,36 @@ export const TourDetailScreen = () => {
 	const renderScene = ({ route }: { route: any }) => {
 		switch (route.key) {
 			case "schedule":
-				return <Schedule />;
+				return (
+					<FlatList
+						data={schedules}
+						renderItem={({ item }) => <ScheduleItem {...item} />}
+						keyExtractor={(item) => item.day}
+					/>
+				);
 			case "review":
 				return (
-					<RatingTour
-						rating={4.9}
-						ratingDetails={ratingDetails}
-					/>
+					<ScrollView>
+						<RatingTour
+							rating={4.9}
+							ratingDetails={ratingDetails}
+						/>
+
+						<FlatList
+							data={commentData}
+							renderItem={({ item }) => (
+								<Comment
+									avatar={item.avatar}
+									name={item.name}
+									date={item.date}
+									rating={item.rating}
+									comment={item.comment}
+								/>
+							)}
+							keyExtractor={(item) => item.id}
+							scrollEnabled={false}
+						/>
+					</ScrollView>
 				);
 			case "info":
 				return <Info />;
@@ -44,51 +126,69 @@ export const TourDetailScreen = () => {
 		{ key: "info", title: "Thông tin khác" },
 	]);
 
-	const tourList = [
+	const listTour = [
 		{
 			id: "1",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			title: "Tour Phú Quốc 3N2Đ",
-			description: "HCM - Grand World - Câu Cá - Lặn Ngắm San Hô",
-			location: "Kiên Giang",
+			name: "Du lịch biển Nha Trang",
 			rating: 4.8,
-			reviews: 24,
+			price: 2500000,
+			discount: 15,
+			duration: "3 ngày 2 đêm",
 		},
 		{
 			id: "2",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			title: "Tour Đà Lạt 4N3Đ",
-			description: "Khám phá Hồ Xuân Hương - Langbiang - Chợ Đêm",
-			location: "Lâm Đồng",
-			rating: 4.5,
-			reviews: 18,
+			name: "Khám phá Đà Lạt",
+			rating: 4.7,
+			price: 1800000,
+			discount: 10,
+			duration: "2 ngày 1 đêm",
 		},
 		{
 			id: "3",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			title: "Tour Miền Tây 2N1Đ",
-			description: "Cần Thơ - Chợ Nổi Cái Răng - Bến Ninh Kiều",
-			location: "Cần Thơ",
-			rating: 4.7,
-			reviews: 30,
+			name: "Tour Phú Quốc",
+			rating: 4.9,
+			price: 3200000,
+			discount: 20,
+			duration: "4 ngày 3 đêm",
 		},
 		{
 			id: "4",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			title: "Tour Huế - Đà Nẵng 5N4Đ",
-			description: "Đại Nội Huế - Bà Nà Hills - Hội An",
-			location: "Huế - Đà Nẵng",
-			rating: 4.6,
-			reviews: 22,
+			name: "Trekking Fansipan",
+			rating: 4.5,
+			price: 1500000,
+			discount: 0,
+			duration: "2 ngày 1 đêm",
 		},
 		{
 			id: "5",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			title: "Tour Côn Đảo 3N2Đ",
-			description: "Khám phá thiên đường biển hoang sơ",
-			location: "Bà Rịa - Vũng Tàu",
-			rating: 4.9,
-			reviews: 28,
+			name: "Khám phá Sài Gòn",
+			rating: 4.6,
+			price: 1200000,
+			discount: 5,
+			duration: "1 ngày",
+		},
+		{
+			id: "6",
+			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
+			name: "Du lịch Hội An",
+			rating: 4.8,
+			price: 2100000,
+			discount: 10,
+			duration: "3 ngày 2 đêm",
+		},
+		{
+			id: "7",
+			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
+			name: "Thám hiểm Sơn Đoòng",
+			rating: 5.0,
+			price: 5000000,
+			discount: 25,
+			duration: "5 ngày 4 đêm",
 		},
 	];
 
@@ -104,69 +204,95 @@ export const TourDetailScreen = () => {
 	];
 
 	return (
-		<SafeAreaView style={{ backgroundColor: "#fff", alignItems: "stretch" }}>
-			<View style={styles.container}>
-				<Image
-					source={{
-						uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-					}}
-					style={styles.image}
-				/>
+		<SafeAreaView style={{ backgroundColor: "#fff" }}>
+			<ScrollView
+				contentContainerStyle={{ flexGrow: 1 }}
+				showsVerticalScrollIndicator={false}
+			>
+				<View style={styles.container}>
+					<Image
+						source={{
+							uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
+						}}
+						style={styles.image}
+					/>
 
-				<View style={styles.content}>
-					<Text style={styles.title}>Tour Côn Đảo 3N2Đ</Text>
-					<Text style={styles.description}>HCM - Grand World - Câu Cá - Lặn Ngắm San Hô</Text>
-					<View style={styles.row}>
-						<Text style={styles.location}>Kiên Giang</Text>
-						<View style={styles.ratingContainer}>
-							<FontAwesome
-								name="star"
-								size={14}
-								color="#FFB400"
-							/>
-							<Text style={styles.rating}>4.8</Text>
-							<Text style={styles.reviews}>(24 đánh giá)</Text>
+					<View style={styles.content}>
+						<Text style={styles.title}>Tour Côn Đảo 3N2Đ</Text>
+						<Text style={styles.description}>HCM - Grand World - Câu Cá - Lặn Ngắm San Hô</Text>
+						<View style={styles.row}>
+							<Text style={styles.location}>Kiên Giang</Text>
+							<View style={styles.ratingContainer}>
+								<FontAwesome
+									name="star"
+									size={14}
+									color="#FFB400"
+								/>
+								<Text style={styles.rating}>4.8</Text>
+								<Text style={styles.reviews}>(24 đánh giá)</Text>
+							</View>
 						</View>
 					</View>
-				</View>
-			</View>
 
-			<TabView
-				initialLayout={{ width: 360 }}
-				navigationState={{ index, routes }}
-				renderScene={renderScene}
-				onIndexChange={setIndex}
-				renderTabBar={(props) => (
-					<TabBar
-						{...props}
-						indicatorStyle={{ backgroundColor: "#ff6347" }}
-						style={styles.tabBar}
-						activeColor="#fff"
-						inactiveColor="#7D7D7D"
-						renderTabBarItem={({ route }) => {
-							const isFocused =
-								props.navigationState.index === props.navigationState.routes.indexOf(route);
-							return (
-								<TouchableOpacity
-									style={[styles.tabItem, isFocused && styles.activeTab]}
-									onPress={() => {
-										props.jumpTo(route.key); // Chuyển tab khi bấm
+					<View style={{ flex: 1, minHeight: 400 }}>
+						<TabView
+							initialLayout={{ width: 360 }}
+							navigationState={{ index, routes }}
+							renderScene={renderScene}
+							onIndexChange={setIndex}
+							renderTabBar={(props) => (
+								<TabBar
+									{...props}
+									indicatorStyle={{ backgroundColor: "#ff6347" }}
+									style={styles.tabBar}
+									activeColor="#fff"
+									inactiveColor="#7D7D7D"
+									renderTabBarItem={({ route }) => {
+										const isFocused =
+											props.navigationState.index ===
+											props.navigationState.routes.indexOf(route);
+										return (
+											<TouchableOpacity
+												style={[styles.tabItem, isFocused && styles.activeTab]}
+												onPress={() => props.jumpTo(route.key)}
+											>
+												<Text
+													style={[
+														styles.tabText,
+														isFocused && styles.activeTabText,
+													]}
+												>
+													{route.title}
+												</Text>
+											</TouchableOpacity>
+										);
 									}}
-								>
-									<Text style={[styles.tabText, isFocused && styles.activeTabText]}>
-										{route.title}
-									</Text>
-								</TouchableOpacity>
-							);
-						}}
-						contentContainerStyle={{ justifyContent: "space-evenly" }}
-						indicatorContainerStyle={{ display: "none" }}
+									contentContainerStyle={{ justifyContent: "space-evenly" }}
+									indicatorContainerStyle={{ display: "none" }}
+								/>
+							)}
+						/>
+					</View>
+
+					<Text
+						style={[
+							Texts.bold16,
+							{ color: Colors.colorBrand.midnightBlue[950], alignSelf: "flex-start" },
+						]}
+					>
+						Có thể bạn sẽ thích
+					</Text>
+
+					<FlatList
+						data={listTour}
+						renderItem={({ item }) => <TourItem {...item} />}
+						keyExtractor={(item) => item.id}
+						style={{ marginTop: 10 }}
+						contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
+						scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList
 					/>
-				)}
-			/>
-			<Text style={[Texts.bold16, { color: Colors.colorBrand.midnightBlue[950], alignSelf: "flex-start" }]}>
-				Có thể bạn sẽ thích
-			</Text>
+				</View>
+			</ScrollView>
 		</SafeAreaView>
 	);
 };
