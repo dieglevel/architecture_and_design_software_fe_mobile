@@ -9,6 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ScheduleItem from "../components/ui/schedule";
 import Comment from "../components/ui/comment";
 import TourInfo from "../components/ui/more-infors";
+import BookingButton from "../components/ui/booking-btn";
 
 export const TourDetailScreen = () => {
 	const schedules = [
@@ -306,6 +307,9 @@ export const TourDetailScreen = () => {
 						contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
 						scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList
 					/>
+					<View>
+						<BookingButton />
+					</View>
 				</View>
 			</ScrollView>
 		</SafeAreaView>
