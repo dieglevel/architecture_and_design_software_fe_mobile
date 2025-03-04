@@ -10,89 +10,136 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import { register } from "@/services/authService";
+import Toast from "react-native-toast-message";
 
 export const SignupScreen = () => {
 	// Params
-	const [name, setName] = useState<string>("");
-	const [dateOfBirth, setDateOfBirth] = useState<string>("");
+	const [fullName, setFullName] = useState<string>("");
+	// const [dateOfBirth, setDateOfBirth] = useState<string>("");
 	const [phone, setPhone] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [email, setEmail] = useState<string>("");
+	const [username, setUserName] = useState<string>("");
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
-	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
+	// const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
 	const [checked, setChecked] = useState<boolean>(false);
 
 	const { height } = Dimensions.get("window");
 
 	const [errors, setErrors] = useState<Object>({
-		name: null,
-		dob: null,
+		fullName: null,
+		email: null,
 		phone: null,
+		username: null,
 		password: null,
 	});
 
 	// Functions
-	const showDatePicker = () => {
-		setDatePickVisible(true);
-	};
+	// const showDatePicker = () => {
+	// 	setDatePickVisible(true);
+	// };
 
-	const hideDatePicker = () => {
-		setDatePickVisible(false);
-	};
+	// const hideDatePicker = () => {
+	// 	setDatePickVisible(false);
+	// };
 
-	const handleConfirm = (date: Date) => {
-		const formattedDate = format(date, "dd/MM/yyyy", { locale: vi }); // Định dạng ngày tháng
-		setDateOfBirth(formattedDate);
-		validateDOB(formattedDate);
-		hideDatePicker();
-	};
+	// const handleConfirm = (date: Date) => {
+	// 	const formattedDate = format(date, "dd/MM/yyyy", { locale: vi }); // Định dạng ngày tháng
+	// 	setDateOfBirth(formattedDate);
+	// 	validateDOB(formattedDate);
+	// 	hideDatePicker();
+	// };
 
 	const validatePhone = (text: string) =>
 		/^(0|\+84)(3[2-9]|5[2689]|7[0-9]|8[1-9]|9[0-9])[0-9]{7}$/.test(text) ? null : "Số điện thoại không hợp lệ!";
+
 	const validateName = (text: string) => {
 		return /^[a-zA-ZÀ-Ỹà-ỹ\s]+$/.test(text.trim()) ? null : "Họ và tên không hợp lệ!";
 	};
-	const validateDOB = (text: string) => {
-		const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-		if (!dateRegex.test(text)) return "Ngày sinh phải có định dạng dd/MM/yyyy!";
+	// const validateDOB = (text: string) => {
+	// 	const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+	// 	if (!dateRegex.test(text)) return "Ngày sinh phải có định dạng dd/MM/yyyy!";}
 
-		const [day, month, year] = text.split("/").map(Number);
-		const birthDate = new Date(year, month - 1, day);
-		const today = new Date();
-
-		// Tính ngày cách đây 16 năm
-		const sixteenYearsAgo = new Date();
-		sixteenYearsAgo.setFullYear(today.getFullYear() - 16);
-
-		if (birthDate >= today) {
-			return "Ngày sinh không hợp lệ!";
-		}
-
-		if (birthDate > sixteenYearsAgo) {
-			return "Người dùng phải trên 16 tuổi!";
-		}
-
-		return null;
+	const validateEmail = (email: string) => {
+		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return regex.test(email) ? null : "Email không hợp lệ";
 	};
+
+	const validateUserName = (userName: string) => {
+		const regex = /^[a-zA-Z0-9_]{3,20}$/;
+		return regex.test(userName) ? null : "Tên người dùng không hợp lệ";
+	};
+
+	// const validateDOB = (text: string) => {
+	// 	const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+	// 	if (!dateRegex.test(text)) return "Ngày sinh phải có định dạng dd/MM/yyyy!";
+
+	// 	const [day, month, year] = text.split("/").map(Number);
+	// 	const birthDate = new Date(year, month - 1, day);
+	// 	const today = new Date();
+
+	// 	// Tính ngày cách đây 16 năm
+	// 	const sixteenYearsAgo = new Date();
+	// 	sixteenYearsAgo.setFullYear(today.getFullYear() - 16);
+
+	// 	if (birthDate >= today) {
+	// 		return "Ngày sinh không hợp lệ!";
+	// 	}
+
+	// 	if (birthDate > sixteenYearsAgo) {
+	// 		return "Người dùng phải trên 16 tuổi!";
+	// 	}
+
+	// 	return null;
+	// };
 	const validatePassword = (text: string) => {
 		const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 		return regex.test(text) ? null : "Mật khẩu ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt";
 	};
 
 	// SubmitAPI
-	const handeRegister = () => {
+	const handleRegister = async () => {
 		const newErrors = {
-			name: validateName(name),
-			dob: validateDOB(dateOfBirth),
+			fullName: validateName(fullName),
+			email: validateEmail(email),
+			username: validateUserName(username),
 			phone: validatePhone(phone),
 			password: validatePassword(password),
 		};
 		setErrors(newErrors);
 
 		// Nếu không có lỗi nào
-		if (Object.values(newErrors).every((error) => error === null)) {
+		if (Object.values(newErrors).every((error) => error === null) && checked) {
 			console.log("Gửi API đăng ký");
 			// Gọi API đăng ký ở đây
+			try {
+				const result = await register({
+					fullName,
+					email,
+					phone,
+					username,
+					password,
+				});
+				console.log("Register result:", result);
+				if (result.statusCode === 200 && result.data) {
+					Toast.show({
+						type: "success",
+						text1: "✅ Thành công",
+						text2: "Đăng ký tài khoản thành công!",
+					});
+					navigate("LoginScreen");
+				} else {
+					Toast.show({
+						type: "error",
+						text1: "❌Lỗi",
+						text2: result.message || "Đã xảy ra lỗi!",
+					});
+				}
+			} catch (error) {
+				console.error("Register failed:", error);
+			}
 		} else {
 			console.log("Thông tin không hợp lệ");
 		}
@@ -121,12 +168,21 @@ export const SignupScreen = () => {
 					<InputForm
 						label="Họ và tên"
 						placeholder="Nhập họ và tên"
-						onChangeText={setName}
-						value={name}
+						onChangeText={setFullName}
+						value={fullName}
 						validator={validateName}
 						required
 					/>
+
 					<InputForm
+						label="Email"
+						placeholder="Nhập email"
+						onChangeText={setEmail}
+						value={email}
+						validator={validateEmail}
+						required
+					/>
+					{/* <InputForm
 						label="Ngày sinh"
 						placeholder="DD/MM/YYYY"
 						onChangeText={setDateOfBirth}
@@ -145,7 +201,7 @@ export const SignupScreen = () => {
 						onCancel={hideDatePicker}
 						maximumDate={new Date()}
 						minimumDate={new Date(1900, 0, 1)}
-					/>
+					/> */}
 
 					<InputForm
 						label="Số điện thoại"
@@ -154,6 +210,15 @@ export const SignupScreen = () => {
 						placeholder="Nhập số điện thoại"
 						required
 						validator={validatePhone}
+					/>
+
+					<InputForm
+						label="Tên đăng nhập"
+						value={username}
+						onChangeText={setUserName}
+						placeholder="Nhập tên đăng nhập"
+						required
+						validator={validateUserName}
 					/>
 					<InputForm
 						label="Nhập mật khẩu"
@@ -188,9 +253,7 @@ export const SignupScreen = () => {
 
 					<Button
 						style={{ marginTop: 8 }}
-						onPress={() => {
-							console.log("adu");
-						}}
+						onPress={handleRegister}
 					>
 						Đăng ký
 					</Button>

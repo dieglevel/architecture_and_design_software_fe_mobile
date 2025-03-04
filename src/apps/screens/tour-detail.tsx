@@ -4,6 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { Tab } from "@/libs/navigation";
 import { TourDetailTabs } from "./tour-detail-tabs";
+import RatingTour from "../components/ui/rating";
 
 export const TourDetailScreen = () => {
 	const tourList = [
@@ -54,6 +55,17 @@ export const TourDetailScreen = () => {
 		},
 	];
 
+	const ratingDetails = [
+		{ label: "Xuất sắc", value: 90 },
+		{ label: "Tốt", value: 80 },
+		{ label: "Trung bình", value: 70 },
+		{ label: "Kém", value: 40 },
+		{ label: "Vị trí", value: 85 },
+		{ label: "Giá cả", value: 75 },
+		{ label: "Phục vụ", value: 88 },
+		{ label: "Tiện nghi", value: 78 },
+	];
+
 	return (
 		<SafeAreaView style={{ alignItems: "stretch", backgroundColor: "#fff" }}>
 			<View style={styles.container}>
@@ -64,7 +76,6 @@ export const TourDetailScreen = () => {
 					}}
 					style={styles.image}
 				/>
-
 				{/* Nội dung */}
 				<View style={styles.content}>
 					<Text style={styles.title}>Tour Côn Đảo 3N2Đ</Text>
@@ -101,6 +112,10 @@ export const TourDetailScreen = () => {
 				<View style={{ flex: 1 }}>
 					<TourDetailTabs />
 				</View>
+				<RatingTour
+					rating={4.9}
+					ratingDetails={ratingDetails}
+				/>
 			</View>
 		</SafeAreaView>
 	);
