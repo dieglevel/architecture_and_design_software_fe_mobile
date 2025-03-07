@@ -1,19 +1,17 @@
 import { Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
 import { Close, Eye, EyeOff } from "@/assets/svgs";
-import { Calendar } from "@/assets/svgs/calendar";
 import { Colors, Texts } from "@/constants";
-import { navigate } from "@/libs/navigation/navigationService";
+import { register } from "@/services/authService";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
-import DateTimePicker from "react-native-modal-datetime-picker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale";
-import { register } from "@/services/authService";
 import Toast from "react-native-toast-message";
 
 export const SignupScreen = () => {
+	const navigate = useNavigation();
+
 	// Params
 	const [fullName, setFullName] = useState<string>("");
 	// const [dateOfBirth, setDateOfBirth] = useState<string>("");
@@ -129,7 +127,7 @@ export const SignupScreen = () => {
 						text1: "✅ Thành công",
 						text2: "Đăng ký tài khoản thành công!",
 					});
-					navigate("LoginScreen");
+					navigate.navigate("LoginScreen");
 				} else {
 					Toast.show({
 						type: "error",
@@ -262,7 +260,7 @@ export const SignupScreen = () => {
 						<Text style={[Texts.regular16, { color: Colors.gray[500] }]}>Đã có tài khoản?</Text>
 						<Press
 							onPress={() => {
-								navigate("LoginScreen");
+								navigate.navigate("LoginScreen");
 							}}
 						>
 							<Text style={[Texts.regular16, { color: Colors.colorBrand.burntSienna[500] }]}>

@@ -7,17 +7,8 @@ export type RootStackParamList = {
 	LoginScreen: undefined;
 	RegisterScreen: undefined;
 	ForgotPassowrdScreen: undefined;
-	// Register: undefined;
-	// ProductDetail: { productId: string };
-	// SubCategory: { categoryId: string };
-	// PaymentOption: { selectedItems: CartItem[]; totalPrice: number };
-	// Order: undefined;
-	// OrderDetail: { order: Order };
-	// Feedback: undefined;
-	// PaymentResult: undefined;
-	// Cart: { productId: string; callback: () => void };
-	// ChatAdmin: { userId: string };
 	TourDetailScreen: undefined;
+	ForgotPasswordScreen: undefined;
 };
 
 declare global {

@@ -2,14 +2,14 @@ import { Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
 import { Close, Eye, EyeOff } from "@/assets/svgs";
 import { Colors, Texts } from "@/constants";
-import { setAccessToken } from "@/libs/axios/axios.config";
-import { navigate } from "@/libs/navigation/navigationService";
-import { login } from "@/services/authService";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export const LoginScreen = () => {
+	const navigate = useNavigation();
+
 	const [username, setUsername] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 
@@ -29,7 +29,7 @@ export const LoginScreen = () => {
 			// 		text1: "✅ Thành công",
 			// 		text2: "Đăng nhập vào ứng dụng thành công!",
 			// 	});
-			navigate("BottomTabScreenApp");
+			navigate.navigate("BottomTabScreenApp")
 			// } else {
 			// 	Toast.show({
 			// 		type: "error",
@@ -87,7 +87,7 @@ export const LoginScreen = () => {
 						required
 					/>
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						<Press onPress={() => navigate("ForgotPassowrdScreen")}>
+						<Press onPress={() => navigate.navigate("ForgotPasswordScreen")}>
 							<Text
 								style={[
 									Texts.regular16,
@@ -114,7 +114,7 @@ export const LoginScreen = () => {
 
 					<View style={{ flexDirection: "row", justifyContent: "center", gap: 4, marginTop: 16 }}>
 						<Text style={[Texts.regular16, { color: Colors.gray[500] }]}>Bạn chưa có tài khoản?</Text>
-						<Press onPress={() => navigate("RegisterScreen")}>
+						<Press onPress={() => navigate.navigate("RegisterScreen")}>
 							<Text style={[Texts.regular16, { color: Colors.colorBrand.burntSienna[500] }]}>
 								Đăng ký
 							</Text>
