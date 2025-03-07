@@ -1,17 +1,16 @@
-import { NavigationContainer } from "@react-navigation/native";
 import { LoginScreen, SignupScreen } from "@/apps/screens";
-import { Stack } from "@/libs/navigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
-import { navigationRef } from "@/libs/navigation/navigationService";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
+import { Stack } from "@/libs/navigation";
+import { NavigationContainer } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
 
 export const RootScreenApp = () => {
 	const insets = useSafeAreaInsets();
 
 	return (
-		<NavigationContainer ref={navigationRef}>
+		<NavigationContainer>
 			<Stack.Navigator
 				initialRouteName="LoginScreen"
 				screenOptions={{
