@@ -1,10 +1,6 @@
-import { HomeScreen, SearchScreen, MessageScreen, UserScreen } from "@/apps/screens";
+import { HomeScreen, MessageScreen, SearchScreen, UserScreen } from "@/apps/screens";
 import { Tab } from "@/libs/navigation";
 import { Ionicons } from "@expo/vector-icons";
-import HomeStack from "../stacks/home-stack";
-import SearchStack from "../stacks/search-stack";
-import MessageStack from "../stacks/message-stack";
-import UserStack from "../stacks/user-stack";
 
 export const BottomTabScreenApp = () => {
 	return (
@@ -32,19 +28,19 @@ export const BottomTabScreenApp = () => {
 		>
 			<Tab.Screen
 				name="HomeStack"
-				component={HomeStack}
+				component={HomeScreen}
 			/>
 			<Tab.Screen
 				name="SearchStack"
-				component={SearchStack}
+				component={SearchScreen}
 			/>
 			<Tab.Screen
 				name="MessageStack"
-				component={MessageStack}
+				component={MessageScreen}
 			/>
 			<Tab.Screen
 				name="UserStack"
-				component={UserStack}
+				component={UserScreen}
 			/>
 		</Tab.Navigator>
 	);

@@ -36,6 +36,7 @@ api.interceptors.response.use(
 	(error) => {
 		if (axios.isAxiosError(error)) {
 			console.log("\x1b[41m Axios \x1b[0m \x1b[31m \x1b[0m", error.config?.url);
+			console.error("Error in response interceptor", error);
 		} else {
 			console.log("Unknown Error:", error);
 		}
