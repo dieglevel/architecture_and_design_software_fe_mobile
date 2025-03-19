@@ -1,45 +1,58 @@
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 export const api = axios.create({
 	baseURL: process.env.EXPO_PUBLIC_BACKEND_URL,
 	timeout: 5000,
 	headers: { "Content-Type": "application/json" },
+	maxRedirects: 5,
 });
 
-export const setAccessToken = (token: string | null) => {
-	api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+// Biến lưu token trong bộ nhớ để tránh gọi SecureStore nhiều lần
+let accessToken: string | null = null;
+
+// Hàm này sẽ được gọi khi app mở lại để load token vào axios
+export const loadAccessToken = async () => {
+	accessToken = await SecureStore.getItemAsync("accessToken");
+	if (accessToken) {
+		api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+		console.log("🔑 Token Loaded:", accessToken);
+	}
 };
 
+// Hàm này để cập nhật token khi login hoặc logout
+export const setAccessToken = async (token: string | null) => {
+	if (token) {
+		accessToken = token;
+		api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+		await SecureStore.setItemAsync("accessToken", token); // Lưu token
+	} else {
+		accessToken = null;
+		delete api.defaults.headers.common["Authorization"];
+		await SecureStore.deleteItemAsync("accessToken"); // Xóa token khi logout
+	}
+};
+
+// Interceptor đảm bảo mọi request có token
 api.interceptors.request.use(
 	(config) => {
-		const token = api.defaults.headers.common["Authorization"];
-		if (token) {
-			config.headers["Authorization"] = token;
+		if (accessToken) {
+			config.headers["Authorization"] = `Bearer ${accessToken}`;
 		}
 		return config;
 	},
-	(error) => {
-		if (error.response?.status === 401) {
-			console.log("\x1b[41m Axios\x1b[0m \x1b[31m \x1b[0m");
-		}
-		if (axios.isAxiosError(error)) {
-		}
-		console.log("Error in request interceptor", error);
-		console.error("Error URL:", error.config?.url);
-		console.log("Request Method:", error.config?.method);
-		return Promise.reject(error);
-	},
+	(error) => Promise.reject(error),
 );
 
 api.interceptors.response.use(
-	(response) => response, // Trả về response nếu thành công
+	(response) => response,
 	(error) => {
 		if (axios.isAxiosError(error)) {
-			console.log("\x1b[41m Axios \x1b[0m \x1b[31m \x1b[0m", error.config?.url);
+			console.error("🚨 Axios Error:", error.config?.url, error.response?.status);
 		} else {
-			console.log("Unknown Error:", error);
+			console.error("Unknown Error:", error);
 		}
-		return Promise.reject(error); // Trả về lỗi để xử lý thêm nếu cần
+		return Promise.reject(error);
 	},
 );
 

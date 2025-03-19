@@ -5,9 +5,11 @@ import { Colors, Texts } from "@/constants";
 import { setAccessToken } from "@/libs/axios/axios.config";
 import { navigate } from "@/libs/navigation/navigationService";
 import { login } from "@/services/authService";
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
+import * as SecureStore from "expo-secure-store";
 
 export const LoginScreen = () => {
 	const [username, setUsername] = useState<string>("");
@@ -19,29 +21,32 @@ export const LoginScreen = () => {
 
 	const handleLogin = async () => {
 		try {
-			// const result = await login({ password, username });
-			// console.log("Login result:", result);
-			// if (result.statusCode === 200 && result.data) {
-			// 	// Lưu token vào axios
-			// 	setAccessToken(result.data.accessToken);
-			// 	Toast.show({
-			// 		type: "success",
-			// 		text1: "✅ Thành công",
-			// 		text2: "Đăng nhập vào ứng dụng thành công!",
-			// 	});
-			navigate("BottomTabScreenApp");
-			// } else {
-			// 	Toast.show({
-			// 		type: "error",
-			// 		text1: "❌ Thất bại",
-			// 		text2: result.message,
-			// 	});
-			// }
-		} catch (error: any) {
+			const result = await login({ password, username });
+			console.log("Login result:", result.data);
+
+			if (result.statusCode === 200 && result.data) {
+				await SecureStore.setItemAsync("accessToken", result.data.token); // Lưu token
+				setAccessToken(result.data.token); // Set vào axios
+
+				Toast.show({
+					type: "success",
+					text1: "✅ Thành công",
+					text2: "Đăng nhập vào ứng dụng thành công!",
+				});
+				navigate("BottomTabScreenApp");
+			} else {
+				Toast.show({
+					type: "error",
+					text1: "❌ Thất bại",
+					text2: result.message,
+				});
+			}
+		} catch (error: unknown) {
+			const err = error as AxiosError<{ message: string }>;
 			Toast.show({
 				type: "error",
 				text1: "❌ Thất bại",
-				text2: error,
+				text2: err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.",
 			});
 		}
 	};
