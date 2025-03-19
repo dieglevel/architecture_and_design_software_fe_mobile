@@ -2,7 +2,19 @@ import { ScrollView, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "../components";
 import { Colors, Texts } from "@/constants";
 import { TourItem } from "../components/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getTours } from "@/services/tourService";
+
+interface TourItemProps {
+	tourId: string;
+	thumbnail: string;
+	name: string;
+	rating: number;
+	price: number;
+	discount: number;
+	duration: string;
+	description: string;
+}
 
 export const HomeScreen = () => {
 	const listTour = [
@@ -71,11 +83,26 @@ export const HomeScreen = () => {
 		},
 	];
 
+	// const [listTour, setListTour] = useState<Array<TourItemProps>>([]);
 	const [showAll, setShowAll] = useState<boolean>(false);
 	const [showAllTemp, setShowAllTemp] = useState<boolean>(false);
 
 	const displayedTours = showAll ? listTour : listTour.slice(0, 3);
 	const displayedToursTemp = showAllTemp ? listTour : listTour.slice(0, 3);
+
+	// useEffect(() => {
+	// 	const getTours = async () => {
+	// 		try {
+	// 			const data = await fetchTours(); // Ensure this returns data matching TourItemProps
+	// 			// setListTour(data);
+	// 			console.log(data);
+	// 		} catch (error) {
+	// 			console.error("Không thể tải danh sách tour");
+	// 		}
+	// 	};
+
+	// 	getTours();
+	// }, []);
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: "#fff", alignItems: "stretch" }}>

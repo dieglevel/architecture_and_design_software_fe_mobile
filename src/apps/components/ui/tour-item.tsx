@@ -6,13 +6,13 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 interface TourItemProps {
 	image: string;
 	name: string;
-	rating: number;
+	rating?: number;
 	price: number;
 	discount?: number;
 	duration: string;
 }
 
-export const TourItem: React.FC<TourItemProps> = ({ image, name, rating, price, discount = 0, duration }) => {
+export const TourItem: React.FC<TourItemProps> = ({ image, name, rating = 0, price, discount = 0, duration }) => {
 	const discountedPrice = price - (price * discount) / 100;
 
 	const navigate = useNavigation();
@@ -38,7 +38,7 @@ export const TourItem: React.FC<TourItemProps> = ({ image, name, rating, price, 
 					<Text style={styles.duration}>⏱ {duration}</Text>
 				</View>
 				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-					<Text style={styles.rating}>⭐ ({rating.toFixed(1)})</Text>
+					{rating > 0 ? <Text style={styles.rating}>⭐ ({rating.toFixed(1)})</Text> : null}
 
 					<Text style={styles.price}>
 						{discount > 0 ? (
