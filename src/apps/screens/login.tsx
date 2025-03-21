@@ -2,20 +2,22 @@ import { Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
 import { Close, Eye, EyeOff } from "@/assets/svgs";
 import { Colors, Texts } from "@/constants";
-import { setAccessToken } from "@/libs/axios/axios.config";
-import { navigate } from "@/libs/navigation/navigationService";
-import { login } from "@/services/authService";
 import { AxiosError } from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
+import { loginApi } from "@/services/authService";
+import { BaseResponse } from "@/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AsyncStorageKey } from "@/libs/async-storage";
 
 export const LoginScreen = () => {
 	const navigate = useNavigation();
 
-	const [username, setUsername] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
+	const [username, setUsername] = useState<string>("admin");
+	const [password, setPassword] = useState<string>("admin");
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
@@ -23,35 +25,33 @@ export const LoginScreen = () => {
 
 	const handleLogin = async () => {
 		try {
-			const result = await login({ password, username });
-			console.log("Login result:", result.data);
-
-			if (result.statusCode === 200 && result.data) {
-				await SecureStore.setItemAsync("accessToken", result.data.token); // Lưu token
-				setAccessToken(result.data.token); // Set vào axios
-
+			const result = await loginApi(username, password);
+			// handle success
+			if (result.statusCode === 200) {
 				Toast.show({
 					type: "success",
-					text1: "✅ Thành công",
-					text2: "Đăng nhập vào ứng dụng thành công!",
+					text1: "Đăng nhập thành công",
+					visibilityTime: 2000,
+					autoHide: true,
 				});
-				navigate("BottomTabScreenApp");
-			} else {
-				Toast.show({
-					type: "error",
-					text1: "❌ Thất bại",
-					text2: result.message,
-				});
+				navigate.navigate("BottomTabScreenApp");
 			}
-		} catch (error: unknown) {
-			const err = error as AxiosError<{ message: string }>;
-			Toast.show({
-				type: "error",
-				text1: "❌ Thất bại",
-				text2: err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.",
-			});
+		} catch (error) {
+			const err = error as BaseResponse<any>;
+			//Another Handle error
 		}
 	};
+
+	useEffect(() => {
+		const checkLogin = async () => {
+			const token = await AsyncStorage.getItem(AsyncStorageKey.TOKEN);
+			if (token) {
+				navigate.navigate("BottomTabScreenApp");
+			}
+		};
+		checkLogin();
+	}, []);
+	
 
 	return (
 		<SafeAreaView>
