@@ -3,7 +3,6 @@ import { SafeAreaView } from "../components";
 import { Colors, Texts } from "@/constants";
 import { TourItem } from "../components/ui";
 import { useEffect, useState } from "react";
-import { getTours } from "@/services/tourService";
 
 interface TourItemProps {
 	tourId: string;

@@ -1,16 +1,32 @@
 import { LoginScreen, SignupScreen } from "@/apps/screens";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
-import { Stack } from "@/libs/navigation";
-import { NavigationContainer } from "@react-navigation/native";
+import { RootStackParamList, Stack, StackScreenNavigationProp } from "@/libs/navigation";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
+import { useEffect } from "react";
+import { eventEmitter } from "@/libs/eventemitter3";
 
 export const RootScreenApp = () => {
 	const insets = useSafeAreaInsets();
 
+	const navigation = useNavigation<StackScreenNavigationProp>();
+
+	useEffect(() => {
+		const logoutListener = () => {
+			navigation.navigate("LoginScreen");
+		};
+
+		eventEmitter.on("logout", logoutListener);
+
+		return () => {
+			eventEmitter.off("logout", logoutListener);
+		};
+	}, [navigation]);
+
 	return (
-		<NavigationContainer>
+		<>
 			<Stack.Navigator
 				initialRouteName="LoginScreen"
 				screenOptions={{
@@ -36,6 +52,6 @@ export const RootScreenApp = () => {
 				/>
 			</Stack.Navigator>
 			<Toast />
-		</NavigationContainer>
+		</>
 	);
 };
