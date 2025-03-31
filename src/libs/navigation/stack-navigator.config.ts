@@ -18,6 +18,7 @@ export type RootStackParamList = {
 	// Cart: { productId: string; callback: () => void };
 	// ChatAdmin: { userId: string };
 	TourDetailScreen: undefined;
+	ProfileScreen: undefined;
 };
 
 declare global {

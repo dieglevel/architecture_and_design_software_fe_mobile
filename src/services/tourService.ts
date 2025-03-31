@@ -1,9 +1,7 @@
 import { BaseResponse } from "@/types";
 import { api } from "../libs/axios/axios.config"; // Import instance đã cấu hình
 import { Gateway } from "@/libs/axios";
-import { Auth, Tour } from "@/types/implement";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AsyncStorageKey } from "@/libs/async-storage";
+import { Tour } from "@/types/implement";
 
 export const getTours = async (): Promise<BaseResponse<Tour>> => {
 	try {
