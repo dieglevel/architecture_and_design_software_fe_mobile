@@ -4,6 +4,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 interface TourItemProps {
+	tourId: string;
 	image: string;
 	name: string;
 	rating?: number;
