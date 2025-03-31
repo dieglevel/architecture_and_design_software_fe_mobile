@@ -1,69 +1,48 @@
+import { BaseResponse } from "@/types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
+import Toast from "react-native-toast-message";
+import { AsyncStorageKey } from "../async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { eventEmitter } from "../eventemitter3";
 
 export const api = axios.create({
 	baseURL: process.env.EXPO_PUBLIC_BACKEND_URL,
 	timeout: 5000,
 	headers: { "Content-Type": "application/json" },
-	maxRedirects: 5,
 });
 
-// Biến lưu token trong bộ nhớ để tránh gọi SecureStore nhiều lần
-let accessToken: string | null = null;
-
-// Hàm này sẽ được gọi khi app mở lại để load token vào axios
-export const loadAccessToken = async () => {
-	accessToken = await SecureStore.getItemAsync("accessToken");
-	if (accessToken) {
-		api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-		console.log("🔑 Token Loaded:", accessToken);
-	}
-};
-
-// Hàm này để cập nhật token khi login hoặc logout
-export const setAccessToken = async (token: string | null) => {
-	if (token) {
-		accessToken = token;
-		api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-		await SecureStore.setItemAsync("accessToken", token); // Lưu token
-	} else {
-		accessToken = null;
-		delete api.defaults.headers.common["Authorization"];
-		await SecureStore.deleteItemAsync("accessToken"); // Xóa token khi logout
-	}
-};
-
-// Interceptor đảm bảo mọi request có token
+// Interceptor trước khi gửi request
 api.interceptors.request.use(
-	(config) => {
-		if (accessToken) {
-			config.headers["Authorization"] = `Bearer ${accessToken}`;
+	async (config) => {
+		// Lấy token từ AsyncStorage
+		const token = await AsyncStorage.getItem(AsyncStorageKey.TOKEN);
+		if (token) {
+			// Thêm token vào header của request
+			config.headers.Authorization = `Bearer ${token}`;
 		}
+
 		return config;
 	},
 	(error) => Promise.reject(error),
 );
 
+// Interceptor xử lý lỗi
 api.interceptors.response.use(
 	(response) => response,
 	(error) => {
-		if (axios.isAxiosError(error)) {
-			console.error("🚨 Axios Error:", error.config?.url, error.response?.status);
+		const errorResponse = error.response.data as BaseResponse<null>;
+		if (errorResponse.statusCode === 401) {
+			Toast.show({
+				type: "error",
+				text1: errorResponse.message || "Đã xảy ra lỗi",
+			});
+
+			AsyncStorage.removeItem(AsyncStorageKey.TOKEN);
+			eventEmitter.emit("logout"); // Gửi sự kiện logout
 		} else {
-			console.error("Unknown Error:", error);
+			console.error("⛔ Axios: ", error.status + " - " + error.config?.url);
 		}
 		return Promise.reject(error);
 	},
 );
-
-// axios.interceptors.response.use(
-// 	(response) => response, // Trả về response nếu thành công
-// 	(error) => {
-// 		if (axios.isAxiosError(error)) {
-// 			console.log("\x1b[41m Axios \x1b[0m \x1b[31m \x1b[0m", error.config?.url);
-// 		} else {
-// 			console.log("Unknown Error:", error);
-// 		}
-// 		return Promise.reject(error); // Trả về lỗi để xử lý thêm nếu cần
-// 	},
-// );
