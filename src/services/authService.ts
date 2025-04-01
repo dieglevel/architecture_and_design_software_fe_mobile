@@ -12,7 +12,6 @@ export const loginApi = async (username: string, password: string) => {
 		const { data, statusCode } = response.data;
 		if (statusCode === 200) {
 			AsyncStorage.setItem(AsyncStorageKey.TOKEN, data?.token || "");
-			
 		}
 		return response.data;
 	} catch (e) {

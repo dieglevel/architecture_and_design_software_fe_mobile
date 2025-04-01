@@ -144,7 +144,7 @@ export const TourDetailScreen = () => {
 
 	const listTour = [
 		{
-			id: "1",
+			tourId: "1",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 			name: "Du lịch biển Nha Trang",
 			rating: 4.8,
@@ -153,7 +153,7 @@ export const TourDetailScreen = () => {
 			duration: "3 ngày 2 đêm",
 		},
 		{
-			id: "2",
+			tourId: "2",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 			name: "Khám phá Đà Lạt",
 			rating: 4.7,
@@ -162,7 +162,7 @@ export const TourDetailScreen = () => {
 			duration: "2 ngày 1 đêm",
 		},
 		{
-			id: "3",
+			tourId: "3",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 			name: "Tour Phú Quốc",
 			rating: 4.9,
@@ -171,7 +171,7 @@ export const TourDetailScreen = () => {
 			duration: "4 ngày 3 đêm",
 		},
 		{
-			id: "4",
+			tourId: "4",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 			name: "Trekking Fansipan",
 			rating: 4.5,
@@ -180,7 +180,7 @@ export const TourDetailScreen = () => {
 			duration: "2 ngày 1 đêm",
 		},
 		{
-			id: "5",
+			tourId: "5",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 			name: "Khám phá Sài Gòn",
 			rating: 4.6,
@@ -189,7 +189,7 @@ export const TourDetailScreen = () => {
 			duration: "1 ngày",
 		},
 		{
-			id: "6",
+			tourId: "6",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 			name: "Du lịch Hội An",
 			rating: 4.8,
@@ -198,7 +198,7 @@ export const TourDetailScreen = () => {
 			duration: "3 ngày 2 đêm",
 		},
 		{
-			id: "7",
+			tourId: "7",
 			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
 			name: "Thám hiểm Sơn Đoòng",
 			rating: 5.0,
@@ -302,7 +302,7 @@ export const TourDetailScreen = () => {
 					<FlatList
 						data={listTour}
 						renderItem={({ item }) => <TourItem {...item} />}
-						keyExtractor={(item) => item.id}
+						keyExtractor={(item) => item.tourId}
 						style={{ marginTop: 10 }}
 						contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
 						scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList

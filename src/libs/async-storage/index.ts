@@ -1,3 +1,3 @@
 export enum AsyncStorageKey {
-   TOKEN = "_TOKEN",
+	TOKEN = "_TOKEN",
 }

@@ -47,7 +47,7 @@ export const RootScreenApp = () => {
 					component={SignupScreen} // Add RegisterScreen here
 				/>
 				<Stack.Screen
-					name="ForgotPassowrdScreen"
+					name="ForgotPasswordScreen"
 					component={ForgotPasswordScreen} // Add RegisterScreen here
 				/>
 			</Stack.Navigator>

@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as SecureStore from "expo-secure-store";
-import { useNavigation } from "@react-navigation/native";
 import { loginApi } from "@/services/authService";
 import { BaseResponse } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
+import { navigate } from "@/libs/navigation/navigationService";
 
 export const LoginScreen = () => {
 	const navigate = useNavigation();
@@ -34,11 +34,34 @@ export const LoginScreen = () => {
 					visibilityTime: 2000,
 					autoHide: true,
 				});
-				navigate.navigate("BottomTabScreenApp");
+				navigate("BottomTabScreenApp");
 			}
 		} catch (error) {
 			const err = error as BaseResponse<any>;
-			//Another Handle error
+			if (err.statusCode === 401) {
+				Toast.show({
+					type: "error",
+					text1: "Đăng nhập thất bại",
+					text2: "Tên đăng nhập hoặc mật khẩu không đúng",
+					visibilityTime: 2000,
+					autoHide: true,
+				});
+			} else if (err.statusCode === 500) {
+				Toast.show({
+					type: "error",
+					text1: "Đăng nhập thất bại",
+					text2: "Lỗi hệ thống, vui lòng thử lại sau",
+					visibilityTime: 2000,
+					autoHide: true,
+				});
+			}
+		} catch (error: unknown) {
+			const err = error as AxiosError<{ message: string }>;
+			Toast.show({
+				type: "error",
+				text1: "❌ Thất bại",
+				text2: err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.",
+			});
 		}
 	};
 
@@ -46,12 +69,11 @@ export const LoginScreen = () => {
 		const checkLogin = async () => {
 			const token = await AsyncStorage.getItem(AsyncStorageKey.TOKEN);
 			if (token) {
-				navigate.navigate("BottomTabScreenApp");
+				navigate("BottomTabScreenApp");
 			}
 		};
 		checkLogin();
 	}, []);
-	
 
 	return (
 		<SafeAreaView>
@@ -94,7 +116,7 @@ export const LoginScreen = () => {
 						required
 					/>
 					<View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-						<Press onPress={() => navigate.navigate("ForgotPasswordScreen")}>
+						<Press onPress={() => navigate("ForgotPasswordScreen")}>
 							<Text
 								style={[
 									Texts.regular16,

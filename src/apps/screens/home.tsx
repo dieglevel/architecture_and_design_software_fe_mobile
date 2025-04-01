@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 interface TourItemProps {
 	tourId: string;
-	thumbnail: string;
+	image: string;
 	name: string;
 	rating: number;
 	price: number;
@@ -16,92 +16,43 @@ interface TourItemProps {
 }
 
 export const HomeScreen = () => {
-	const listTour = [
-		{
-			id: "1",
-			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			name: "Du lịch biển Nha Trang",
-			rating: 4.8,
-			price: 2500000,
-			discount: 15,
-			duration: "3 ngày 2 đêm",
-		},
-		{
-			id: "2",
-			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			name: "Khám phá Đà Lạt",
-			rating: 4.7,
-			price: 1800000,
-			discount: 10,
-			duration: "2 ngày 1 đêm",
-		},
-		{
-			id: "3",
-			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			name: "Tour Phú Quốc",
-			rating: 4.9,
-			price: 3200000,
-			discount: 20,
-			duration: "4 ngày 3 đêm",
-		},
-		{
-			id: "4",
-			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			name: "Trekking Fansipan",
-			rating: 4.5,
-			price: 1500000,
-			discount: 0,
-			duration: "2 ngày 1 đêm",
-		},
-		{
-			id: "5",
-			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			name: "Khám phá Sài Gòn",
-			rating: 4.6,
-			price: 1200000,
-			discount: 5,
-			duration: "1 ngày",
-		},
-		{
-			id: "6",
-			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			name: "Du lịch Hội An",
-			rating: 4.8,
-			price: 2100000,
-			discount: 10,
-			duration: "3 ngày 2 đêm",
-		},
-		{
-			id: "7",
-			image: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-			name: "Thám hiểm Sơn Đoòng",
-			rating: 5.0,
-			price: 5000000,
-			discount: 25,
-			duration: "5 ngày 4 đêm",
-		},
-	];
+	const [listTour, setListTour] = useState<Array<TourItemProps>>([]);
 
-	// const [listTour, setListTour] = useState<Array<TourItemProps>>([]);
 	const [showAll, setShowAll] = useState<boolean>(false);
 	const [showAllTemp, setShowAllTemp] = useState<boolean>(false);
 
 	const displayedTours = showAll ? listTour : listTour.slice(0, 3);
 	const displayedToursTemp = showAllTemp ? listTour : listTour.slice(0, 3);
 
-	// useEffect(() => {
-	// 	const getTours = async () => {
-	// 		try {
-	// 			const data = await fetchTours(); // Ensure this returns data matching TourItemProps
-	// 			// setListTour(data);
-	// 			console.log(data);
-	// 		} catch (error) {
-	// 			console.error("Không thể tải danh sách tour");
-	// 		}
-	// 	};
+	useEffect(() => {
+		handleGetTours();
+	}, []);
 
-	// 	getTours();
-	// }, []);
+	const handleGetTours = async () => {
+		try {
+			const response = await getTours();
+			if (response.statusCode === 302) {
+				const tourList = Array.isArray(response.data) ? response.data : [];
+
+				const mappedTours: TourItemProps[] = tourList.map((tour) => ({
+					tourId: tour.tourId,
+					image: tour.thumbnail,
+					name: tour.name,
+					rating: 4.5, // Giả sử API chưa có rating
+					price: tour.price,
+					discount: 10, // Giả sử API chưa có discount
+					duration: tour.duration,
+					description: tour.description,
+				}));
+
+				setListTour(mappedTours);
+			} else {
+				console.error("Error fetching tours:", response?.message ?? "Unknown error");
+			}
+		} catch (error) {
+			console.error("Error fetching tours:", error);
+		}
+	};
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: "#fff", alignItems: "stretch" }}>
@@ -112,7 +63,7 @@ export const HomeScreen = () => {
 
 				{displayedTours.map((item) => (
 					<TourItem
-						key={item.id}
+						key={item.tourId}
 						{...item}
 					/>
 				))}
@@ -138,7 +89,7 @@ export const HomeScreen = () => {
 
 				{displayedToursTemp.map((item) => (
 					<TourItem
-						key={item.id}
+						key={item.tourId}
 						{...item}
 					/>
 				))}
