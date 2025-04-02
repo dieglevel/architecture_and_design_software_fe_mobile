@@ -2,14 +2,15 @@ import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView }
 import { FontAwesome } from "@expo/vector-icons";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useState } from "react";
-import RatingTour from "../components/ui/rating";
+import RatingTour from "../../components/ui/rating";
 import { Colors, Texts } from "@/constants";
-import { TourItem } from "../components/ui";
+import { TourItem } from "../../components/ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ScheduleItem from "../components/ui/schedule";
-import Comment from "../components/ui/comment";
-import TourInfo from "../components/ui/more-infors";
-import BookingButton from "../components/ui/booking-btn";
+import ScheduleItem from "../../components/ui/schedule";
+import Comment from "../../components/ui/comment";
+import TourInfo from "../../components/ui/more-infors";
+import BookingButton from "../../components/ui/booking-btn";
+import { Divider } from "react-native-paper";
 
 export const TourDetailScreen = () => {
 	const schedules = [
@@ -79,6 +80,7 @@ export const TourDetailScreen = () => {
 			case "schedule":
 				return (
 					<FlatList
+						style={{ padding: 10 }}
 						data={schedules}
 						renderItem={({ item }) => <ScheduleItem {...item} />}
 						keyExtractor={(item) => item.day}
@@ -220,99 +222,95 @@ export const TourDetailScreen = () => {
 	];
 
 	return (
-		<SafeAreaView style={{ backgroundColor: "#fff" }}>
-			<ScrollView
-				contentContainerStyle={{ flexGrow: 1 }}
-				showsVerticalScrollIndicator={false}
-			>
-				<View style={styles.container}>
-					<Image
-						source={{
-							uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-						}}
-						style={styles.image}
-					/>
+		<View style={{marginTop: 10, backgroundColor: Colors.gray[0], flex: 1, paddingHorizontal: 10, paddingVertical: 8}}>
+			<FlatList
+				data={listTour}
+				renderItem={({ item }) => <TourItem tour={item} />}
+				
+				keyExtractor={(item, index) => index.toString()}
+				style={{  marginBottom: 20 }}
+				contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
+				scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList
+				ListHeaderComponent={
+					<View style={[styles.container, {gap: 8}]}>
+						<Image
+							source={{
+								uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
+							}}
+							style={styles.image}
+						/>
 
-					<View style={styles.content}>
-						<Text style={styles.title}>Tour Côn Đảo 3N2Đ</Text>
-						<Text style={styles.description}>HCM - Grand World - Câu Cá - Lặn Ngắm San Hô</Text>
-						<View style={styles.row}>
-							<Text style={styles.location}>Kiên Giang</Text>
-							<View style={styles.ratingContainer}>
-								<FontAwesome
-									name="star"
-									size={14}
-									color="#FFB400"
-								/>
-								<Text style={styles.rating}>4.8</Text>
-								<Text style={styles.reviews}>(24 đánh giá)</Text>
+						<View style={styles.content}>
+							<Text style={styles.title}>Tour Côn Đảo 3N2Đ</Text>
+							<Text style={styles.description}>HCM - Grand World - Câu Cá - Lặn Ngắm San Hô</Text>
+							<View style={styles.row}>
+								<Text style={styles.location}>Kiên Giang</Text>
+								<View style={styles.ratingContainer}>
+									<FontAwesome
+										name="star"
+										size={14}
+										color="#FFB400"
+									/>
+									<Text style={styles.rating}>4.8</Text>
+									<Text style={styles.reviews}>(24 đánh giá)</Text>
+								</View>
 							</View>
 						</View>
-					</View>
 
-					<View style={{ flex: 1, minHeight: 400 }}>
-						<TabView
-							initialLayout={{ width: 360 }}
-							navigationState={{ index, routes }}
-							renderScene={renderScene}
-							onIndexChange={setIndex}
-							renderTabBar={(props) => (
-								<TabBar
-									{...props}
-									indicatorStyle={{ backgroundColor: "#ff6347" }}
-									style={styles.tabBar}
-									activeColor="#fff"
-									inactiveColor="#7D7D7D"
-									renderTabBarItem={({ route }) => {
-										const isFocused =
-											props.navigationState.index ===
-											props.navigationState.routes.indexOf(route);
-										return (
-											<TouchableOpacity
-												style={[styles.tabItem, isFocused && styles.activeTab]}
-												onPress={() => props.jumpTo(route.key)}
-											>
-												<Text
-													style={[
-														styles.tabText,
-														isFocused && styles.activeTabText,
-													]}
+						<View style={{ flex: 1, minHeight: 400 }}>
+							<TabView
+							style={{ flex: 1}}
+								navigationState={{ index, routes }}
+								renderScene={renderScene}
+								onIndexChange={setIndex}
+								renderTabBar={(props) => (
+									<TabBar
+										{...props}
+										style={[styles.tabBar]}
+										activeColor="#fff"
+										inactiveColor="#7D7D7D"
+										renderTabBarItem={({ route }) => {
+											const isFocused =
+												props.navigationState.index ===
+												props.navigationState.routes.indexOf(route);
+											return (
+												<TouchableOpacity
+													style={[styles.tabItem, isFocused && styles.activeTab]}
+													onPress={() => props.jumpTo(route.key)}
 												>
-													{route.title}
-												</Text>
-											</TouchableOpacity>
-										);
-									}}
-									contentContainerStyle={{ justifyContent: "space-evenly" }}
-									indicatorContainerStyle={{ display: "none" }}
-								/>
-							)}
-						/>
-					</View>
+													<Text
+														style={[
+															styles.tabText,
+															isFocused && styles.activeTabText,
+														]}
+													>
+														{route.title}
+													</Text>
+												</TouchableOpacity>
+											);
+										}}
+										contentContainerStyle={{ justifyContent: "space-evenly" }}
+										indicatorContainerStyle={{ display: "none" }}
+									/>
+								)}
+							/>
+						</View>
+						<Divider />
 
-					<Text
-						style={[
-							Texts.bold16,
-							{ color: Colors.colorBrand.midnightBlue[950], alignSelf: "flex-start" },
-						]}
-					>
-						Có thể bạn sẽ thích
-					</Text>
+						<Text
+							style={[
+								Texts.bold16,
+								{ color: Colors.colorBrand.midnightBlue[950], alignSelf: "flex-start" },
+							]}
+						>
+							Có thể bạn sẽ thích
+						</Text>
 
-					<FlatList
-						data={listTour}
-						renderItem={({ item }) => <TourItem {...item} />}
-						keyExtractor={(item) => item.tourId}
-						style={{ marginTop: 10 }}
-						contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
-						scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList
-					/>
-					<View>
-						<BookingButton />
 					</View>
-				</View>
-			</ScrollView>
-		</SafeAreaView>
+				}
+			/>
+				<BookingButton />
+		</View>
 	);
 };
 
@@ -320,7 +318,6 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: "#fff",
 		overflow: "hidden",
-		margin: 10,
 	},
 	image: {
 		width: "100%",
@@ -373,6 +370,7 @@ const styles = StyleSheet.create({
 	tabBar: {
 		backgroundColor: "#fff",
 		elevation: 2,
+		paddingVertical: 10
 	},
 
 	tabItem: {

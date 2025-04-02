@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getProfile } from "@/services/userService";
+import { getProfile } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { navigate } from "@/libs/navigation/navigationService";
 import { AsyncStorageKey } from "@/libs/async-storage";

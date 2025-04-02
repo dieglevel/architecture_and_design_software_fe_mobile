@@ -1,20 +1,24 @@
 import { Colors } from "@/constants";
 import { navigate } from "@/libs/navigation/navigationService";
+import { Tour } from "@/types/implement";
+import { localePrice } from "@/utils";
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
-interface TourItemProps {
-	tourId: string;
-	image: string;
-	name: string;
+interface Props {
+	tour: Tour;
 	rating?: number;
-	price: number;
+
 	discount?: number;
-	duration: string;
 }
 
-export const TourItem: React.FC<TourItemProps> = ({ image, name, rating = 0, price, discount = 0, duration }) => {
-	const discountedPrice = price - (price * discount) / 100;
+export const TourItem = ({ discount = 0, tour, rating = 3.5 }: Props) => {
+	const discountCalculation = (price: number, discount: number) => {
+		if (discount > 0) {
+			return price - (price * discount) / 100;
+		}
+		return price;
+	};
 
 	return (
 		<TouchableOpacity
@@ -22,7 +26,7 @@ export const TourItem: React.FC<TourItemProps> = ({ image, name, rating = 0, pri
 			onPress={() => navigate("TourDetailScreen")}
 		>
 			<Image
-				source={{ uri: image }}
+				source={{ uri: tour.thumbnail }}
 				style={styles.image}
 			/>
 			<View style={styles.details}>
@@ -31,25 +35,29 @@ export const TourItem: React.FC<TourItemProps> = ({ image, name, rating = 0, pri
 						style={styles.name}
 						numberOfLines={1}
 					>
-						{name}
+						{tour.name}
 					</Text>
-
-					<Text style={styles.duration}>⏱ {duration}</Text>
+					{rating > 0 ? (
+						<Text style={[styles.rating, { fontWeight: "bold" }]}>{rating.toFixed(1)} ⭐</Text>
+					) : null}
 				</View>
 				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-					{rating > 0 ? <Text style={styles.rating}>⭐ ({rating.toFixed(1)})</Text> : null}
-
+					<Text style={styles.duration}>⏱ {tour.duration}</Text>
 					<Text style={styles.price}>
 						{discount > 0 ? (
 							<>
-								<Text style={styles.originalPrice}>{price.toLocaleString("vi-VN")} ₫</Text>
+								<Text style={styles.originalPrice}>
+									{localePrice(tour.price ? tour.price : 0)}
+								</Text>
 								{"  "}
 								<Text style={styles.discountedPrice}>
-									{discountedPrice.toLocaleString("vi-VN")} ₫
+									{localePrice(discountCalculation(tour.price ? tour.price : 0, discount))}
 								</Text>
 							</>
 						) : (
-							<Text>{price.toLocaleString("vi-VN")} ₫</Text>
+							<Text style={{ color: Colors.colorBrand.burntSienna[500] }}>
+								{localePrice(tour.price ? tour.price : 0)}
+							</Text>
 						)}
 					</Text>
 				</View>
@@ -91,6 +99,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontWeight: "bold",
 		color: Colors.colorBrand.midnightBlue[950],
+		maxWidth: "75%",
 	},
 
 	rating: {
