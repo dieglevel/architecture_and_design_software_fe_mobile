@@ -1,4 +1,3 @@
-import { HomeScreen, SearchScreen, MessageScreen, UserScreen } from "@/apps/screens";
 import { Tab } from "@/libs/navigation";
 import { Ionicons } from "@expo/vector-icons";
 import HomeStack from "../stacks/home-stack";

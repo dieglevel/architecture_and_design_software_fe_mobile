@@ -10,7 +10,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { register } from "@/services/authService";
+import { register } from "@/services/auth-service";
 import Toast from "react-native-toast-message";
 
 export const SignupScreen = () => {

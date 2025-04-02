@@ -7,11 +7,12 @@ import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as SecureStore from "expo-secure-store";
-import { loginApi } from "@/services/authService";
+import { loginApi } from "@/services/auth-service";
 import { BaseResponse } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
 import { navigate } from "@/libs/navigation/navigationService";
+import { StackRouterOptions, useNavigation } from "@react-navigation/native";
 
 export const LoginScreen = () => {
 	const [username, setUsername] = useState<string>("ghuyvip");
