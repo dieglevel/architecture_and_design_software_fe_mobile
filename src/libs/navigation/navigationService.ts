@@ -1,13 +1,41 @@
 import { createNavigationContainerRef } from "@react-navigation/native";
-import { RootStackParamList } from "./stack-navigator.config";
+import { RootStackParamList, StackScreenNavigationProp } from "./stack-navigator.config";
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 export function navigate<RouteName extends keyof RootStackParamList>(
 	name: RouteName,
-	params?: RootStackParamList[RouteName],
+	params?: RootStackParamList[RouteName] | undefined,
 ) {
 	if (navigationRef.isReady()) {
 		navigationRef.navigate(name, params);
+	}
+}
+
+export function goBack() {
+	if (navigationRef.isReady()) {
+		navigationRef.goBack();
+	}
+}
+
+export function reset(name: keyof RootStackParamList, params?: RootStackParamList[keyof RootStackParamList]) {
+	if (navigationRef.isReady()) {
+		navigationRef.reset({
+			index: 0,
+			routes: [{ name, params }],
+		});
+	}
+}
+
+export function push<RouteName extends keyof RootStackParamList>(
+	name: RouteName,
+	params?: RootStackParamList[RouteName] | undefined,
+) {
+	if (navigationRef.isReady()) {
+		navigationRef.dispatch({
+			...navigationRef.getRootState(),
+			type: "Navigation/PUSH",
+			payload: { name, params },
+		});
 	}
 }

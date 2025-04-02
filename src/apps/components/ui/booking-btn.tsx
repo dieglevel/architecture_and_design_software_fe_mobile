@@ -1,5 +1,7 @@
+import { Colors } from "@/constants";
 import { FontAwesome } from "@expo/vector-icons";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { Divider } from "react-native-paper";
 
 const BookingButton = () => {
 	return (
@@ -20,6 +22,13 @@ const BookingButton = () => {
 
 const styles = StyleSheet.create({
 	bookingContainer: {
+		position: "absolute",
+		bottom: 0,
+		left: 0,
+		right: 0,
+		backgroundColor: Colors.gray[0],
+		paddingVertical: 8,
+		paddingHorizontal: 20,
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",

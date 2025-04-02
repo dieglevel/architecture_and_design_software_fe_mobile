@@ -16,10 +16,12 @@
     "@react-navigation/material-top-tabs": "^7.1.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/native-stack": "^7.2.0",
+    "@reduxjs/toolkit": "^2.6.1",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "eventemitter3": "^5.0.1",
     "expo": "~52.0.26",
+    "expo-linear-gradient": "~14.0.2",
     "expo-secure-store": "^14.0.1",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
@@ -36,7 +38,7 @@
     "react-native-tab-view": "^4.0.5",
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.13",
-    "expo-linear-gradient": "~14.0.2"
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
