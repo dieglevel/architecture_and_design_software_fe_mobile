@@ -1,16 +1,10 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { SceneMap, TabBar, TabView } from "react-native-tab-view";
-import { useState } from "react";
-import RatingTour from "../../components/ui/rating";
 import { Colors, Texts } from "@/constants";
 import { TourItem } from "../../components/ui";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ScheduleItem from "../../components/ui/schedule";
-import Comment from "../../components/ui/comment";
-import TourInfo from "../../components/ui/more-infors";
 import BookingButton from "../../components/ui/booking-btn";
 import { Divider } from "react-native-paper";
+import TourDetail from "@/apps/components/ui/tour-detail-tabview";
 
 export const TourDetailScreen = () => {
 	const schedules = [
@@ -74,79 +68,6 @@ export const TourDetailScreen = () => {
 			comment: "It was a decent experience. Could improve the customer service a bit more.",
 		},
 	];
-
-	const renderScene = ({ route }: { route: any }) => {
-		switch (route.key) {
-			case "schedule":
-				return (
-					<FlatList
-						style={{ padding: 10 }}
-						data={schedules}
-						renderItem={({ item }) => <ScheduleItem {...item} />}
-						keyExtractor={(item) => item.day}
-						nestedScrollEnabled={true}
-						scrollEnabled={false}
-					/>
-				);
-			case "review":
-				return (
-					<ScrollView>
-						<RatingTour
-							rating={4.9}
-							ratingDetails={ratingDetails}
-						/>
-
-						<FlatList
-							data={commentData}
-							renderItem={({ item }) => (
-								<Comment
-									avatar={item.avatar}
-									name={item.name}
-									date={item.date}
-									rating={item.rating}
-									comment={item.comment}
-								/>
-							)}
-							keyExtractor={(item) => item.id}
-							scrollEnabled={false}
-							nestedScrollEnabled={true}
-						/>
-					</ScrollView>
-				);
-			case "info":
-				return (
-					<TourInfo
-						transport={[
-							"Vé máy bay khứ hồi Vietjet Air bao gồm 7kg hành lý xách tay + 20kg hành lý ký gửi.",
-							"Xe du lịch hiện đại, điều hòa, đưa đón tham quan.",
-							"Tàu câu cá và lặn ngắm san hô với đầy đủ dụng cụ.",
-						]}
-						accommodation={[
-							"Khách sạn 3 sao tiêu chuẩn (2-3 khách/phòng).",
-							"Phòng tiện nghi điều hòa, tivi, nóng lạnh.",
-						]}
-						others={[
-							"Ăn uống theo lịch trình tham quan.",
-							"Vé vào cửa các điểm tham quan.",
-							"HDV nhiệt tình, kinh nghiệm.",
-							"Nước uống lạnh phục vụ du lịch.",
-							"Bảo hiểm du lịch mức cao nhất.",
-							"Y tế dự phòng trên xe.",
-						]}
-					/>
-				);
-			default:
-				return null;
-		}
-	};
-
-	const [index, setIndex] = useState(0);
-	const [routes] = useState<Array<Object>>([
-		{ key: "schedule", title: "Lịch trình" },
-		{ key: "review", title: "Đánh giá" },
-		{ key: "info", title: "Thông tin khác" },
-	]);
-
 	const listTour = [
 		{
 			tourId: "1",
@@ -225,17 +146,23 @@ export const TourDetailScreen = () => {
 	];
 
 	return (
-		<View style={{marginTop: 10, backgroundColor: Colors.gray[0], flex: 1, paddingHorizontal: 10, paddingVertical: 8}}>
+		<View
+			style={{
+				marginTop: 10,
+				backgroundColor: Colors.gray[0],
+				flex: 1,
+				paddingHorizontal: 10,
+				paddingVertical: 8,
+			}}
+		>
 			<FlatList
 				data={listTour}
 				renderItem={({ item }) => <TourItem tour={item} />}
-				
 				keyExtractor={(item, index) => index.toString()}
-				style={{  marginBottom: 20 }}
+				style={{ marginBottom: 20 }}
 				contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
-				scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList
 				ListHeaderComponent={
-					<View style={[styles.container, {gap: 8}]}>
+					<View style={[styles.container, { gap: 8 }]}>
 						<Image
 							source={{
 								uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
@@ -261,41 +188,10 @@ export const TourDetailScreen = () => {
 						</View>
 
 						<View style={{ flex: 1, minHeight: 400 }}>
-							<TabView
-							style={{ flex: 1}}
-								navigationState={{ index, routes }}
-								renderScene={renderScene}
-								onIndexChange={setIndex}
-								renderTabBar={(props) => (
-									<TabBar
-										{...props}
-										style={[styles.tabBar]}
-										activeColor="#fff"
-										inactiveColor="#7D7D7D"
-										renderTabBarItem={({ route }) => {
-											const isFocused =
-												props.navigationState.index ===
-												props.navigationState.routes.indexOf(route);
-											return (
-												<TouchableOpacity
-													style={[styles.tabItem, isFocused && styles.activeTab]}
-													onPress={() => props.jumpTo(route.key)}
-												>
-													<Text
-														style={[
-															styles.tabText,
-															isFocused && styles.activeTabText,
-														]}
-													>
-														{route.title}
-													</Text>
-												</TouchableOpacity>
-											);
-										}}
-										contentContainerStyle={{ justifyContent: "space-evenly" }}
-										indicatorContainerStyle={{ display: "none" }}
-									/>
-								)}
+							<TourDetail
+								schedules={schedules}
+								ratingDetails={ratingDetails}
+								commentData={commentData}
 							/>
 						</View>
 						<Divider />
@@ -308,25 +204,10 @@ export const TourDetailScreen = () => {
 						>
 							Có thể bạn sẽ thích
 						</Text>
-
-<<<<<<< HEAD:src/apps/screens/tour-detail.tsx
-					<FlatList
-						data={listTour}
-						renderItem={({ item }) => <TourItem {...item} />}
-						keyExtractor={(item, index) => index.toString()}
-						style={{ marginTop: 10 }}
-						contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
-						scrollEnabled={false} // Ngăn FlatList cuộn riêng
-						nestedScrollEnabled={true}
-					/>
-					<View>
-						<BookingButton />
-=======
->>>>>>> 7c87a0a294fb23c4e783c0ea5f4bedfd55b3671c:src/apps/screens/tour-detail/tour-detail.tsx
 					</View>
 				}
 			/>
-				<BookingButton />
+			<BookingButton />
 		</View>
 	);
 };
@@ -383,28 +264,5 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-	},
-	tabBar: {
-		backgroundColor: "#fff",
-		elevation: 2,
-		paddingVertical: 10
-	},
-
-	tabItem: {
-		paddingVertical: 10,
-		paddingHorizontal: 20,
-		borderRadius: 10,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	activeTab: {
-		backgroundColor: "#ff6347", // Màu nền cam khi chọn
-	},
-	tabText: {
-		color: "#7D7D7D",
-		fontWeight: "bold",
-	},
-	activeTabText: {
-		color: "#fff", // Màu trắng khi active
 	},
 });
