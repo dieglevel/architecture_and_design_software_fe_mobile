@@ -29,9 +29,8 @@ const RatingTour = ({ rating, ratingDetails }: RatingProps) => {
 			<View style={styles.divider} />
 
 			{ratingDetails.map((item, index) => (
-				<>
-					<View
-						key={index}
+				<View key={index}>
+					<View 
 						style={styles.detailContainer}
 					>
 						<Text style={styles.label}>{item.label}</Text>
@@ -45,7 +44,7 @@ const RatingTour = ({ rating, ratingDetails }: RatingProps) => {
 						<Text style={styles.percent}>{item.value}%</Text>
 					</View>
 					{index === 3 && <View style={styles.divider} />}
-				</>
+				</View>
 			))}
 		</View>
 	);
