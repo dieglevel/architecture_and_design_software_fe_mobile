@@ -10,7 +10,12 @@ export const ReviewScene = ({
 	ratingDetails: RatingDetail[];
 	commentData: CommentProps[];
 }) => (
-	<ScrollView>
+	<ScrollView
+		style={{ flex: 1 }}
+		keyboardShouldPersistTaps="handled"
+		nestedScrollEnabled
+		showsVerticalScrollIndicator={false}
+	>
 		<RatingTour
 			rating={4.9}
 			ratingDetails={ratingDetails}
