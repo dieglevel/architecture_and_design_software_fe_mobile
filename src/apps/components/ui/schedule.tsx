@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants";
-
-interface ScheduleItemProps {
-	day: string;
-	route: string;
-	meals: string;
-	description?: string;
-}
+import { ScheduleItemProps } from "@/types/implement";
 
 const ScheduleItem: React.FC<ScheduleItemProps> = ({ day, route, meals, description }) => {
 	const [expanded, setExpanded] = useState<boolean>(false);
