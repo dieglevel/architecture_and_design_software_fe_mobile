@@ -14,8 +14,8 @@ import { AsyncStorageKey } from "@/libs/async-storage";
 import { navigate } from "@/libs/navigation/navigationService";
 
 export const LoginScreen = () => {
-	const [username, setUsername] = useState<string>("admin");
-	const [password, setPassword] = useState<string>("admin");
+	const [username, setUsername] = useState<string>("ghuyvip");
+	const [password, setPassword] = useState<string>("Anhbakhia3@");
 
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
