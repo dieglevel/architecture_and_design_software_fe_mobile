@@ -26,7 +26,7 @@ const ProfileScreen = () => {
 		try {
 			const response = await getProfile();
 			if (response.statusCode === 200) {
-				setName(response.data?.fullname ?? "");
+				setName(response.data?.fullName ?? "");
 				setUsername(response.data?.username ?? "");
 				// setAddress(response.data?.address ?? "");
 				setPhone(response.data?.phone ?? "");

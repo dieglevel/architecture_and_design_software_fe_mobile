@@ -49,7 +49,7 @@ export const TourDetailScreen = () => {
 
 	const commentData = [
 		{
-			id: "1",
+			id: "9",
 			avatar: "https://i.pravatar.cc/150?img=1",
 			name: "Phung Anh Minh",
 			date: "10/11/2022",
@@ -57,7 +57,7 @@ export const TourDetailScreen = () => {
 			comment: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
 		},
 		{
-			id: "2",
+			id: "10",
 			avatar: "https://i.pravatar.cc/150?img=2",
 			name: "Nguyen Van A",
 			date: "15/02/2023",
@@ -65,7 +65,7 @@ export const TourDetailScreen = () => {
 			comment: "Great service and amazing experience. Will definitely recommend to others!",
 		},
 		{
-			id: "3",
+			id: "11",
 			avatar: "https://i.pravatar.cc/150?img=3",
 			name: "Tran Thi B",
 			date: "05/05/2023",
@@ -82,6 +82,8 @@ export const TourDetailScreen = () => {
 						data={schedules}
 						renderItem={({ item }) => <ScheduleItem {...item} />}
 						keyExtractor={(item) => item.day}
+						nestedScrollEnabled={true}
+						scrollEnabled={false}
 					/>
 				);
 			case "review":
@@ -105,6 +107,7 @@ export const TourDetailScreen = () => {
 							)}
 							keyExtractor={(item) => item.id}
 							scrollEnabled={false}
+							nestedScrollEnabled={true}
 						/>
 					</ScrollView>
 				);
@@ -302,10 +305,11 @@ export const TourDetailScreen = () => {
 					<FlatList
 						data={listTour}
 						renderItem={({ item }) => <TourItem {...item} />}
-						keyExtractor={(item) => item.tourId}
+						keyExtractor={(item, index) => index.toString()}
 						style={{ marginTop: 10 }}
 						contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
-						scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList
+						scrollEnabled={false} // Ngăn FlatList cuộn riêng
+						nestedScrollEnabled={true}
 					/>
 					<View>
 						<BookingButton />
