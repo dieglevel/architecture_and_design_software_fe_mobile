@@ -6,7 +6,7 @@ export const handleGetTours = async (setListTour: React.Dispatch<React.SetStateA
    try {
       const response = await getTours();
 
-      if (response.statusCode === 302) {
+      if (response.statusCode === 200) {
          const tours = response.data;
 
          if (tours) {

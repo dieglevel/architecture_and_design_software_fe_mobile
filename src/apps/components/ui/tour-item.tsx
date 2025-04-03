@@ -22,6 +22,7 @@ export const TourItem = ({ discount = 0, tour, rating = 3.5 }: Props) => {
 
 	return (
 		<TouchableOpacity
+			delayPressIn={500}
 			style={[styles.container, discount > 0 && styles.containerDiscount]}
 			onPress={() => navigate("TourDetailScreen")}
 		>
@@ -73,14 +74,19 @@ const styles = StyleSheet.create({
 		height: 230,
 		backgroundColor: "#fff",
 		borderRadius: 10,
-		marginVertical: 5,
-		shadowColor: "#000",
-		shadowOpacity: 0.1,
-		shadowRadius: 5,
-		elevation: 2,
+		marginVertical: 10,
+		shadowColor: Colors.colorBrand.midnightBlue[950],
 		borderWidth: 1,
 		borderColor: "#F5F5F5",
 		position: "relative",
+		shadowOffset: {
+			width: 0,
+			height: 3,
+		},
+		shadowOpacity: 0.27,
+		shadowRadius: 4.65,
+
+		elevation: 6,
 	},
 	containerDiscount: {
 		borderColor: "#FF6F61",

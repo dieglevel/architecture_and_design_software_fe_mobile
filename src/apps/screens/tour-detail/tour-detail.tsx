@@ -88,27 +88,25 @@ export const TourDetailScreen = () => {
 				);
 			case "review":
 				return (
-					<ScrollView>
-						<RatingTour
-							rating={4.9}
-							ratingDetails={ratingDetails}
-						/>
-
-						<FlatList
-							data={commentData}
-							renderItem={({ item }) => (
-								<Comment
-									avatar={item.avatar}
-									name={item.name}
-									date={item.date}
-									rating={item.rating}
-									comment={item.comment}
-								/>
-							)}
-							keyExtractor={(item) => item.id}
-							scrollEnabled={false}
-						/>
-					</ScrollView>
+					<FlatList
+						data={commentData}
+						renderItem={({ item }) => (
+							<Comment
+								avatar={item.avatar}
+								name={item.name}
+								date={item.date}
+								rating={item.rating}
+								comment={item.comment}
+							/>
+						)}
+						keyExtractor={(item) => item.id}
+						ListHeaderComponent={
+							<RatingTour
+								rating={4.9}
+								ratingDetails={ratingDetails}
+							/>
+						}
+					/>
 				);
 			case "info":
 				return (
@@ -222,17 +220,24 @@ export const TourDetailScreen = () => {
 	];
 
 	return (
-		<View style={{marginTop: 10, backgroundColor: Colors.gray[0], flex: 1, paddingHorizontal: 10, paddingVertical: 8}}>
+		<View
+			style={{
+				marginTop: 10,
+				backgroundColor: Colors.gray[0],
+				flex: 1,
+				paddingHorizontal: 10,
+				paddingVertical: 8,
+			}}
+		>
 			<FlatList
+				showsVerticalScrollIndicator={false}
 				data={listTour}
 				renderItem={({ item }) => <TourItem tour={item} />}
-				
 				keyExtractor={(item, index) => index.toString()}
-				style={{  marginBottom: 20 }}
+				style={{ marginBottom: 20 }}
 				contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
-				scrollEnabled={false} // Vô hiệu hóa cuộn riêng của FlatList
 				ListHeaderComponent={
-					<View style={[styles.container, {gap: 8}]}>
+					<View style={[styles.container, { gap: 8 }]}>
 						<Image
 							source={{
 								uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
@@ -259,7 +264,7 @@ export const TourDetailScreen = () => {
 
 						<View style={{ flex: 1, minHeight: 400 }}>
 							<TabView
-							style={{ flex: 1}}
+								style={{ flex: 1 }}
 								navigationState={{ index, routes }}
 								renderScene={renderScene}
 								onIndexChange={setIndex}
@@ -305,11 +310,10 @@ export const TourDetailScreen = () => {
 						>
 							Có thể bạn sẽ thích
 						</Text>
-
 					</View>
 				}
 			/>
-				<BookingButton />
+			<BookingButton />
 		</View>
 	);
 };
@@ -370,7 +374,7 @@ const styles = StyleSheet.create({
 	tabBar: {
 		backgroundColor: "#fff",
 		elevation: 2,
-		paddingVertical: 10
+		paddingVertical: 10,
 	},
 
 	tabItem: {
