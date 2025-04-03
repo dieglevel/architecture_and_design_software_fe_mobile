@@ -16,15 +16,13 @@ export const HomeScreen = () => {
 		handleGetTours(setListTour);
 	}, []);
 
-
-
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: "#fff", alignItems: "stretch" }}>
 			{/* Header renderItem Footer */}
 			{/* => (Header + FlatList) -> RenderItem */}
 			<FlatList
 				ListHeaderComponent={() => (
-					<View style={{ padding: 10, flex: 1, gap: 10 }}>
+					<View style={{ flex: 1, gap: 10 }}>
 						<Header />
 
 						<HeadText title="Những Địa Điểm Nổi Bật" />
@@ -44,9 +42,8 @@ export const HomeScreen = () => {
 					/>
 				)}
 				keyExtractor={(_, index) => index.toString()}
-				contentContainerStyle={{ paddingVertical: 8 }}
 				nestedScrollEnabled={true}
-				style={{ flex: 1 }}
+				style={{ flex: 1, paddingHorizontal: 20, paddingTop: 10 }}
 			/>
 		</SafeAreaView>
 	);

@@ -156,6 +156,7 @@ export const TourDetailScreen = () => {
 			}}
 		>
 			<FlatList
+				showsVerticalScrollIndicator={false}
 				data={listTour}
 				renderItem={({ item }) => <TourItem tour={item} />}
 				keyExtractor={(item, index) => index.toString()}
@@ -265,4 +266,5 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+	// backgroundColor: "#fff",
 });
