@@ -1,12 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
+import {
+	View,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	Image,
+	StyleSheet,
+	ScrollView,
+	ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProfile } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { navigate } from "@/libs/navigation/navigationService";
 import { AsyncStorageKey } from "@/libs/async-storage";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { CommonActions, useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
+import { AppDispatch, RootState, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
+import { setUser } from "@/libs/redux/stores/user.store.";
+import { Loading } from "../components";
+import { Colors } from "@/constants";
+import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
 
 const ProfileScreen = () => {
 	const [name, setName] = useState<string>("");
@@ -18,26 +32,40 @@ const ProfileScreen = () => {
 	const [confirmPassword, setConfirmPassword] = useState<string>("************");
 	const navigation = useNavigation();
 
-	useEffect(() => {
-		handleGetProfile();
-	}, []);
+	const user = useAppSelector((state) => state.user.data);
+	const dispatch = useAppDispatch<AppDispatch>();
 
-	const handleGetProfile = async () => {
-		try {
-			const response = await getProfile();
-			if (response.statusCode === 200) {
-				setName(response.data?.fullname ?? "");
-				setUsername(response.data?.username ?? "");
-				// setAddress(response.data?.address ?? "");
-				setPhone(response.data?.phone ?? "");
-				setEmail(response.data?.email ?? "");
-			} else {
-				console.error("Error fetching profile:", response?.message ?? "Unknown error");
-			}
-		} catch (error) {
-			console.error("Error fetching profile:", error);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+
+	const isFocused = useIsFocused();
+
+	useEffect(() => {
+		const handleGetProfile = async () => {
+			try {
+				const response = await getProfile();
+				if (response.statusCode === 200) {
+					dispatch(setUser(response.data ?? null));
+					setName(response.data?.fullname ?? "");
+					setUsername(response.data?.username ?? "");
+					setPhone(response.data?.phone ?? "");
+					setEmail(response.data?.email ?? "");
+					console.log("user", response.data);
+				} else {
+					console.error("Error fetching profile:", response?.message ?? "Unknown error");
+				}
+			} catch (error) {
+				console.error("Error fetching profile:", error);
+			} 
+		};
+
+		
+		if (isFocused) {
+			setIsLoading(true);
+			handleGetProfile();
+			setIsLoading(false);
 		}
-	};
+
+	}, [isFocused]);
 
 	const handleLogout = async () => {
 		try {
@@ -55,73 +83,79 @@ const ProfileScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView>
-				<LinearGradient
-					colors={["#f07055", "#9043ed"]}
-					start={{ x: 0, y: 0.5 }}
-					end={{ x: 1, y: 0.5 }}
-					style={styles.header}
-				>
-					<Image
-						source={{ uri: "https://i.imgur.com/your-avatar-link.jpg" }}
-						style={styles.avatar}
-					/>
-					<View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-						<Text style={styles.name}>{name}</Text>
-						<Text style={styles.username}>{username}</Text>
+			{isLoading ? (
+				<ActivityIndicatorCustom />
+			) : (
+				<ScrollView>
+					<LinearGradient
+						colors={["#f07055", "#9043ed"]}
+						start={{ x: 0, y: 0.5 }}
+						end={{ x: 1, y: 0.5 }}
+						style={styles.header}
+					>
+						<Image
+							source={{ uri: user?.avatarUrl }}
+							style={styles.avatar}
+						/>
+						<View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+							<Text style={styles.name}>{name}</Text>
+							<Text style={styles.username}>{user?.username}</Text>
+						</View>
+					</LinearGradient>
+
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>Thông tin cơ bản</Text>
+						<ProfileInput
+							label="Họ và tên"
+							value={name}
+							onChangeText={setName}
+						/>
+						<ProfileInput
+							label="Địa chỉ"
+							value={address}
+							onChangeText={setAddress}
+						/>
+						<ProfileInput
+							label="Liên lạc"
+							value={phone}
+							onChangeText={setPhone}
+						/>
+						<ProfileInput
+							label="Email"
+							value={email}
+							onChangeText={setEmail}
+						/>
+						<ActionButtons />
 					</View>
-				</LinearGradient>
 
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Thông tin cơ bản</Text>
-					<ProfileInput
-						label="Họ và tên"
-						value={name}
-						onChangeText={setName}
-					/>
-					<ProfileInput
-						label="Địa chỉ"
-						value={address}
-						onChangeText={setAddress}
-					/>
-					<ProfileInput
-						label="Liên lạc"
-						value={phone}
-						onChangeText={setPhone}
-					/>
-					<ProfileInput
-						label="Email"
-						value={email}
-						onChangeText={setEmail}
-					/>
-					<ActionButtons />
-				</View>
+					<View style={styles.section}>
+						<Text style={styles.sectionTitle}>Mật khẩu</Text>
+						<ProfileInput
+							label="Mật khẩu"
+							value={password}
+							onChangeText={setPassword}
+							secureTextEntry
+						/>
+						<ProfileInput
+							label="Nhập lại mật khẩu"
+							value={confirmPassword}
+							onChangeText={setConfirmPassword}
+							secureTextEntry
+						/>
+						<ActionButtons />
+					</View>
 
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Mật khẩu</Text>
-					<ProfileInput
-						label="Mật khẩu"
-						value={password}
-						onChangeText={setPassword}
-						secureTextEntry
-					/>
-					<ProfileInput
-						label="Nhập lại mật khẩu"
-						value={confirmPassword}
-						onChangeText={setConfirmPassword}
-						secureTextEntry
-					/>
-					<ActionButtons />
-				</View>
-
-				<View style={styles.section}>
-					<TouchableOpacity onPress={handleLogout}>
-						<Text style={{ color: "#f07055", fontSize: 16, textAlign: "center", fontWeight: 500 }}>
-							Đăng xuất
-						</Text>
-					</TouchableOpacity>
-				</View>
-			</ScrollView>
+					<View style={styles.section}>
+						<TouchableOpacity onPress={handleLogout}>
+							<Text
+								style={{ color: "#f07055", fontSize: 16, textAlign: "center", fontWeight: 500 }}
+							>
+								Đăng xuất
+							</Text>
+						</TouchableOpacity>
+					</View>
+				</ScrollView>
+			)}
 		</SafeAreaView>
 	);
 };

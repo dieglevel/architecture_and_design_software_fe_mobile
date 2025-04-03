@@ -4,4 +4,7 @@ export interface User {
 	username?: string;
 	fullname?: string;
 	userId?: string;
+	avatarUrl?: string;
+	gender?: number;
+	
 }

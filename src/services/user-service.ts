@@ -6,9 +6,7 @@ import { User } from "@/types/implement/user";
 
 export const getProfile = async (): Promise<BaseResponse<User>> => {
 	try {
-		const response = await api.get<BaseResponse<User>>(`${Gateway.USER}/users/my-info`, {
-			validateStatus: (status) => status < 400, // Chấp nhận tất cả mã < 400 vì server trả về 302 có data
-		});
+		const response = await api.get<BaseResponse<User>>(`${Gateway.USER}/users/my-info`);
 		return response.data;
 	} catch (e) {
 		throw e as BaseResponse<null>;
