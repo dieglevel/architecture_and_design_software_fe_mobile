@@ -1,16 +1,29 @@
 import { BaseResponse } from "@/types";
-import { api } from "../libs/axios/axios.config"; // Import instance đã cấu hình
+import { api } from "../libs/axios/axios.config";
 import { Gateway } from "@/libs/axios";
-import { Tour } from "@/types/implement";
 import { User } from "@/types/implement/user";
+import { AxiosError } from "axios";
 
-export const getProfile = async (): Promise<BaseResponse<User>> => {
+export const getProfile = async (): Promise<BaseResponse<User | null>> => {
 	try {
 		const response = await api.get<BaseResponse<User>>(`${Gateway.USER}/users/my-info`, {
 			validateStatus: (status) => status < 400, // Chấp nhận tất cả mã < 400 vì server trả về 302 có data
 		});
 		return response.data;
-	} catch (e) {
-		throw e as BaseResponse<null>;
+	} catch (error) {
+		const axiosError = error as AxiosError<BaseResponse<null>>;
+
+		// Trường hợp có response từ server
+		if (axiosError.response) {
+			return axiosError.response.data;
+		}
+
+		// Trường hợp lỗi do network hoặc không có response
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
 	}
 };

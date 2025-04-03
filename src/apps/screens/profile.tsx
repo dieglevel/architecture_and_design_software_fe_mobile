@@ -7,15 +7,25 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { navigate } from "@/libs/navigation/navigationService";
 import { AsyncStorageKey } from "@/libs/async-storage";
 import { CommonActions, useNavigation } from "@react-navigation/native";
+import DateTimePicker from "react-native-modal-datetime-picker";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { format, set } from "date-fns";
+import { vi } from "date-fns/locale";
+import { InputForm } from "../components/ui";
+import { Calendar } from "@/assets/svgs/calendar";
 
 const ProfileScreen = () => {
 	const [name, setName] = useState<string>("");
 	const [username, setUsername] = useState<string>("");
 	const [address, setAddress] = useState<string>("");
+	const [avatar, setAvatar] = useState<string>("");
+	const [gender, setGender] = useState<string>("Nam");
+	const [dateOfBirth, setDateOfBirth] = useState<string>("");
 	const [phone, setPhone] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("************");
 	const [confirmPassword, setConfirmPassword] = useState<string>("************");
+	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
 	const navigation = useNavigation();
 
 	useEffect(() => {
@@ -26,11 +36,13 @@ const ProfileScreen = () => {
 		try {
 			const response = await getProfile();
 			if (response.statusCode === 200) {
+				console.log("Profile data:", response.data);
 				setName(response.data?.fullName ?? "");
 				setUsername(response.data?.username ?? "");
-				// setAddress(response.data?.address ?? "");
+				setGender(response.data?.gender === 1 ? "Nam" : "Nữ");
 				setPhone(response.data?.phone ?? "");
 				setEmail(response.data?.email ?? "");
+				setAvatar(response.data?.avatarUrl ?? "");
 			} else {
 				console.error("Error fetching profile:", response?.message ?? "Unknown error");
 			}
@@ -53,6 +65,44 @@ const ProfileScreen = () => {
 		}
 	};
 
+	const showDatePicker = () => {
+		setDatePickVisible(true);
+	};
+
+	const hideDatePicker = () => {
+		setDatePickVisible(false);
+	};
+
+	const handleConfirm = (date: Date) => {
+		const formattedDate = format(date, "dd/MM/yyyy", { locale: vi }); // Định dạng ngày tháng
+		setDateOfBirth(formattedDate);
+		validateDOB(formattedDate);
+		hideDatePicker();
+	};
+
+	const validateDOB = (text: string) => {
+		const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+		if (!dateRegex.test(text)) return "Ngày sinh phải có định dạng dd/MM/yyyy!";
+
+		const [day, month, year] = text.split("/").map(Number);
+		const birthDate = new Date(year, month - 1, day);
+		const today = new Date();
+
+		// Tính ngày cách đây 16 năm
+		const sixteenYearsAgo = new Date();
+		sixteenYearsAgo.setFullYear(today.getFullYear() - 16);
+
+		if (birthDate >= today) {
+			return "Ngày sinh không hợp lệ!";
+		}
+
+		if (birthDate > sixteenYearsAgo) {
+			return "Người dùng phải trên 16 tuổi!";
+		}
+
+		return null;
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView>
@@ -63,7 +113,7 @@ const ProfileScreen = () => {
 					style={styles.header}
 				>
 					<Image
-						source={{ uri: "https://i.imgur.com/your-avatar-link.jpg" }}
+						source={{ uri: avatar }}
 						style={styles.avatar}
 					/>
 					<View style={{ flexDirection: "column", alignItems: "flex-start" }}>
@@ -80,10 +130,27 @@ const ProfileScreen = () => {
 						onChangeText={setName}
 					/>
 					<ProfileInput
-						label="Địa chỉ"
-						value={address}
-						onChangeText={setAddress}
+						label="Giới tính"
+						value={gender}
+						onChangeText={setGender}
 					/>
+					<ProfileInput
+						label="Ngày sinh"
+						value={dateOfBirth}
+						onChangeText={setDateOfBirth}
+						icon={<Calendar />}
+						onIconPress={showDatePicker}
+					/>
+					<DateTimePicker
+						isVisible={isDatePickVisible}
+						onConfirm={handleConfirm}
+						mode="date"
+						display="compact"
+						onCancel={hideDatePicker}
+						maximumDate={new Date()}
+						minimumDate={new Date(1900, 0, 1)}
+					/>
+
 					<ProfileInput
 						label="Liên lạc"
 						value={phone}
@@ -131,17 +198,36 @@ interface ProfileInputProps {
 	value: string;
 	onChangeText: (text: string) => void;
 	secureTextEntry?: boolean;
+	icon?: React.ReactNode; // Icon tùy chỉnh
+	onIconPress?: () => void; // Hàm gọi khi nhấn vào icon
 }
 
-const ProfileInput: React.FC<ProfileInputProps> = ({ label, value, onChangeText, secureTextEntry = false }) => (
+const ProfileInput: React.FC<ProfileInputProps> = ({
+	label,
+	value,
+	onChangeText,
+	secureTextEntry = false,
+	icon,
+	onIconPress,
+}) => (
 	<View style={styles.inputContainer}>
 		<Text style={styles.inputLabel}>{label}</Text>
-		<TextInput
-			style={styles.input}
-			value={value}
-			onChangeText={onChangeText}
-			secureTextEntry={secureTextEntry}
-		/>
+		<View style={styles.inputWrapper}>
+			<TextInput
+				style={[styles.input, icon ? styles.inputWithIcon : null]}
+				value={value}
+				onChangeText={onChangeText}
+				secureTextEntry={secureTextEntry}
+			/>
+			{icon && (
+				<TouchableOpacity
+					style={styles.iconContainer}
+					onPress={onIconPress}
+				>
+					{icon}
+				</TouchableOpacity>
+			)}
+		</View>
 	</View>
 );
 
@@ -202,6 +288,22 @@ const styles = StyleSheet.create({
 	cancelButton: { backgroundColor: "#a0a0a0" },
 	confirmButton: { backgroundColor: "#ff4d4d" },
 	buttonText: { color: "#fff", fontSize: 14, fontWeight: "bold" },
+
+	inputWrapper: {
+		position: "relative",
+		borderColor: "#ccc",
+		borderRadius: 8,
+		justifyContent: "center",
+	},
+	inputWithIcon: {
+		paddingRight: 35,
+	},
+	iconContainer: {
+		position: "absolute",
+		right: 10,
+		top: "50%",
+		transform: [{ translateY: -10 }],
+	},
 });
 
 export default ProfileScreen;

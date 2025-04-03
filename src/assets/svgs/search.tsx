@@ -1,17 +1,53 @@
 import React from "react";
-import Svg, { Path } from "react-native-svg";
-interface HomeIconProps {
+import Svg, { Path, Rect, Mask, Defs } from "react-native-svg";
+
+interface SearchIconProps {
 	size?: number;
 	color?: string;
+	backgroundColor?: string;
+	borderRadius?: number; // Thêm prop borderRadius
 }
-const SearchIcon: React.FC<HomeIconProps> = ({ size = 36, color = "#461409" }) => {
+
+const SearchIcon: React.FC<SearchIconProps> = ({
+	size = 36,
+	color = "black",
+	backgroundColor = "transparent",
+	borderRadius = 8, // Thêm giá trị mặc định cho borderRadius
+}) => {
 	return (
 		<Svg
 			width={size}
 			height={size}
 			viewBox="0 0 36 36"
-			fill="none"
+			fill={backgroundColor || "transparent"}
 		>
+			<Defs>
+				<Mask
+					id="mask1"
+					x="0"
+					y="0"
+					width="36"
+					height="36"
+				>
+					{/* Tạo nền với bo góc */}
+					<Rect
+						x="0"
+						y="0"
+						width="36"
+						height="36"
+						fill="white"
+						rx={borderRadius} // Bo góc
+						ry={borderRadius} // Bo góc
+					/>
+				</Mask>
+			</Defs>
+			{/* Áp dụng mask để tạo hiệu ứng bo góc */}
+			<Rect
+				width={size}
+				height={size}
+				fill={backgroundColor}
+				mask="url(#mask1)"
+			/>
 			<Path
 				fillRule="evenodd"
 				clipRule="evenodd"
