@@ -33,7 +33,7 @@ export const LoginScreen = () => {
 					visibilityTime: 2000,
 					autoHide: true,
 				});
-				navigate("BottomTabScreenApp");
+				navigate("WelcomeScreen");
 			}
 		} catch (error) {
 			const err = error as BaseResponse<any>;

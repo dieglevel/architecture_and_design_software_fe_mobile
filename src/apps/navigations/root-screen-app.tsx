@@ -6,6 +6,7 @@ import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
 import { navigationRef } from "@/libs/navigation/navigationService";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
 import Toast from "react-native-toast-message";
+import WelcomeScreen from "../screens/home/welcome-screen";
 
 export const RootScreenApp = () => {
 	const insets = useSafeAreaInsets();
@@ -19,6 +20,10 @@ export const RootScreenApp = () => {
 					animation: "fade_from_bottom",
 				}}
 			>
+				<Stack.Screen
+					name="WelcomeScreen"
+					component={WelcomeScreen}
+				/>
 				<Stack.Screen
 					name="BottomTabScreenApp"
 					component={BottomTabScreenApp}

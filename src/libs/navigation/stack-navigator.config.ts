@@ -7,6 +7,7 @@ export type RootStackParamList = {
 	LoginScreen: undefined;
 	RegisterScreen: undefined;
 	ForgotPasswordScreen: undefined;
+	WelcomeScreen: undefined;
 	// Register: undefined;
 	// ProductDetail: { productId: string };
 	// SubCategory: { categoryId: string };
