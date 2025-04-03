@@ -1,16 +1,10 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { SceneMap, TabBar, TabView } from "react-native-tab-view";
-import { useState } from "react";
-import RatingTour from "../../components/ui/rating";
 import { Colors, Texts } from "@/constants";
 import { TourItem } from "../../components/ui";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ScheduleItem from "../../components/ui/schedule";
-import Comment from "../../components/ui/comment";
-import TourInfo from "../../components/ui/more-infors";
 import BookingButton from "../../components/ui/booking-btn";
 import { Divider } from "react-native-paper";
+import TourDetail from "@/apps/components/ui/tour-detail-tabview";
 
 export const TourDetailScreen = () => {
 	const schedules = [
@@ -50,7 +44,7 @@ export const TourDetailScreen = () => {
 
 	const commentData = [
 		{
-			id: "1",
+			id: "9",
 			avatar: "https://i.pravatar.cc/150?img=1",
 			name: "Phung Anh Minh",
 			date: "10/11/2022",
@@ -58,7 +52,7 @@ export const TourDetailScreen = () => {
 			comment: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
 		},
 		{
-			id: "2",
+			id: "10",
 			avatar: "https://i.pravatar.cc/150?img=2",
 			name: "Nguyen Van A",
 			date: "15/02/2023",
@@ -66,7 +60,7 @@ export const TourDetailScreen = () => {
 			comment: "Great service and amazing experience. Will definitely recommend to others!",
 		},
 		{
-			id: "3",
+			id: "11",
 			avatar: "https://i.pravatar.cc/150?img=3",
 			name: "Tran Thi B",
 			date: "05/05/2023",
@@ -74,74 +68,6 @@ export const TourDetailScreen = () => {
 			comment: "It was a decent experience. Could improve the customer service a bit more.",
 		},
 	];
-
-	const renderScene = ({ route }: { route: any }) => {
-		switch (route.key) {
-			case "schedule":
-				return (
-					<FlatList
-						style={{ padding: 10 }}
-						data={schedules}
-						renderItem={({ item }) => <ScheduleItem {...item} />}
-						keyExtractor={(item) => item.day}
-					/>
-				);
-			case "review":
-				return (
-					<FlatList
-						data={commentData}
-						renderItem={({ item }) => (
-							<Comment
-								avatar={item.avatar}
-								name={item.name}
-								date={item.date}
-								rating={item.rating}
-								comment={item.comment}
-							/>
-						)}
-						keyExtractor={(item) => item.id}
-						ListHeaderComponent={
-							<RatingTour
-								rating={4.9}
-								ratingDetails={ratingDetails}
-							/>
-						}
-					/>
-				);
-			case "info":
-				return (
-					<TourInfo
-						transport={[
-							"Vé máy bay khứ hồi Vietjet Air bao gồm 7kg hành lý xách tay + 20kg hành lý ký gửi.",
-							"Xe du lịch hiện đại, điều hòa, đưa đón tham quan.",
-							"Tàu câu cá và lặn ngắm san hô với đầy đủ dụng cụ.",
-						]}
-						accommodation={[
-							"Khách sạn 3 sao tiêu chuẩn (2-3 khách/phòng).",
-							"Phòng tiện nghi điều hòa, tivi, nóng lạnh.",
-						]}
-						others={[
-							"Ăn uống theo lịch trình tham quan.",
-							"Vé vào cửa các điểm tham quan.",
-							"HDV nhiệt tình, kinh nghiệm.",
-							"Nước uống lạnh phục vụ du lịch.",
-							"Bảo hiểm du lịch mức cao nhất.",
-							"Y tế dự phòng trên xe.",
-						]}
-					/>
-				);
-			default:
-				return null;
-		}
-	};
-
-	const [index, setIndex] = useState(0);
-	const [routes] = useState<Array<Object>>([
-		{ key: "schedule", title: "Lịch trình" },
-		{ key: "review", title: "Đánh giá" },
-		{ key: "info", title: "Thông tin khác" },
-	]);
-
 	const listTour = [
 		{
 			tourId: "1",
@@ -263,41 +189,10 @@ export const TourDetailScreen = () => {
 						</View>
 
 						<View style={{ flex: 1, minHeight: 400 }}>
-							<TabView
-								style={{ flex: 1 }}
-								navigationState={{ index, routes }}
-								renderScene={renderScene}
-								onIndexChange={setIndex}
-								renderTabBar={(props) => (
-									<TabBar
-										{...props}
-										style={[styles.tabBar]}
-										activeColor="#fff"
-										inactiveColor="#7D7D7D"
-										renderTabBarItem={({ route }) => {
-											const isFocused =
-												props.navigationState.index ===
-												props.navigationState.routes.indexOf(route);
-											return (
-												<TouchableOpacity
-													style={[styles.tabItem, isFocused && styles.activeTab]}
-													onPress={() => props.jumpTo(route.key)}
-												>
-													<Text
-														style={[
-															styles.tabText,
-															isFocused && styles.activeTabText,
-														]}
-													>
-														{route.title}
-													</Text>
-												</TouchableOpacity>
-											);
-										}}
-										contentContainerStyle={{ justifyContent: "space-evenly" }}
-										indicatorContainerStyle={{ display: "none" }}
-									/>
-								)}
+							<TourDetail
+								schedules={schedules}
+								ratingDetails={ratingDetails}
+								commentData={commentData}
 							/>
 						</View>
 						<Divider />
@@ -371,27 +266,5 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
-	tabBar: {
 		backgroundColor: "#fff",
-		elevation: 2,
-		paddingVertical: 10,
-	},
-
-	tabItem: {
-		paddingVertical: 10,
-		paddingHorizontal: 20,
-		borderRadius: 10,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	activeTab: {
-		backgroundColor: "#ff6347", // Màu nền cam khi chọn
-	},
-	tabText: {
-		color: "#7D7D7D",
-		fontWeight: "bold",
-	},
-	activeTabText: {
-		color: "#fff", // Màu trắng khi active
-	},
 });
