@@ -1,5 +1,4 @@
 import { Tab } from "@/libs/navigation";
-import { Ionicons } from "@expo/vector-icons";
 import HomeStack from "../stacks/home-stack";
 import SearchStack from "../stacks/search-stack";
 import MessageStack from "../stacks/message-stack";
@@ -8,7 +7,8 @@ import HomeIcon from "@/assets/svgs/home";
 import SearchIcon from "@/assets/svgs/search";
 import MessageIcon from "@/assets/svgs/message";
 import UserIcon from "@/assets/svgs/user";
-import { TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { Colors } from "@/constants";
 
 export const BottomTabScreenApp = () => {
 	return (
@@ -16,7 +16,7 @@ export const BottomTabScreenApp = () => {
 			screenOptions={({ route }) => ({
 				tabBarIcon: ({ focused }) => {
 					let iconColor = focused ? "#fff" : "#461409";
-					let backgroundColor = focused ? "#f27052" : "#fff";
+					let backgroundColor = focused ? Colors.colorBrand.burntSienna[600] : "#fff";
 					let size = 40;
 					if (route.name === "HomeStack")
 						return (
@@ -68,6 +68,10 @@ export const BottomTabScreenApp = () => {
 				tabBarShowLabel: false,
 				headerShown: false,
 				tabBarHideOnKeyboard: true,
+				tabBarStyle: {
+					borderTopRightRadius: 7,
+					borderTopLeftRadius: 7,
+				},
 			})}
 		>
 			<Tab.Screen
