@@ -6,9 +6,7 @@ import { AxiosError } from "axios";
 
 export const getProfile = async (): Promise<BaseResponse<User | null>> => {
 	try {
-		const response = await api.get<BaseResponse<User>>(`${Gateway.USER}/users/my-info`, {
-			validateStatus: (status) => status < 400, // Chấp nhận tất cả mã < 400 vì server trả về 302 có data
-		});
+		const response = await api.get<BaseResponse<User>>(`${Gateway.USER}/users/my-info`);
 		return response.data;
 	} catch (error) {
 		const axiosError = error as AxiosError<BaseResponse<null>>;
