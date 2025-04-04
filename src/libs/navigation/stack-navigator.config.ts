@@ -20,6 +20,9 @@ export type RootStackParamList = {
 	// ChatAdmin: { userId: string };
 	TourDetailScreen: undefined;
 	ProfileScreen: undefined;
+	ProfileScreenBooking: undefined;
+	ProfileDetailsScreen: undefined;
+	ProfileSecurityScreen: undefined;
 };
 
 declare global {

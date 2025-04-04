@@ -10,7 +10,7 @@ import {
 	ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getProfile } from "@/services/user-service";
+import { getProfile, updateInfo } from "@/services/user-service";
 import { CommonActions, useIsFocused, useNavigation } from "@react-navigation/native";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser } from "@/libs/redux/stores/user.store.";
@@ -21,14 +21,21 @@ import { vi } from "date-fns/locale";
 import { Calendar } from "@/assets/svgs/calendar";
 import { Colors } from "@/constants";
 import DateTimePicker from "react-native-modal-datetime-picker";
+import { Gender } from "@/types/implement";
 
-// Format date function
-const formatDate = (timestamp: number): string => {
+// Format date from timestamp to display string (dd/MM/yyyy)
+const formatDateFromTimestamp = (timestamp: number): string => {
 	const date = new Date(timestamp);
 	const day = String(date.getDate()).padStart(2, "0");
 	const month = String(date.getMonth() + 1).padStart(2, "0");
 	const year = date.getFullYear();
 	return `${day}/${month}/${year}`;
+};
+
+// Format date string (dd/MM/yyyy) to timestamp for API
+const formatDateForApi = (dateStr: string): string => {
+	const [day, month, year] = dateStr.split("/").map(Number);
+	return `${String(day).padStart(2, "0")}-${String(month).padStart(2, "0")}-${year}`;
 };
 
 export const ProfileDetailsScreen = () => {
@@ -43,7 +50,9 @@ export const ProfileDetailsScreen = () => {
 	// Form state
 	const [name, setName] = useState<string>(user?.fullName ?? "");
 	const [gender, setGender] = useState<string>(user?.gender === 1 ? "Nam" : "Nữ");
-	const [dateOfBirth, setDateOfBirth] = useState<string>(formatDate(Number(user?.birthday) || Date.now()));
+	const [dateOfBirth, setDateOfBirth] = useState<string>(
+		user?.birthday ? formatDateFromTimestamp(Number(user.birthday)) : formatDateFromTimestamp(Date.now()),
+	);
 	const [phone, setPhone] = useState<string>(user?.phone ?? "");
 	const [email, setEmail] = useState<string>(user?.email ?? "");
 
@@ -74,7 +83,11 @@ export const ProfileDetailsScreen = () => {
 		if (user) {
 			setName(user?.fullName ?? "");
 			setGender(user?.gender === 1 ? "Nam" : "Nữ");
-			setDateOfBirth(formatDate(Number(user?.birthday) || Date.now()));
+			setDateOfBirth(
+				user?.birthday
+					? formatDateFromTimestamp(Number(user.birthday))
+					: formatDateFromTimestamp(Date.now()),
+			);
 			setPhone(user?.phone ?? "");
 			setEmail(user?.email ?? "");
 		}
@@ -90,7 +103,7 @@ export const ProfileDetailsScreen = () => {
 
 	// Handle date selection
 	const handleConfirm = (date: Date) => {
-		const formattedDate = format(date, "dd/MM/yyyy", { locale: vi });
+		const formattedDate = formatDateFromTimestamp(date.getTime());
 		setDateOfBirth(formattedDate);
 		validateDOB(formattedDate);
 		hideDatePicker();
@@ -98,7 +111,7 @@ export const ProfileDetailsScreen = () => {
 
 	// Validate date of birth
 	const validateDOB = (text: string) => {
-		const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+		const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/; // dd/MM/yyyy format
 		if (!dateRegex.test(text)) return "Ngày sinh phải có định dạng dd/MM/yyyy!";
 
 		const [day, month, year] = text.split("/").map(Number);
@@ -144,16 +157,30 @@ export const ProfileDetailsScreen = () => {
 			return;
 		}
 
-		// TODO: Implement the actual API call to update profile
 		setIsSaving(true);
+		try {
+			const userInfo = {
+				fullName: name,
+				phone: phone,
+				birthday: formatDateForApi(dateOfBirth),
+				gender: gender === "Nam" ? Gender.Male : Gender.Female,
+				email: email,
+			};
 
-		// Simulate API call
-		setTimeout(() => {
+			const response = await updateInfo(userInfo);
+
+			if (response.success) {
+				Alert.alert("Thành công", "Thông tin cá nhân đã được cập nhật", [
+					{ text: "OK", onPress: () => navigation.goBack() },
+				]);
+			} else {
+				Alert.alert("Lỗi", response.message || "Không thể cập nhật thông tin");
+			}
+		} catch (error) {
+			Alert.alert("Lỗi", "Đã có lỗi xảy ra khi cập nhật thông tin");
+		} finally {
 			setIsSaving(false);
-			Alert.alert("Thành công", "Thông tin cá nhân đã được cập nhật", [
-				{ text: "OK", onPress: () => navigation.goBack() },
-			]);
-		}, 1000);
+		}
 	};
 
 	return (
@@ -213,7 +240,7 @@ export const ProfileDetailsScreen = () => {
 							label="Ngày sinh"
 							value={dateOfBirth}
 							onChangeText={setDateOfBirth}
-							placeholder="DD/MM/YYYY"
+							placeholder="dd/MM/yyyy"
 							icon={<Calendar />}
 							onIconPress={showDatePicker}
 						/>
