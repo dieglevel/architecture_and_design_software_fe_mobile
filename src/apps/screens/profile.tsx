@@ -1,37 +1,25 @@
 import React, { useEffect, useState } from "react";
-import {
-	View,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	Image,
-	StyleSheet,
-	ScrollView,
-	ActivityIndicator,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProfile } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { navigate } from "@/libs/navigation/navigationService";
 import { AsyncStorageKey } from "@/libs/async-storage";
 import { CommonActions, useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import { AppDispatch, RootState, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser } from "@/libs/redux/stores/user.store.";
-import { Loading } from "../components";
-import { Colors } from "@/constants";
 import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { format, set } from "date-fns";
 import { vi } from "date-fns/locale";
-import { InputForm } from "../components/ui";
 import { Calendar } from "@/assets/svgs/calendar";
+import { MaterialIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { Colors } from "@/constants";
 
 const ProfileScreen = () => {
 	const [name, setName] = useState<string>("");
 	const [username, setUsername] = useState<string>("");
-	const [address, setAddress] = useState<string>("");
 	const [avatar, setAvatar] = useState<string>("");
 	const [gender, setGender] = useState<string>("Nam");
 	const [dateOfBirth, setDateOfBirth] = useState<string>("");
@@ -43,6 +31,7 @@ const ProfileScreen = () => {
 	const navigation = useNavigation();
 
 	const user = useAppSelector((state) => state.user.data);
+
 	const dispatch = useAppDispatch<AppDispatch>();
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -61,7 +50,12 @@ const ProfileScreen = () => {
 					setPhone(response.data?.phone ?? "");
 					setEmail(response.data?.email ?? "");
 					setAvatar(response.data?.avatarUrl ?? "");
-					console.log("user", response.data);
+					const formatDate = (dateString: string) => {
+						const formattedDate = format(dateString, "dd/MM/yyyy", { locale: vi });
+						return formattedDate;
+					};
+					setDateOfBirth(formatDate(response.data?.birthday ?? ""));
+					console.log("birthday", dateOfBirth);
 				} else {
 					console.error("Error fetching profile:", response?.message ?? "Unknown error");
 				}
@@ -77,6 +71,7 @@ const ProfileScreen = () => {
 		}
 	}, [isFocused]);
 
+	// Hàm xử lý khi người dùng nhấn nút "Đăng xuất"
 	const handleLogout = async () => {
 		try {
 			await AsyncStorage.removeItem(AsyncStorageKey.TOKEN);
@@ -99,6 +94,7 @@ const ProfileScreen = () => {
 		setDatePickVisible(false);
 	};
 
+	// Hàm xử lý khi chọn ngày
 	const handleConfirm = (date: Date) => {
 		const formattedDate = format(date, "dd/MM/yyyy", { locale: vi }); // Định dạng ngày tháng
 		setDateOfBirth(formattedDate);
@@ -129,6 +125,30 @@ const ProfileScreen = () => {
 		return null;
 	};
 
+	// Hàm xử lý khi người dùng chọn thay đổi ảnh
+	const handlePickImage = async () => {
+		// Yêu cầu quyền truy cập ảnh
+		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+		if (permissionResult.granted === false) {
+			alert("Bạn cần cấp quyền truy cập ảnh!");
+			return;
+		}
+
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ["images"], // Dùng chuỗi thay vì MediaTypeOptions.Images
+			allowsEditing: true, // Cho phép chỉnh sửa ảnh
+			aspect: [1, 1], // Cắt ảnh theo tỷ lệ 1:1
+			quality: 1, // Chất lượng ảnh cao nhất
+		});
+
+		return result.canceled ? null : result.assets[0].uri;
+	};
+
+	const changeAvatar = async () => {
+		const newImage = await handlePickImage();
+		if (newImage) setAvatar(newImage);
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			{isLoading ? (
@@ -141,10 +161,22 @@ const ProfileScreen = () => {
 						end={{ x: 1, y: 0.5 }}
 						style={styles.header}
 					>
-						<Image
-							source={{ uri: avatar }}
-							style={styles.avatar}
-						/>
+						<View style={styles.avatarContainer}>
+							<Image
+								source={{ uri: avatar }}
+								style={styles.avatar}
+							/>
+							<TouchableOpacity
+								onPress={changeAvatar}
+								style={styles.avatarEdit}
+							>
+								<MaterialIcons
+									name="camera-alt"
+									size={14}
+									color={Colors.colorBrand.midnightBlue[500]}
+								/>
+							</TouchableOpacity>
+						</View>
 						<View style={{ flexDirection: "column", alignItems: "flex-start" }}>
 							<Text style={styles.name}>{name}</Text>
 							<Text style={styles.username}>{username}</Text>
@@ -285,7 +317,24 @@ const styles = StyleSheet.create({
 		marginHorizontal: 15,
 		marginTop: 10,
 	},
-	avatar: { width: 80, height: 80, borderRadius: 40, borderWidth: 3, borderColor: "#fff", marginRight: 8 },
+	avatarContainer: { position: "relative", width: 80, height: 80, marginRight: 8 },
+	avatar: {
+		width: "100%",
+		height: "100%",
+		borderRadius: 40,
+		borderWidth: 3,
+		borderColor: "#fff",
+	},
+	avatarEdit: {
+		position: "absolute",
+		bottom: -3,
+		width: 30,
+		height: 15,
+		backgroundColor: "#fff",
+		borderRadius: 20,
+		alignItems: "center",
+		alignSelf: "center",
+	},
 	name: { fontSize: 20, fontWeight: "bold", color: "#fff", marginTop: 10 },
 	username: {
 		fontSize: 14,
