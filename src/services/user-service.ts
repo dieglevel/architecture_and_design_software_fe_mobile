@@ -58,3 +58,23 @@ export const updateAvatar = async (avatarUri: string): Promise<BaseResponse<User
 		};
 	}
 };
+
+export const updateInfo = async (userInfo: Partial<User>): Promise<BaseResponse<User | null>> => {
+	try {
+		const response = await api.put<BaseResponse<User>>(`${Gateway.USER}/users/me`, userInfo);
+		return response.data;
+	} catch (error) {
+		const axiosError = error as AxiosError<BaseResponse<null>>;
+		// Handle server response errors
+		if (axiosError.response) {
+			return axiosError.response.data;
+		}
+		// Handle network or no response errors
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
+	}
+};
