@@ -2,40 +2,22 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getProfile } from "@/services/user-service";
+import { getProfile, updateAvatar } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
-import { CommonActions, useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
-import { AppDispatch, RootState, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
+import { CommonActions, useIsFocused, useNavigation } from "@react-navigation/native";
+import { AppDispatch, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser } from "@/libs/redux/stores/user.store.";
 import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Calendar } from "@/assets/svgs/calendar";
 import { MaterialIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { Colors } from "@/constants";
+import imagePicker from "@/services/image-picker";
 
 const ProfileScreen = () => {
-	const [name, setName] = useState<string>("");
-	const [username, setUsername] = useState<string>("");
-	const [avatar, setAvatar] = useState<string>("");
-	const [gender, setGender] = useState<string>("Nam");
-	const [dateOfBirth, setDateOfBirth] = useState<string>("");
-	const [phone, setPhone] = useState<string>("");
-	const [email, setEmail] = useState<string>("");
-	const [password, setPassword] = useState<string>("************");
-	const [confirmPassword, setConfirmPassword] = useState<string>("************");
-	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
-	const navigation = useNavigation();
-
-	const user = useAppSelector((state) => state.user.data);
-
-	const dispatch = useAppDispatch<AppDispatch>();
-
-	const [isLoading, setIsLoading] = useState<boolean>(true);
-
 	const isFocused = useIsFocused();
 
 	useEffect(() => {
@@ -44,18 +26,7 @@ const ProfileScreen = () => {
 				const response = await getProfile();
 				if (response.statusCode === 200) {
 					dispatch(setUser(response.data ?? null));
-					setName(response.data?.fullName ?? "");
-					setUsername(response.data?.username ?? "");
-					setGender(response.data?.gender === 1 ? "Nam" : "Nữ");
-					setPhone(response.data?.phone ?? "");
-					setEmail(response.data?.email ?? "");
-					setAvatar(response.data?.avatarUrl ?? "");
-					const formatDate = (dateString: string) => {
-						const formattedDate = format(dateString, "dd/MM/yyyy", { locale: vi });
-						return formattedDate;
-					};
-					setDateOfBirth(formatDate(response.data?.birthday ?? ""));
-					console.log("birthday", dateOfBirth);
+					console.log("Profile data:", response.data);
 				} else {
 					console.error("Error fetching profile:", response?.message ?? "Unknown error");
 				}
@@ -70,6 +41,35 @@ const ProfileScreen = () => {
 			setIsLoading(false);
 		}
 	}, [isFocused]);
+
+	const user = useAppSelector((state) => state.user.data);
+
+	const dispatch = useAppDispatch<AppDispatch>();
+
+	const formatDate = (timestamp: number): string => {
+		const date = new Date(timestamp); // Chuyển timestamp thành Date object
+		const day = String(date.getDate()).padStart(2, "0"); // Lấy ngày (dd)
+		const month = String(date.getMonth() + 1).padStart(2, "0"); // Lấy tháng (MM)
+		const year = date.getFullYear(); // Lấy năm (YYYY)
+
+		return `${day}/${month}/${year}`; // Format thành dd/MM/yyyy
+	};
+	const [name, setName] = useState<string>(user?.fullName ?? "");
+	const [username, setUsername] = useState<string>(user?.username ?? "");
+	const [avatar, setAvatar] = useState<string>(user?.avatarUrl ?? "");
+	const [gender, setGender] = useState<string>(user?.gender === 1 ? "Nam" : "Nữ");
+	const [dateOfBirth, setDateOfBirth] = useState<string>(
+		formatDate(Number(user?.birthday) || Date.now()), // Ép kiểu về number
+	);
+
+	const [phone, setPhone] = useState<string>(user?.phone ?? "");
+	const [email, setEmail] = useState<string>(user?.email ?? "");
+	const [password, setPassword] = useState<string>("************");
+	const [confirmPassword, setConfirmPassword] = useState<string>("************");
+	const [isDatePickVisible, setDatePickVisible] = useState<boolean>(false);
+	const navigation = useNavigation();
+
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	// Hàm xử lý khi người dùng nhấn nút "Đăng xuất"
 	const handleLogout = async () => {
@@ -125,28 +125,13 @@ const ProfileScreen = () => {
 		return null;
 	};
 
-	// Hàm xử lý khi người dùng chọn thay đổi ảnh
-	const handlePickImage = async () => {
-		// Yêu cầu quyền truy cập ảnh
-		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-		if (permissionResult.granted === false) {
-			alert("Bạn cần cấp quyền truy cập ảnh!");
-			return;
+	const handleChangAvatar = async () => {
+		const newImage = await imagePicker();
+		const response = await updateAvatar(newImage ?? "");
+		if (response.statusCode === 200) {
+			setAvatar(response.data?.avatarUrl ?? "");
+			dispatch(setUser(response.data ?? null));
 		}
-
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ["images"], // Dùng chuỗi thay vì MediaTypeOptions.Images
-			allowsEditing: true, // Cho phép chỉnh sửa ảnh
-			aspect: [1, 1], // Cắt ảnh theo tỷ lệ 1:1
-			quality: 1, // Chất lượng ảnh cao nhất
-		});
-
-		return result.canceled ? null : result.assets[0].uri;
-	};
-
-	const changeAvatar = async () => {
-		const newImage = await handlePickImage();
-		if (newImage) setAvatar(newImage);
 	};
 
 	return (
@@ -167,7 +152,7 @@ const ProfileScreen = () => {
 								style={styles.avatar}
 							/>
 							<TouchableOpacity
-								onPress={changeAvatar}
+								onPress={handleChangAvatar}
 								style={styles.avatarEdit}
 							>
 								<MaterialIcons
