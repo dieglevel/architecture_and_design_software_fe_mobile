@@ -21,7 +21,9 @@
     "date-fns": "^4.1.0",
     "eventemitter3": "^5.0.1",
     "expo": "~52.0.26",
+    "expo-crypto": "^14.0.2",
     "expo-dev-client": "~5.0.17",
+    "expo-image-picker": "~16.0.6",
     "expo-linear-gradient": "~14.0.2",
     "expo-secure-store": "^14.0.1",
     "expo-status-bar": "~2.0.1",
@@ -40,8 +42,7 @@
     "react-native-tab-view": "^4.0.5",
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.13",
-    "react-redux": "^9.2.0",
-    "expo-image-picker": "~16.0.6"
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
