@@ -16,7 +16,7 @@ export const BottomTabScreenApp = () => {
 			screenOptions={({ route }) => ({
 				tabBarIcon: ({ focused }) => {
 					let iconColor = focused ? "#fff" : "#461409";
-					let backgroundColor = focused ? Colors.colorBrand.burntSienna[600] : "#fff";
+					let backgroundColor = focused ? Colors.colorBrand.burntSienna[500] : "#fff";
 					let size = 40;
 					if (route.name === "HomeStack")
 						return (

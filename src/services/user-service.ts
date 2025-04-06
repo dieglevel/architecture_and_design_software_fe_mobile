@@ -3,6 +3,7 @@ import { api } from "../libs/axios/axios.config";
 import { Gateway } from "@/libs/axios";
 import { User } from "@/types/implement/user";
 import { AxiosError } from "axios";
+import * as Crypto from "expo-crypto";
 
 export const getProfile = async (): Promise<BaseResponse<User | null>> => {
 	try {
@@ -10,13 +11,65 @@ export const getProfile = async (): Promise<BaseResponse<User | null>> => {
 		return response.data;
 	} catch (error) {
 		const axiosError = error as AxiosError<BaseResponse<null>>;
-
 		// Trường hợp có response từ server
 		if (axiosError.response) {
 			return axiosError.response.data;
 		}
-
 		// Trường hợp lỗi do network hoặc không có response
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
+	}
+};
+
+export const updateAvatar = async (avatarUri: string): Promise<BaseResponse<User | null>> => {
+	const generateFileName = async (uri: string) => {
+		const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, uri);
+		const fileExtension = uri.split(".").pop(); // Lấy phần mở rộng (jpg, png,...)
+		return `${hash}.${fileExtension}`;
+	};
+	try {
+		const formData = new FormData();
+		const fileName = await generateFileName(avatarUri);
+		console.log("File name:", fileName); // Kiểm tra tên file đã được tạo thành công chưa
+
+		formData.append("avatar", {
+			uri: avatarUri,
+			name: fileName,
+			type: "image/jpeg|jpg|png", // Định dạng hợp lệ: "image/jpeg" hoặc "image/png"
+		} as any);
+
+		const response = await api.put<BaseResponse<User>>(`${Gateway.USER}/users/me/avatar`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data", // CÓ THỂ LOẠI BỎ để axios tự đặt
+			},
+		});
+
+		return response.data;
+	} catch (error) {
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
+	}
+};
+
+export const updateInfo = async (userInfo: Partial<User>): Promise<BaseResponse<User | null>> => {
+	try {
+		const response = await api.put<BaseResponse<User>>(`${Gateway.USER}/users/me`, userInfo);
+		return response.data;
+	} catch (error) {
+		const axiosError = error as AxiosError<BaseResponse<null>>;
+		// Handle server response errors
+		if (axiosError.response) {
+			return axiosError.response.data;
+		}
+		// Handle network or no response errors
 		return {
 			message: "Không thể kết nối đến server",
 			data: null,
