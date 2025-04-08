@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-native";
+import { View, StyleSheet, RefreshControl, Dimensions, Animated } from "react-native";
 import { SafeAreaView } from "../../components";
 import { Tour } from "@/types/implement";
-import Header, { HEADER_HEIGHT } from "./container/header";
+import Header, { HEADER_HEIGHT, SCROLL_THRESHOLD } from "./container/header";
 import ListItem from "./container/list-item";
 import HeadText from "./components/head-text";
 import { handleGetTours } from "./handle";
@@ -10,6 +10,7 @@ import { Colors } from "@/constants";
 import { navigate } from "@/libs/navigation/navigationService";
 import { CarouselBanner } from "./components/carousel-banner";
 import { CategoriesScroll } from "./components/categories-scroll";
+import { useDispatch } from "react-redux";
 
 const { width } = Dimensions.get("window");
 
@@ -18,6 +19,8 @@ export const HomeScreen = () => {
 	const [popularTours, setPopularTours] = useState<Tour[]>([]);
 	const [discountedTours, setDiscountedTours] = useState<Tour[]>([]);
 	const [refreshing, setRefreshing] = useState(false);
+	const dispatch = useDispatch();
+	const scrollY = new Animated.Value(0);
 
 	const fetchData = async () => {
 		await handleGetTours(setListTour);
@@ -90,9 +93,9 @@ export const HomeScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<Header />
+			<Header scrollY={scrollY} />
 
-			<FlatList
+			<Animated.FlatList
 				data={listTour}
 				renderItem={({ item }) => (
 					<View style={styles.section}>
@@ -112,6 +115,10 @@ export const HomeScreen = () => {
 						colors={[Colors.colorBrand.burntSienna[500]]}
 					/>
 				}
+				onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+					useNativeDriver: true,
+				})}
+				scrollEventThrottle={16}
 				ListHeaderComponent={renderHeader}
 			/>
 		</SafeAreaView>
