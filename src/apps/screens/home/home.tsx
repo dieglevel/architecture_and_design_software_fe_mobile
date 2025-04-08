@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, RefreshControl, Dimensions, Animated } from "react-native";
-import { SafeAreaView } from "../../components";
-import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-native";
+import { View, StyleSheet, RefreshControl, Dimensions, FlatList, Animated } from "react-native";
 import { Loading, LoadingSpin, SafeAreaView } from "../../components";
 import { Tour } from "@/types/implement";
 import Header, { HEADER_HEIGHT, SCROLL_THRESHOLD } from "./container/header";
@@ -103,7 +101,6 @@ export const HomeScreen = () => {
 				<LoadingSpin />
 			) : (
 				<>
-					<Header />
 			<Header scrollY={scrollY} />
 
 			<Animated.FlatList
@@ -132,9 +129,11 @@ export const HomeScreen = () => {
 				scrollEventThrottle={16}
 				ListHeaderComponent={renderHeader}
 			/>
-		</SafeAreaView>
-	);
+			</>)}
+		</SafeAreaView> )
+
 };
+
 
 const styles = StyleSheet.create({
 	container: {

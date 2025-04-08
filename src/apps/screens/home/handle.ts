@@ -5,14 +5,14 @@ export const handleGetTours = async (setListTour: React.Dispatch<React.SetStateA
 	try {
 		const response = await getTours();
 
-		if (response.statusCode === 200) {
+		if (response) {
 			const tours = response.data;
 
 			if (tours) {
 				setListTour(tours);
 			}
 		} else {
-			console.error("Error fetching tours:", response?.message ?? "Unknown error");
+			console.error("Error fetching tours:", response);
 		}
 	} catch (error) {
 		console.error("Error fetching tours:", error);

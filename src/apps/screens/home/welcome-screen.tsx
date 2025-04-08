@@ -23,14 +23,13 @@ const WelcomeScreen = () => {
 	}, [isDataLoaded]);
 
 	return (
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center", margin: 15 }}>
+		<View style={{ flex: 1, justifyContent: "center", alignItems: "center", margin: 15.5, backgroundColor: "#fffefe" }}>
 			<LottieView
 				source={require("../../../assets/svgs/welcome.json")}
 				autoPlay
 				loop
-				style={{ width: 350, height: 350 }}
+				style={{ width: 350, height: 350,  }}
 			/>
-			<Text style={styles.welcomeText}>Chào mừng bạn!</Text>
 		</View>
 	);
 };

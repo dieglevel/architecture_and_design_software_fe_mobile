@@ -15,7 +15,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Tour } from "@/types/implement";
 import { navigate } from "@/libs/navigation/navigationService";
 import { useDispatch } from "react-redux";
-import { selectTour } from "@/libs/redux/stores/selected-tour.store";
 
 interface Props {
 	tours: Tour[];
@@ -34,7 +33,7 @@ export const CarouselBanner = ({ tours }: Props) => {
 
 		const interval = setInterval(() => {
 			nextBanner();
-		}, 1000);
+		}, 4000);
 
 		return () => clearInterval(interval);
 	}, [currentBannerIndex, tours.length]);
@@ -57,8 +56,7 @@ export const CarouselBanner = ({ tours }: Props) => {
 	};
 
 	const handlePressBanner = (tour: Tour) => {
-		dispatch(selectTour(tour));
-		navigate("TourDetailScreen");
+		navigate("TourDetailScreen", { tourId: tour.tourId });
 	};
 
 	const renderBannerItem = ({ item, index }: { item: Tour; index: number }) => (

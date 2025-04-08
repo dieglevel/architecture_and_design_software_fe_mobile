@@ -17,7 +17,7 @@ export default function App() {
 	return (
 		<PaperProvider>
 			<Provider store={store}>
-			<RootScreenApp />
+				<RootScreenApp />
 			</Provider>
 		</PaperProvider>
 	);
