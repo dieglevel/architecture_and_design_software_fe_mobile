@@ -15,7 +15,7 @@ interface Props {
 	horizontal?: boolean;
 }
 
-export const TourItem = ({ discount = 0, tour, rating = 3.5, horizontal = false }: Props) => {
+export const TourItem = React.memo(({ discount = 0, tour, rating = 3.5, horizontal = false }: Props) => {
 	const discountCalculation = (price: number, discount: number) => {
 		if (discount > 0) {
 			return price - (price * discount) / 100;
@@ -120,7 +120,7 @@ export const TourItem = ({ discount = 0, tour, rating = 3.5, horizontal = false 
 			</View>
 		</TouchableOpacity>
 	);
-};
+});
 
 const { width } = Dimensions.get("window");
 const cardWidth = width * 0.75;

@@ -1,3 +1,4 @@
+import { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,6 +39,8 @@ declare global {
 }
 
 export type StackScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+export type TourDetailRouteProp = RouteProp<RootStackParamList, 'TourDetailScreen'>;
 
 // export type ProductDetailRouteProp = RouteProp<
 // 	RootStackParamList,
