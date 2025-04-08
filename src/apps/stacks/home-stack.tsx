@@ -16,7 +16,7 @@ export default function HomeStack() {
 			<Stack.Screen
 				name="TourDetailScreen"
 				component={TourDetailScreen}
-				options={{ headerShown: true }}
+				options={{ headerShown: true, title: "", presentation: "modal" }}
 			/>
 		</Stack.Navigator>
 	);
