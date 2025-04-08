@@ -7,7 +7,6 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "rea
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
-import { selectTour } from "@/libs/redux/stores/selected-tour.store";
 
 interface Props {
 	tour: Tour;
@@ -24,7 +23,6 @@ export const TourItem = ({ discount = 0, tour, rating = 3.5, horizontal = false 
 		return price;
 	};
 
-	const dispatch = useDispatch();
 
 	return (
 		<TouchableOpacity
@@ -34,7 +32,7 @@ export const TourItem = ({ discount = 0, tour, rating = 3.5, horizontal = false 
 				horizontal ? styles.horizontalContainer : null,
 				discount > 0 && styles.containerDiscount,
 			]}
-			onPress={() => dispatch(selectTour(tour)) && navigate("TourDetailScreen")}
+			onPress={() => navigate("TourDetailScreen", { tourId: tour.tourId })}
 		>
 			<View style={horizontal ? styles.horizontalImageContainer : styles.imageContainer}>
 				<Image

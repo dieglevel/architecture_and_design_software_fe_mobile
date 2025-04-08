@@ -29,11 +29,6 @@
     "jsEngine": "hermes",
     "plugins": [
       "expo-font"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "299c3a94-7d97-40a6-bcb4-007fe17e35a4"
-      }
-    }
+    ]
   }
 }
