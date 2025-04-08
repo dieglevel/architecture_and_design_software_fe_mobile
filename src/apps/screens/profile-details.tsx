@@ -11,13 +11,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProfile, updateInfo } from "@/services/user-service";
-import { CommonActions, useIsFocused, useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser } from "@/libs/redux/stores/user.store.";
 import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale";
 import { Calendar } from "@/assets/svgs/calendar";
 import { Colors } from "@/constants";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -133,11 +130,6 @@ export const ProfileDetailsScreen = () => {
 		return null;
 	};
 
-	// Handle gender selection
-	const toggleGender = () => {
-		setGender(gender === "Nam" ? "Nữ" : "Nam");
-	};
-
 	// Handle save changes
 	const handleSaveChanges = async () => {
 		// Validation
@@ -166,6 +158,7 @@ export const ProfileDetailsScreen = () => {
 				gender: gender === "Nam" ? Gender.Male : Gender.Female,
 				email: email,
 			};
+			console.log("User Info:", userInfo);
 
 			const response = await updateInfo(userInfo);
 

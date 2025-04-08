@@ -13,3 +13,23 @@ export const getTours = async () => {
 		throw e as BaseResponse<null>;
 	}
 };
+
+export const searchTours = async (tour: Tour) => {
+	try {
+		const response = await api.get<BaseResponse<Tour[]>>(`${Gateway.BOOKING}/tours/search`, {
+			params: tour,
+		});
+		return response.data;
+	} catch (e) {
+		throw e as BaseResponse<null>;
+	}
+};
+
+export const getTourDetails = async (id: string) => {
+	try {
+		const response = await api.get<BaseResponse<Tour>>(`${Gateway.BOOKING}/tours/${id}`);
+		return response.data;
+	} catch (e) {
+		throw e as BaseResponse<null>;
+	}
+};

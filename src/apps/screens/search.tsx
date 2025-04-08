@@ -17,6 +17,8 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { Colors } from "@/constants";
 import SearchIcon from "@/assets/svgs/search";
 import { Ionicons } from "@expo/vector-icons";
+import { searchTours } from "@/services/tour-service";
+import { navigate } from "@/libs/navigation/navigationService";
 
 const { width } = Dimensions.get("window");
 const popularDestinations = [
@@ -70,12 +72,19 @@ export const SearchScreen = () => {
 	};
 
 	const handleSearch = () => {
-		// Implement search functionality
+		// Navigate to search results with parameters
 		console.log("Searching for:", {
 			departureLocation,
 			destination,
 			departureDate,
 			returnDate,
+		});
+
+		navigate("SearchResultsScreen", {
+			departure: departureLocation,
+			destination: destination,
+			departureDate: departureDate,
+			returnDate: returnDate,
 		});
 	};
 

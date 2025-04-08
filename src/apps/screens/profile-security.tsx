@@ -97,20 +97,20 @@ export const ProfileSecurityScreen = () => {
 		<SafeAreaView style={styles.container}>
 			<ScrollView contentContainerStyle={styles.scrollContainer}>
 				<View style={styles.formContainer}>
-					<Text style={styles.formTitle}>Change Password</Text>
+					<Text style={styles.formTitle}>Thay đổi mật khẩu</Text>
 					<Text style={styles.formDescription}>
-						Your password must be at least 8 characters long and contain a mix of uppercase letters,
-						lowercase letters, numbers, and special characters.
+						Mật khẩu của bạn phải có ít nhất 8 ký tự và bao gồm chữ hoa, chữ thường, số và ký tự đặc
+						biệt.
 					</Text>
 
 					<View style={styles.inputContainer}>
-						<Text style={styles.inputLabel}>Current Password</Text>
+						<Text style={styles.inputLabel}>Mật khẩu hiện tại</Text>
 						<View style={styles.inputWrapper}>
 							<TextInput
 								style={styles.input}
 								value={currentPassword}
 								onChangeText={setCurrentPassword}
-								placeholder="Enter your current password"
+								placeholder="Nhập mật khẩu hiện tại của bạn"
 								placeholderTextColor={Colors.gray[400]}
 								secureTextEntry={!showCurrentPassword}
 							/>
@@ -129,13 +129,13 @@ export const ProfileSecurityScreen = () => {
 					</View>
 
 					<View style={styles.inputContainer}>
-						<Text style={styles.inputLabel}>New Password</Text>
+						<Text style={styles.inputLabel}>Mật khẩu mới</Text>
 						<View style={styles.inputWrapper}>
 							<TextInput
 								style={styles.input}
 								value={newPassword}
 								onChangeText={setNewPassword}
-								placeholder="Enter your new password"
+								placeholder="Nhập mật khẩu mới"
 								placeholderTextColor={Colors.gray[400]}
 								secureTextEntry={!showNewPassword}
 							/>
@@ -179,13 +179,13 @@ export const ProfileSecurityScreen = () => {
 					</View>
 
 					<View style={styles.inputContainer}>
-						<Text style={styles.inputLabel}>Confirm New Password</Text>
+						<Text style={styles.inputLabel}>Nhập lại mật khẩu mới</Text>
 						<View style={styles.inputWrapper}>
 							<TextInput
 								style={styles.input}
 								value={confirmPassword}
 								onChangeText={setConfirmPassword}
-								placeholder="Confirm your new password"
+								placeholder="Xác nhận lại mật khẩu mới của bạn"
 								placeholderTextColor={Colors.gray[400]}
 								secureTextEntry={!showConfirmPassword}
 							/>
@@ -211,13 +211,13 @@ export const ProfileSecurityScreen = () => {
 						{isLoading ? (
 							<ActivityIndicator color="#fff" />
 						) : (
-							<Text style={styles.saveButtonText}>Update Password</Text>
+							<Text style={styles.saveButtonText}>Thay đổi mật khẩu</Text>
 						)}
 					</TouchableOpacity>
 				</View>
 
 				<View style={styles.securityOptionsContainer}>
-					<Text style={styles.formTitle}>Additional Security Options</Text>
+					<Text style={styles.formTitle}>Tùy chọn bảo mật bổ sung</Text>
 
 					<TouchableOpacity style={styles.securityOption}>
 						<View style={styles.securityOptionContent}>
@@ -227,9 +227,9 @@ export const ProfileSecurityScreen = () => {
 								color={Colors.colorBrand.burntSienna[500]}
 							/>
 							<View style={styles.securityOptionTextContainer}>
-								<Text style={styles.securityOptionTitle}>Two-Factor Authentication</Text>
+								<Text style={styles.securityOptionTitle}>Xác thực hai yếu tố</Text>
 								<Text style={styles.securityOptionDescription}>
-									Add an extra layer of security to your account
+									Thêm một lớp bảo mật bổ sung cho tài khoản của bạn
 								</Text>
 							</View>
 						</View>
@@ -248,9 +248,9 @@ export const ProfileSecurityScreen = () => {
 								color={Colors.colorBrand.burntSienna[500]}
 							/>
 							<View style={styles.securityOptionTextContainer}>
-								<Text style={styles.securityOptionTitle}>Login Activity</Text>
+								<Text style={styles.securityOptionTitle}>Lịch sử đăng nhập</Text>
 								<Text style={styles.securityOptionDescription}>
-									Review your recent login sessions
+									Xem lại các phiên đăng nhập gần đây của bạn
 								</Text>
 							</View>
 						</View>

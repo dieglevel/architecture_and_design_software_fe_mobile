@@ -1,18 +1,40 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, StatusBar, Dimensions } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, StatusBar, Dimensions, Animated } from "react-native";
 import { Colors } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
-// Export this constant so we can use it in the HomeScreen
-export const HEADER_HEIGHT = 150;
+// Export these constants for the HomeScreen
+export const HEADER_HEIGHT = 140;
+export const TOP_ROW_HEIGHT = 70;
+export const SCROLL_THRESHOLD = TOP_ROW_HEIGHT;
 
-const Header = () => {
+interface HeaderProps {
+	scrollY: Animated.Value;
+}
+
+const Header = ({ scrollY }: HeaderProps) => {
 	const insets = useSafeAreaInsets();
 
+	// Calculate the translation for the entire header
+	const headerTranslateY = scrollY.interpolate({
+		inputRange: [0, SCROLL_THRESHOLD],
+		outputRange: [0, -TOP_ROW_HEIGHT],
+		extrapolate: "clamp",
+	});
+
 	return (
-		<View style={[styles.container, { paddingTop: insets.top > 0 ? insets.top : 10 }]}>
+		<Animated.View
+			style={[
+				styles.container,
+				{
+					paddingTop: insets.top > 0 ? insets.top : 10,
+					transform: [{ translateY: headerTranslateY }],
+				},
+			]}
+		>
 			<StatusBar
 				barStyle="dark-content"
 				backgroundColor="#fff"
@@ -67,7 +89,7 @@ const Header = () => {
 					/>
 				</TouchableOpacity>
 			</View>
-		</View>
+		</Animated.View>
 	);
 };
 
@@ -75,7 +97,7 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: "#fff",
 		paddingHorizontal: 20,
-		paddingBottom: 15,
+		// paddingBottom: 15,
 		borderBottomLeftRadius: 20,
 		borderBottomRightRadius: 20,
 		shadowColor: Colors.gray[800],
@@ -83,20 +105,21 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.1,
 		shadowRadius: 10,
 		elevation: 5,
-		marginBottom: 5,
+		// marginBottom: 15,
 		width: width,
-		alignSelf: "center",
+		// alignSelf: "center",
 		left: 0,
 		right: 0,
 		position: "absolute",
 		zIndex: 10,
-		height: HEADER_HEIGHT, // Use the exported constant
+		height: HEADER_HEIGHT,
 	},
 	topRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		marginBottom: 15,
+		// marginBottom: 8,
+		height: TOP_ROW_HEIGHT,
 	},
 	welcomeContainer: {
 		flexDirection: "column",
