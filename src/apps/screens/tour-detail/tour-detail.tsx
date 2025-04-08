@@ -1,12 +1,35 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Modal, Dimensions } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Texts } from "@/constants";
 import { TourItem } from "../../components/ui";
 import BookingButton from "../../components/ui/booking-btn";
 import { Divider } from "react-native-paper";
 import TourDetail from "@/apps/components/ui/tour-detail-tabview";
+import { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
+
+// Định nghĩa interface cho tourImageResponse
+interface TourImageResponse {
+	imageUrl: string;
+	[key: string]: any;
+}
 
 export const TourDetailScreen = () => {
+	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+	const [modalVisible, setModalVisible] = useState(false);
+	const [currentImageIndex, setCurrentImageIndex] = useState(0);
+	const windowWidth = Dimensions.get("window").width;
+	const flatListRef = useRef<FlatList>(null);
+
+	const tourSelected = useSelector((state: any) => state.selectedTour.selected);
+	console.log(JSON.stringify(tourSelected, null, 2));
+
+	// useEffect(() => {
+	// 	const fetchTourData = async () => {
+	// 		const data = await getTourDetails
+	// 	}
+	// })
+
 	const schedules = [
 		{
 			day: "Ngày 1",
@@ -164,16 +187,76 @@ export const TourDetailScreen = () => {
 				contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
 				ListHeaderComponent={
 					<View style={[styles.container, { gap: 8 }]}>
-						<Image
-							source={{
-								uri: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tour_eiffel_paris-eiffel_tower.jpg",
-							}}
-							style={styles.image}
-						/>
+						<View style={styles.imageContainer}>
+							<FlatList
+								ref={flatListRef}
+								data={tourSelected?.tourImageResponses || []}
+								horizontal
+								pagingEnabled
+								showsHorizontalScrollIndicator={false}
+								keyExtractor={(item, index) => index.toString()}
+								onMomentumScrollEnd={(event) => {
+									const newIndex = Math.round(
+										event.nativeEvent.contentOffset.x / (windowWidth - 20),
+									);
+									setCurrentImageIndex(newIndex);
+								}}
+								renderItem={({ item }) => (
+									<TouchableOpacity
+										onPress={() => {
+											setSelectedImage(item.imageUrl);
+											setModalVisible(true);
+										}}
+									>
+										<Image
+											source={{ uri: item.imageUrl }}
+											style={[styles.image, { width: windowWidth - 20 }]}
+											resizeMode="cover"
+										/>
+									</TouchableOpacity>
+								)}
+							/>
+							<View style={styles.paginationContainer}>
+								{(tourSelected?.tourImageResponses || []).map(
+									(_: TourImageResponse, index: number) => (
+										<View
+											key={index}
+											style={[
+												styles.paginationDot,
+												index === currentImageIndex && styles.paginationDotActive,
+											]}
+										/>
+									),
+								)}
+							</View>
+						</View>
+
+						<Modal
+							animationType="fade"
+							transparent={true}
+							visible={modalVisible}
+							onRequestClose={() => setModalVisible(false)}
+						>
+							<TouchableOpacity
+								style={styles.modalContainer}
+								activeOpacity={1}
+								onPress={() => setModalVisible(false)}
+							>
+								<Image
+									source={{ uri: selectedImage || "" }}
+									style={styles.modalImage}
+									resizeMode="contain"
+								/>
+							</TouchableOpacity>
+						</Modal>
 
 						<View style={styles.content}>
-							<Text style={styles.title}>Tour Côn Đảo 3N2Đ</Text>
-							<Text style={styles.description}>HCM - Grand World - Câu Cá - Lặn Ngắm San Hô</Text>
+							<Text style={styles.title}>{tourSelected?.name || "Error"}</Text>
+							<Text style={styles.description}>
+								{tourSelected?.tourDestinationResponses
+									.map((item: any) => item?.name)
+									.join(" - ")}
+							</Text>
 							<View style={styles.row}>
 								<Text style={styles.location}>Kiên Giang</Text>
 								<View style={styles.ratingContainer}>
@@ -218,10 +301,38 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 		overflow: "hidden",
 	},
+	imageContainer: {
+		height: 200,
+		borderRadius: 10,
+		overflow: "hidden",
+		position: "relative",
+	},
 	image: {
 		width: "100%",
-		height: 150,
+		height: "100%",
 		borderRadius: 10,
+	},
+	paginationContainer: {
+		position: "absolute",
+		bottom: 10,
+		left: 0,
+		right: 0,
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	paginationDot: {
+		width: 8,
+		height: 8,
+		borderRadius: 4,
+		backgroundColor: "rgba(255, 255, 255, 0.88)",
+		marginHorizontal: 4,
+	},
+	paginationDotActive: {
+		backgroundColor: Colors.colorBrand.burntSienna[500],
+		width: 10,
+		height: 10,
+		borderRadius: 5,
 	},
 	content: {
 		padding: 10,
@@ -265,6 +376,17 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	modalContainer: {
+		flex: 1,
+		backgroundColor: "black",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	modalImage: {
+		width: "100%",
+		height: "100%",
+		resizeMode: "contain",
 	},
 	// backgroundColor: "#fff",
 });
