@@ -3,16 +3,20 @@ import { navigate } from "@/libs/navigation/navigationService";
 import { Tour } from "@/types/implement";
 import { localePrice } from "@/utils";
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { selectTour } from "@/libs/redux/stores/selected-tour.store";
 
 interface Props {
 	tour: Tour;
 	rating?: number;
-
 	discount?: number;
+	horizontal?: boolean;
 }
 
-export const TourItem = ({ discount = 0, tour, rating = 3.5 }: Props) => {
+export const TourItem = ({ discount = 0, tour, rating = 3.5, horizontal = false }: Props) => {
 	const discountCalculation = (price: number, discount: number) => {
 		if (discount > 0) {
 			return price - (price * discount) / 100;
@@ -20,127 +24,228 @@ export const TourItem = ({ discount = 0, tour, rating = 3.5 }: Props) => {
 		return price;
 	};
 
+	const dispatch = useDispatch();
+
 	return (
 		<TouchableOpacity
 			delayPressIn={500}
-			style={[styles.container, discount > 0 && styles.containerDiscount]}
-			onPress={() => navigate("TourDetailScreen")}
+			style={[
+				styles.container,
+				horizontal ? styles.horizontalContainer : null,
+				discount > 0 && styles.containerDiscount,
+			]}
+			onPress={() => dispatch(selectTour(tour)) && navigate("TourDetailScreen")}
 		>
-			<Image
-				source={{ uri: tour.thumbnail }}
-				style={styles.image}
-			/>
+			<View style={horizontal ? styles.horizontalImageContainer : styles.imageContainer}>
+				<Image
+					source={{ uri: tour.thumbnail }}
+					style={styles.image}
+					resizeMode="cover"
+				/>
+
+				{/* Location tag */}
+				<LinearGradient
+					colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.7)"]}
+					style={styles.gradientOverlay}
+				>
+					<View style={styles.locationContainer}>
+						<Ionicons
+							name="location"
+							size={14}
+							color="#fff"
+						/>
+						<Text
+							style={styles.locationText}
+							numberOfLines={1}
+						>
+							{tour.name ? tour.name.split(" - ")[1] || "Việt Nam" : "Việt Nam"}
+						</Text>
+					</View>
+				</LinearGradient>
+
+				{/* Favorite button */}
+				<TouchableOpacity style={styles.favoriteButton}>
+					<Ionicons
+						name="heart-outline"
+						size={20}
+						color="#fff"
+					/>
+				</TouchableOpacity>
+
+				{discount > 0 && (
+					<View style={styles.discountBadge}>
+						<Text style={styles.discountText}>-{discount}%</Text>
+					</View>
+				)}
+			</View>
+
 			<View style={styles.details}>
-				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-					<Text
-						style={styles.name}
-						numberOfLines={1}
-					>
-						{tour.name}
-					</Text>
-					{rating > 0 ? (
-						<Text style={[styles.rating, { fontWeight: "bold" }]}>{rating.toFixed(1)} ⭐</Text>
-					) : null}
+				<Text
+					style={styles.name}
+					numberOfLines={horizontal ? 1 : 2}
+				>
+					{tour.name}
+				</Text>
+
+				<View style={styles.infoRow}>
+					<View style={styles.infoItem}>
+						<Ionicons
+							name="time-outline"
+							size={14}
+							color={Colors.gray[500]}
+						/>
+						<Text style={styles.infoText}>{tour.duration}</Text>
+					</View>
+
+					<View style={styles.infoItem}>
+						<Ionicons
+							name="star"
+							size={14}
+							color="#FFD700"
+						/>
+						<Text style={styles.infoText}>{rating.toFixed(1)}</Text>
+					</View>
 				</View>
-				<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-					<Text style={styles.duration}>⏱ {tour.duration}</Text>
-					<Text style={styles.price}>
-						{discount > 0 ? (
-							<>
-								<Text style={styles.originalPrice}>
-									{localePrice(tour.price ? tour.price : 0)}
-								</Text>
-								{"  "}
-								<Text style={styles.discountedPrice}>
-									{localePrice(discountCalculation(tour.price ? tour.price : 0, discount))}
-								</Text>
-							</>
-						) : (
-							<Text style={{ color: Colors.colorBrand.burntSienna[500] }}>
-								{localePrice(tour.price ? tour.price : 0)}
+
+				<View style={styles.priceContainer}>
+					{discount > 0 ? (
+						<>
+							<Text style={styles.originalPrice}>{localePrice(tour.price ? tour.price : 0)}</Text>
+							<Text style={styles.discountedPrice}>
+								{localePrice(discountCalculation(tour.price ? tour.price : 0, discount))}
 							</Text>
-						)}
-					</Text>
+						</>
+					) : (
+						<Text style={styles.discountedPrice}>{localePrice(tour.price ? tour.price : 0)}</Text>
+					)}
 				</View>
 			</View>
-			{discount > 0 && <Text style={styles.discountBadge}>-{discount}%</Text>}
 		</TouchableOpacity>
 	);
 };
 
+const { width } = Dimensions.get("window");
+const cardWidth = width * 0.75;
+
 const styles = StyleSheet.create({
 	container: {
 		width: "100%",
-		height: 230,
 		backgroundColor: "#fff",
-		borderRadius: 10,
+		borderRadius: 16,
 		marginVertical: 10,
 		shadowColor: Colors.colorBrand.midnightBlue[950],
-		borderWidth: 1,
-		borderColor: "#F5F5F5",
-		position: "relative",
+		overflow: "hidden",
 		shadowOffset: {
 			width: 0,
 			height: 3,
 		},
-		shadowOpacity: 0.27,
-		shadowRadius: 4.65,
-
-		elevation: 6,
+		shadowOpacity: 0.15,
+		shadowRadius: 8,
+		elevation: 5,
+	},
+	horizontalContainer: {
+		width: cardWidth,
+		marginRight: 15,
+		height: 280,
 	},
 	containerDiscount: {
-		borderColor: "#FF6F61",
+		borderWidth: 0,
+	},
+	imageContainer: {
+		width: "100%",
+		height: 180,
+		position: "relative",
+	},
+	horizontalImageContainer: {
+		width: "100%",
+		height: 160,
+		position: "relative",
 	},
 	image: {
 		width: "100%",
-		height: 160,
-		borderTopLeftRadius: 10,
-		borderTopRightRadius: 10,
+		height: "100%",
+	},
+	gradientOverlay: {
+		position: "absolute",
+		bottom: 0,
+		left: 0,
+		right: 0,
+		height: 60,
+		justifyContent: "flex-end",
+		paddingBottom: 10,
+		paddingHorizontal: 12,
+	},
+	locationContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	locationText: {
+		color: "#fff",
+		fontSize: 12,
+		marginLeft: 4,
+		fontWeight: "600",
+	},
+	favoriteButton: {
+		position: "absolute",
+		top: 10,
+		right: 10,
+		width: 32,
+		height: 32,
+		borderRadius: 16,
+		backgroundColor: "rgba(0,0,0,0.3)",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	details: {
-		margin: 10,
-		justifyContent: "space-between",
+		padding: 12,
 	},
 	name: {
 		fontSize: 16,
 		fontWeight: "bold",
 		color: Colors.colorBrand.midnightBlue[950],
-		maxWidth: "75%",
+		marginBottom: 8,
 	},
-
-	rating: {
-		fontSize: 14,
-		color: "#000",
+	infoRow: {
+		flexDirection: "row",
+		marginBottom: 8,
 	},
-	duration: {
-		fontSize: 14,
-		color: "#555",
+	infoItem: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginRight: 16,
 	},
-	price: {
-		fontSize: 16,
-		fontWeight: "bold",
+	infoText: {
+		fontSize: 12,
+		color: Colors.gray[700],
+		marginLeft: 4,
+	},
+	priceContainer: {
+		flexDirection: "row",
+		alignItems: "center",
 	},
 	discountedPrice: {
 		fontSize: 16,
 		fontWeight: "bold",
-		color: Colors.colorBrand.midnightBlue[950],
+		color: Colors.colorBrand.burntSienna[600],
 	},
 	originalPrice: {
 		fontSize: 14,
-		color: "#888",
+		color: Colors.gray[500],
 		textDecorationLine: "line-through",
+		marginRight: 8,
 	},
 	discountBadge: {
 		position: "absolute",
 		top: 10,
-		right: 10,
-		backgroundColor: "#fff",
-		color: Colors.colorBrand.midnightBlue[950],
-		textAlign: "center",
+		left: 10,
+		backgroundColor: Colors.colorBrand.burntSienna[500],
 		paddingHorizontal: 8,
-		paddingVertical: 2,
+		paddingVertical: 4,
+		borderRadius: 12,
+	},
+	discountText: {
+		color: "#fff",
 		fontSize: 12,
 		fontWeight: "bold",
-		borderRadius: 5,
 	},
 });
