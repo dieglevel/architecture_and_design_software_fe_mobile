@@ -12,6 +12,7 @@ interface Props extends React.PropsWithChildren<TextInputProps> {
 	secureTextEntry?: boolean;
 	required?: boolean;
 	style?: StyleProp<ViewStyle>;
+	inputContainerStyle?: StyleProp<ViewStyle>;
 	validator?: (text: string) => string | null; // Hàm kiểm tra
 }
 
@@ -27,6 +28,7 @@ export const InputForm = ({
 	secureTextEntry,
 	required,
 	style,
+	inputContainerStyle,
 	validator,
 }: Props) => {
 	const [isFocus, setIsFocus] = useState(false);
@@ -57,6 +59,7 @@ export const InputForm = ({
 					Styles.px8,
 					Styles.gap8,
 					{ flexDirection: "row", alignItems: "center", maxHeight: 40 },
+					inputContainerStyle,
 				]}
 			>
 				{left && (
