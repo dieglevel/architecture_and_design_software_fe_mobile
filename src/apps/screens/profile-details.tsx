@@ -46,7 +46,7 @@ export const ProfileDetailsScreen = () => {
 
 	// Form state
 	const [name, setName] = useState<string>(user?.fullName ?? "");
-	const [gender, setGender] = useState<string>(user?.gender === 1 ? "Nam" : "Nữ");
+	const [gender, setGender] = useState<Gender>(user?.gender ?? Gender.Male);
 	const [dateOfBirth, setDateOfBirth] = useState<string>(
 		user?.birthday ? formatDateFromTimestamp(Number(user.birthday)) : formatDateFromTimestamp(Date.now()),
 	);
@@ -79,7 +79,7 @@ export const ProfileDetailsScreen = () => {
 	useEffect(() => {
 		if (user) {
 			setName(user?.fullName ?? "");
-			setGender(user?.gender === 1 ? "Nam" : "Nữ");
+			setGender(user?.gender === Gender.Male ? Gender.Male : Gender.Female);
 			setDateOfBirth(
 				user?.birthday
 					? formatDateFromTimestamp(Number(user.birthday))
@@ -155,7 +155,7 @@ export const ProfileDetailsScreen = () => {
 				fullName: name,
 				phone: phone,
 				birthday: formatDateForApi(dateOfBirth),
-				gender: gender === "Nam" ? Gender.Male : Gender.Female,
+				gender: gender,
 				email: email,
 			};
 			console.log("User Info:", userInfo);
@@ -196,14 +196,14 @@ export const ProfileDetailsScreen = () => {
 								<TouchableOpacity
 									style={[
 										styles.genderOption,
-										gender === "Nam" && styles.genderOptionSelected,
+										gender === Gender.Male && styles.genderOptionSelected,
 									]}
-									onPress={() => setGender("Nam")}
+									onPress={() => setGender(Gender.Male)}
 								>
 									<Text
 										style={[
 											styles.genderText,
-											gender === "Nam" && styles.genderTextSelected,
+											gender === Gender.Male && styles.genderTextSelected,
 										]}
 									>
 										Nam
@@ -213,14 +213,14 @@ export const ProfileDetailsScreen = () => {
 								<TouchableOpacity
 									style={[
 										styles.genderOption,
-										gender === "Nữ" && styles.genderOptionSelected,
+										gender === Gender.Female && styles.genderOptionSelected,
 									]}
-									onPress={() => setGender("Nữ")}
+									onPress={() => setGender(Gender.Female)}
 								>
 									<Text
 										style={[
 											styles.genderText,
-											gender === "Nữ" && styles.genderTextSelected,
+											gender === Gender.Female && styles.genderTextSelected,
 										]}
 									>
 										Nữ
