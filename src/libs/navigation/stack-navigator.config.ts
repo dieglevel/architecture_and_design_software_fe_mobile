@@ -18,7 +18,7 @@ export type RootStackParamList = {
 	// PaymentResult: undefined;
 	// Cart: { productId: string; callback: () => void };
 	// ChatAdmin: { userId: string };
-	TourDetailScreen: undefined;
+	TourDetailScreen: {tourId: string};
 	ProfileScreen: undefined;
 	ProfileScreenBooking: undefined;
 	ProfileDetailsScreen: undefined;

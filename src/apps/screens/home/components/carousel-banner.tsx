@@ -34,7 +34,7 @@ export const CarouselBanner = ({ tours }: Props) => {
 
 		const interval = setInterval(() => {
 			nextBanner();
-		}, 4000);
+		}, 1000);
 
 		return () => clearInterval(interval);
 	}, [currentBannerIndex, tours.length]);
@@ -139,11 +139,12 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 	},
 	bannerItem: {
-		width: width - 40,
+		width: width - 50,
 		height: 180,
 		borderRadius: 15,
 		overflow: "hidden",
 		marginRight: 0,
+		marginHorizontal: 10,
 	},
 	bannerImage: {
 		width: "100%",

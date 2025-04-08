@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, RefreshControl, Dimensions, Animated } from "react-native";
 import { SafeAreaView } from "../../components";
+import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-native";
+import { Loading, LoadingSpin, SafeAreaView } from "../../components";
 import { Tour } from "@/types/implement";
 import Header, { HEADER_HEIGHT, SCROLL_THRESHOLD } from "./container/header";
 import ListItem from "./container/list-item";
@@ -22,16 +24,20 @@ export const HomeScreen = () => {
 	const dispatch = useDispatch();
 	const scrollY = new Animated.Value(0);
 
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+
 	const fetchData = async () => {
 		await handleGetTours(setListTour);
 		// In a real app, you would have separate API calls
 		// This is just for demonstration
 		setPopularTours([...listTour].sort(() => 0.5 - Math.random()).slice(0, 5));
 		setDiscountedTours([...listTour].sort(() => 0.5 - Math.random()).slice(0, 5));
+		setIsLoading(false);
 	};
 
 	useEffect(() => {
 		fetchData();
+
 	}, []);
 
 	useEffect(() => {
@@ -93,6 +99,11 @@ export const HomeScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+			{isLoading ? (
+				<LoadingSpin />
+			) : (
+				<>
+					<Header />
 			<Header scrollY={scrollY} />
 
 			<Animated.FlatList
