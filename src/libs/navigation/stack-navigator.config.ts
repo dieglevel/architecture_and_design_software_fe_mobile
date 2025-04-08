@@ -23,6 +23,12 @@ export type RootStackParamList = {
 	ProfileScreenBooking: undefined;
 	ProfileDetailsScreen: undefined;
 	ProfileSecurityScreen: undefined;
+	SearchResultsScreen: {
+		departure?: string;
+		destination?: string;
+		departureDate?: string;
+		returnDate?: string;
+	};
 };
 
 declare global {

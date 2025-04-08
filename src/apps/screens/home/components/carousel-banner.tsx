@@ -14,6 +14,8 @@ import { Colors } from "@/constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { Tour } from "@/types/implement";
 import { navigate } from "@/libs/navigation/navigationService";
+import { useDispatch } from "react-redux";
+import { selectTour } from "@/libs/redux/stores/selected-tour.store";
 
 interface Props {
 	tours: Tour[];
@@ -25,6 +27,7 @@ const ITEM_WIDTH = width - 40;
 export const CarouselBanner = ({ tours }: Props) => {
 	const bannerRef = useRef<FlatList>(null);
 	const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		if (tours.length <= 1) return;
@@ -53,11 +56,16 @@ export const CarouselBanner = ({ tours }: Props) => {
 		}
 	};
 
+	const handlePressBanner = (tour: Tour) => {
+		dispatch(selectTour(tour));
+		navigate("TourDetailScreen");
+	};
+
 	const renderBannerItem = ({ item, index }: { item: Tour; index: number }) => (
 		<TouchableOpacity
 			key={index}
 			activeOpacity={0.9}
-			onPress={() => navigate("TourDetailScreen")}
+			onPress={() => handlePressBanner(item)}
 			style={styles.bannerItem}
 		>
 			<Image
