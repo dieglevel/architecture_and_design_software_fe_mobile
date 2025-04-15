@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, RefreshControl, Dimensions, FlatList, Animated } from "react-native";
 import { Loading, LoadingSpin, SafeAreaView } from "../../components";
 import { Tour } from "@/types/implement";
@@ -12,15 +12,14 @@ import { CarouselBanner } from "./components/carousel-banner";
 import { CategoriesScroll } from "./components/categories-scroll";
 import { useDispatch } from "react-redux";
 
-const { width } = Dimensions.get("window");
-
 export const HomeScreen = () => {
 	const [listTour, setListTour] = useState<Tour[]>([]);
 	const [popularTours, setPopularTours] = useState<Tour[]>([]);
 	const [discountedTours, setDiscountedTours] = useState<Tour[]>([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const dispatch = useDispatch();
-	const scrollY = new Animated.Value(0);
+	const scrollY = useRef(new Animated.Value(0)).current;
+	const [isSearchActive, setIsSearchActive] = useState(false);
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -35,7 +34,6 @@ export const HomeScreen = () => {
 
 	useEffect(() => {
 		fetchData();
-
 	}, []);
 
 	useEffect(() => {
@@ -101,39 +99,43 @@ export const HomeScreen = () => {
 				<LoadingSpin />
 			) : (
 				<>
-			<Header scrollY={scrollY} />
-
-			<Animated.FlatList
-				data={listTour}
-				renderItem={({ item }) => (
-					<View style={styles.section}>
-						<ListItem
-							listTour={[item]}
-							horizontal={false}
-						/>
-					</View>
-				)}
-				keyExtractor={(item) => item.tourId?.toString() || Math.random().toString()}
-				showsVerticalScrollIndicator={false}
-				contentContainerStyle={[styles.scrollContent, { paddingTop: HEADER_HEIGHT }]}
-				refreshControl={
-					<RefreshControl
-						refreshing={refreshing}
-						onRefresh={onRefresh}
-						colors={[Colors.colorBrand.burntSienna[500]]}
+					<Header
+						scrollY={scrollY}
+						onSearchStateChange={setIsSearchActive}
 					/>
-				}
-				onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-					useNativeDriver: true,
-				})}
-				scrollEventThrottle={16}
-				ListHeaderComponent={renderHeader}
-			/>
-			</>)}
-		</SafeAreaView> )
 
+					<Animated.FlatList
+						data={listTour}
+						renderItem={({ item }) => (
+							<View style={styles.section}>
+								<ListItem
+									listTour={[item]}
+									horizontal={false}
+								/>
+							</View>
+						)}
+						keyExtractor={(item) => item.tourId?.toString() || Math.random().toString()}
+						showsVerticalScrollIndicator={false}
+						contentContainerStyle={[styles.scrollContent, { paddingTop: HEADER_HEIGHT }]}
+						refreshControl={
+							<RefreshControl
+								refreshing={refreshing}
+								onRefresh={onRefresh}
+								colors={[Colors.colorBrand.burntSienna[500]]}
+							/>
+						}
+						onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+							useNativeDriver: true,
+						})}
+						scrollEventThrottle={16}
+						ListHeaderComponent={renderHeader}
+						scrollEnabled={!isSearchActive}
+					/>
+				</>
+			)}
+		</SafeAreaView>
+	);
 };
-
 
 const styles = StyleSheet.create({
 	container: {

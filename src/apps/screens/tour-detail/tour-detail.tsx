@@ -14,9 +14,9 @@ import { Tour, TourDestinationResponse } from "@/types/implement";
 import { handleGetTours } from "../home/handle";
 import { set } from "lodash";
 import { LoadingSpin } from "@/apps/components";
+import React from "react";
 
 export const TourDetailScreen = () => {
-	const navigator = useNavigation();
 	const route = useRoute<TourDetailRouteProp>();
 
 	const tourId = route.params?.tourId;
@@ -40,11 +40,9 @@ export const TourDetailScreen = () => {
 
 	useEffect(() => {
 		const fetchTourData = async () => {
-
-			try{
+			try {
 				handleGetTours(setListData);
-			}
-			catch (error) {
+			} catch (error) {
 				console.error("Error fetching tour data:", error);
 			}
 
