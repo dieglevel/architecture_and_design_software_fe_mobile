@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "@/constants";
+import { changePassword } from "@/services/user-service";
 
 export const ProfileSecurityScreen = () => {
 	const navigation = useNavigation();
@@ -42,7 +43,7 @@ export const ProfileSecurityScreen = () => {
 	};
 
 	// Handle form submission
-	const handleChangePassword = () => {
+	const handleChangePassword = async () => {
 		// Reset errors
 		setErrors({});
 
@@ -55,24 +56,24 @@ export const ProfileSecurityScreen = () => {
 		} = {};
 
 		if (!currentPassword) {
-			newErrors.currentPassword = "Current password is required";
+			newErrors.currentPassword = "Mật khẩu hiện tại là bắt buộc";
 			hasErrors = true;
 		}
 
 		if (!newPassword) {
-			newErrors.newPassword = "New password is required";
+			newErrors.newPassword = "Mật khẩu mới là bắt buộc";
 			hasErrors = true;
 		} else if (!validatePassword(newPassword)) {
 			newErrors.newPassword =
-				"Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
+				"Mật khẩu phải có ít nhất 8 ký tự và bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt";
 			hasErrors = true;
 		}
 
 		if (!confirmPassword) {
-			newErrors.confirmPassword = "Please confirm your new password";
+			newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu mới";
 			hasErrors = true;
 		} else if (newPassword !== confirmPassword) {
-			newErrors.confirmPassword = "Passwords do not match";
+			newErrors.confirmPassword = "Mật khẩu không khớp";
 			hasErrors = true;
 		}
 
@@ -84,13 +85,21 @@ export const ProfileSecurityScreen = () => {
 		// Submit the form
 		setIsLoading(true);
 
-		// Simulate API call
-		setTimeout(() => {
+		try {
+			const response = await changePassword(currentPassword, newPassword);
+
+			if (response.success) {
+				Alert.alert("Thành công", "Mật khẩu đã được cập nhật thành công", [
+					{ text: "OK", onPress: () => navigation.goBack() },
+				]);
+			} else {
+				Alert.alert("Lỗi", response.message || "Không thể cập nhật mật khẩu");
+			}
+		} catch (error) {
+			Alert.alert("Lỗi", "Đã xảy ra lỗi. Vui lòng thử lại sau");
+		} finally {
 			setIsLoading(false);
-			Alert.alert("Success", "Your password has been updated successfully", [
-				{ text: "OK", onPress: () => navigation.goBack() },
-			]);
-		}, 1500);
+		}
 	};
 
 	return (

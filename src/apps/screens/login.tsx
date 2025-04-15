@@ -9,12 +9,14 @@ import { loginApi } from "@/services/auth-service";
 import { BaseResponse } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
-import { navigate } from "@/libs/navigation/navigationService";
+import { navigate, reset } from "@/libs/navigation/navigationService";
+import { useAppDispatch } from "@/libs/redux/redux.config";
+import { fetchUserProfile } from "@/libs/redux/thunks/user.thunk";
 
 export const LoginScreen = () => {
 	const [username, setUsername] = useState<string>("ghuyvip");
 	const [password, setPassword] = useState<string>("Anhbakhia3@");
-
+	const dispatch = useAppDispatch();
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
 	const { height } = Dimensions.get("window");
@@ -22,7 +24,6 @@ export const LoginScreen = () => {
 	const handleLogin = async () => {
 		try {
 			const result = await loginApi(username, password);
-			// handle success
 			if (result.statusCode === 200) {
 				Toast.show({
 					type: "success",
@@ -30,7 +31,17 @@ export const LoginScreen = () => {
 					visibilityTime: 2000,
 					autoHide: true,
 				});
-				navigate("WelcomeScreen");
+
+				const resultFetchProfile = await dispatch(fetchUserProfile());
+
+				if (fetchUserProfile.fulfilled.match(resultFetchProfile)) {
+					reset("WelcomeScreen");
+				} else {
+					Toast.show({
+						type: "error",
+						text1: "Lỗi khi lấy thông tin người dùng",
+					});
+				}
 			}
 		} catch (error) {
 			const err = error as BaseResponse<any>;
@@ -51,7 +62,6 @@ export const LoginScreen = () => {
 					autoHide: true,
 				});
 			}
-			//Another Handle error
 		}
 	};
 

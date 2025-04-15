@@ -14,34 +14,9 @@ import imagePicker from "@/services/image-picker";
 import { navigate } from "@/libs/navigation/navigationService";
 
 const ProfileScreenBooking = () => {
-	const isFocused = useIsFocused();
 	const user = useAppSelector((state) => state.user.data);
 	const dispatch = useAppDispatch<AppDispatch>();
 	const navigation = useNavigation();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-
-	useEffect(() => {
-		const fetchProfile = async () => {
-			try {
-				const response = await getProfile();
-				if (response.statusCode === 200) {
-					dispatch(setUser(response.data ?? null));
-				} else {
-					console.error("Error fetching profile:", response?.message ?? "Unknown error");
-				}
-			} catch (error) {
-				console.error("Error fetching profile:", error);
-			}
-		};
-
-		if (isFocused) {
-			setIsLoading(true);
-			fetchProfile();
-			setTimeout(() => {
-				setIsLoading(false);
-			}, 1000);
-		}
-	}, [isFocused, dispatch]);
 
 	const handleLogout = async () => {
 		try {
@@ -113,294 +88,290 @@ const ProfileScreenBooking = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			{isLoading ? (
-				<ActivityIndicatorCustom />
-			) : (
-				<ScrollView showsVerticalScrollIndicator={false}>
-					{/* Header Section */}
-					<View style={styles.header}>
-						<View style={styles.headerContent}>
-							<View style={styles.avatarContainer}>
-								<Image
-									source={{ uri: user?.avatarUrl || "https://via.placeholder.com/150" }}
-									style={styles.avatar}
-								/>
-								<TouchableOpacity
-									onPress={handleChangAvatar}
-									style={styles.editAvatarButton}
-								>
-									<MaterialIcons
-										name="camera-alt"
-										size={16}
-										color={Colors.gray[950]}
-									/>
-								</TouchableOpacity>
-							</View>
-
-							<View style={styles.userInfo}>
-								<Text style={styles.userName}>{user?.fullName || "User Name"}</Text>
-								<Text style={styles.userLevel}>Genius Level 1</Text>
-								<View style={styles.badge}>
-									<MaterialIcons
-										name="star"
-										size={12}
-										color="#fff"
-									/>
-									<Text style={styles.badgeText}>10% Genius discount</Text>
-								</View>
-							</View>
-						</View>
-
-						<View style={styles.statsContainer}>
-							<View style={styles.statItem}>
-								<Text style={styles.statValue}>2</Text>
-								<Text style={styles.statLabel}>Stays</Text>
-							</View>
-							<View style={styles.statDivider} />
-							<View style={styles.statItem}>
-								<Text style={styles.statValue}>3</Text>
-								<Text style={styles.statLabel}>Saved</Text>
-							</View>
-							<View style={styles.statDivider} />
-							<View style={styles.statItem}>
-								<Text style={styles.statValue}>$216</Text>
-								<Text style={styles.statLabel}>Rewards</Text>
-							</View>
-						</View>
-					</View>
-
-					{/* Account Settings Section */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>Cài đặt tài khoản</Text>
-
-						<TouchableOpacity
-							style={styles.menuItem}
-							onPress={() => navigate("ProfileDetailsScreen")}
-						>
-							<View style={styles.menuIconContainer}>
-								<Ionicons
-									name="person-outline"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Thông tin cá nhân</Text>
-								<Text style={styles.menuItemSubtext}>Họ tên, email, điện thoại</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
+			<ScrollView showsVerticalScrollIndicator={false}>
+				{/* Header Section */}
+				<View style={styles.header}>
+					<View style={styles.headerContent}>
+						<View style={styles.avatarContainer}>
+							<Image
+								source={{ uri: user?.avatarUrl || "https://via.placeholder.com/150" }}
+								style={styles.avatar}
 							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity
-							style={styles.menuItem}
-							onPress={() => navigate("ProfileSecurityScreen")}
-						>
-							<View style={styles.menuIconContainer}>
-								<Ionicons
-									name="lock-closed-outline"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Mật khẩu và bảo mật</Text>
-								<Text style={styles.menuItemSubtext}>Thay đổi mật khẩu</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
-								<MaterialIcons
-									name="payment"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Thông tin thanh toán</Text>
-								<Text style={styles.menuItemSubtext}>Phương thức thanh toán</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
-								<Ionicons
-									name="notifications-outline"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Thông báo</Text>
-								<Text style={styles.menuItemSubtext}>Đặt tour, đặt trước</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-					</View>
-
-					{/* Saved Places Section */}
-					<View style={styles.section}>
-						<View style={styles.sectionHeader}>
-							<Text style={styles.sectionTitle}>Saved Places</Text>
-							<TouchableOpacity>
-								<Text style={styles.seeAllText}>See all</Text>
-							</TouchableOpacity>
-						</View>
-
-						<FlatList
-							data={savedPlaces}
-							horizontal
-							showsHorizontalScrollIndicator={false}
-							keyExtractor={(item) => item.id}
-							contentContainerStyle={styles.savedPlacesContainer}
-							renderItem={({ item }) => (
-								<TouchableOpacity style={styles.savedPlaceItem}>
-									<Image
-										source={{ uri: item.image }}
-										style={styles.savedPlaceImage}
-									/>
-									<View style={styles.savedPlaceOverlay}>
-										<MaterialIcons
-											name="favorite"
-											size={20}
-											color="#fff"
-											style={styles.favoriteIcon}
-										/>
-									</View>
-									<View style={styles.savedPlaceInfo}>
-										<Text
-											style={styles.savedPlaceName}
-											numberOfLines={1}
-										>
-											{item.name}
-										</Text>
-										<Text
-											style={styles.savedPlaceLocation}
-											numberOfLines={1}
-										>
-											{item.location}
-										</Text>
-										<Text style={styles.savedPlaceDate}>Saved on {item.savedDate}</Text>
-									</View>
-								</TouchableOpacity>
-							)}
-						/>
-					</View>
-
-					{/* Recent Bookings Section */}
-					<View style={styles.section}>
-						<View style={styles.sectionHeader}>
-							<Text style={styles.sectionTitle}>Recent Bookings</Text>
-							<TouchableOpacity>
-								<Text style={styles.seeAllText}>See all</Text>
-							</TouchableOpacity>
-						</View>
-
-						{recentBookings.map((booking) => (
 							<TouchableOpacity
-								key={booking.id}
-								style={styles.bookingItem}
+								onPress={handleChangAvatar}
+								style={styles.editAvatarButton}
 							>
-								<Image
-									source={{ uri: booking.image }}
-									style={styles.bookingImage}
+								<MaterialIcons
+									name="camera-alt"
+									size={16}
+									color={Colors.gray[950]}
 								/>
-								<View style={styles.bookingContent}>
-									<Text
-										style={styles.bookingName}
-										numberOfLines={1}
-									>
-										{booking.name}
-									</Text>
-									<Text style={styles.bookingLocation}>{booking.location}</Text>
-									<Text style={styles.bookingDate}>{booking.date}</Text>
-									<View
-										style={[
-											styles.bookingStatus,
-											booking.status === "Completed"
-												? styles.completedStatus
-												: styles.upcomingStatus,
-										]}
-									>
-										<Text style={styles.bookingStatusText}>{booking.status}</Text>
-									</View>
-								</View>
 							</TouchableOpacity>
-						))}
+						</View>
+
+						<View style={styles.userInfo}>
+							<Text style={styles.userName}>{user?.fullName || "User Name"}</Text>
+							<Text style={styles.userLevel}>Genius Level 1</Text>
+							<View style={styles.badge}>
+								<MaterialIcons
+									name="star"
+									size={12}
+									color="#fff"
+								/>
+								<Text style={styles.badgeText}>10% Genius discount</Text>
+							</View>
+						</View>
 					</View>
 
-					{/* Support & Help Section */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>Support & Help</Text>
-
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
-								<FontAwesome
-									name="question-circle-o"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Help center</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
-								<FontAwesome5
-									name="headset"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Contact customer service</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
+					<View style={styles.statsContainer}>
+						<View style={styles.statItem}>
+							<Text style={styles.statValue}>2</Text>
+							<Text style={styles.statLabel}>Stays</Text>
+						</View>
+						<View style={styles.statDivider} />
+						<View style={styles.statItem}>
+							<Text style={styles.statValue}>3</Text>
+							<Text style={styles.statLabel}>Saved</Text>
+						</View>
+						<View style={styles.statDivider} />
+						<View style={styles.statItem}>
+							<Text style={styles.statValue}>$216</Text>
+							<Text style={styles.statLabel}>Rewards</Text>
+						</View>
 					</View>
+				</View>
 
-					{/* Logout Button */}
+				{/* Account Settings Section */}
+				<View style={styles.section}>
+					<Text style={styles.sectionTitle}>Cài đặt tài khoản</Text>
+
 					<TouchableOpacity
-						style={styles.logoutButton}
-						onPress={handleLogout}
+						style={styles.menuItem}
+						onPress={() => navigate("ProfileDetailsScreen")}
 					>
-						<Text style={styles.logoutText}>Đăng xuất</Text>
+						<View style={styles.menuIconContainer}>
+							<Ionicons
+								name="person-outline"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Thông tin cá nhân</Text>
+							<Text style={styles.menuItemSubtext}>Họ tên, email, điện thoại</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
 					</TouchableOpacity>
 
-					<View style={styles.versionContainer}>
-						<Text style={styles.versionText}>Phiên bản 1.0.0</Text>
+					<TouchableOpacity
+						style={styles.menuItem}
+						onPress={() => navigate("ProfileSecurityScreen")}
+					>
+						<View style={styles.menuIconContainer}>
+							<Ionicons
+								name="lock-closed-outline"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Mật khẩu và bảo mật</Text>
+							<Text style={styles.menuItemSubtext}>Thay đổi mật khẩu</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<MaterialIcons
+								name="payment"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Thông tin thanh toán</Text>
+							<Text style={styles.menuItemSubtext}>Phương thức thanh toán</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<Ionicons
+								name="notifications-outline"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Thông báo</Text>
+							<Text style={styles.menuItemSubtext}>Đặt tour, đặt trước</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+				</View>
+
+				{/* Saved Places Section */}
+				<View style={styles.section}>
+					<View style={styles.sectionHeader}>
+						<Text style={styles.sectionTitle}>Saved Places</Text>
+						<TouchableOpacity>
+							<Text style={styles.seeAllText}>See all</Text>
+						</TouchableOpacity>
 					</View>
-				</ScrollView>
-			)}
+
+					<FlatList
+						data={savedPlaces}
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						keyExtractor={(item) => item.id}
+						contentContainerStyle={styles.savedPlacesContainer}
+						renderItem={({ item }) => (
+							<TouchableOpacity style={styles.savedPlaceItem}>
+								<Image
+									source={{ uri: item.image }}
+									style={styles.savedPlaceImage}
+								/>
+								<View style={styles.savedPlaceOverlay}>
+									<MaterialIcons
+										name="favorite"
+										size={20}
+										color="#fff"
+										style={styles.favoriteIcon}
+									/>
+								</View>
+								<View style={styles.savedPlaceInfo}>
+									<Text
+										style={styles.savedPlaceName}
+										numberOfLines={1}
+									>
+										{item.name}
+									</Text>
+									<Text
+										style={styles.savedPlaceLocation}
+										numberOfLines={1}
+									>
+										{item.location}
+									</Text>
+									<Text style={styles.savedPlaceDate}>Saved on {item.savedDate}</Text>
+								</View>
+							</TouchableOpacity>
+						)}
+					/>
+				</View>
+
+				{/* Recent Bookings Section */}
+				<View style={styles.section}>
+					<View style={styles.sectionHeader}>
+						<Text style={styles.sectionTitle}>Recent Bookings</Text>
+						<TouchableOpacity>
+							<Text style={styles.seeAllText}>See all</Text>
+						</TouchableOpacity>
+					</View>
+
+					{recentBookings.map((booking) => (
+						<TouchableOpacity
+							key={booking.id}
+							style={styles.bookingItem}
+						>
+							<Image
+								source={{ uri: booking.image }}
+								style={styles.bookingImage}
+							/>
+							<View style={styles.bookingContent}>
+								<Text
+									style={styles.bookingName}
+									numberOfLines={1}
+								>
+									{booking.name}
+								</Text>
+								<Text style={styles.bookingLocation}>{booking.location}</Text>
+								<Text style={styles.bookingDate}>{booking.date}</Text>
+								<View
+									style={[
+										styles.bookingStatus,
+										booking.status === "Completed"
+											? styles.completedStatus
+											: styles.upcomingStatus,
+									]}
+								>
+									<Text style={styles.bookingStatusText}>{booking.status}</Text>
+								</View>
+							</View>
+						</TouchableOpacity>
+					))}
+				</View>
+
+				{/* Support & Help Section */}
+				<View style={styles.section}>
+					<Text style={styles.sectionTitle}>Support & Help</Text>
+
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<FontAwesome
+								name="question-circle-o"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Help center</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<FontAwesome5
+								name="headset"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Contact customer service</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+				</View>
+
+				{/* Logout Button */}
+				<TouchableOpacity
+					style={styles.logoutButton}
+					onPress={handleLogout}
+				>
+					<Text style={styles.logoutText}>Đăng xuất</Text>
+				</TouchableOpacity>
+
+				<View style={styles.versionContainer}>
+					<Text style={styles.versionText}>Phiên bản 1.0.0</Text>
+				</View>
+			</ScrollView>
 		</SafeAreaView>
 	);
 };
