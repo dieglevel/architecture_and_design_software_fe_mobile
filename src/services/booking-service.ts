@@ -35,6 +35,13 @@ export const getHistoryTours = async (userId: string) => {
 	return safeApiCall(() => api.get<BaseResponse<TourHistoryItem[]>>(`${Gateway.BOOKING}/history/${userId}`), []);
 };
 
+export const addHistoryTour = async (userId: string, tourId: string) => {
+	return safeApiCall(
+		() => api.post<BaseResponse<TourHistoryItem[]>>(`${Gateway.BOOKING}/history`, { userId, tourId }),
+		[],
+	);
+};
+
 export const getFavoriteTours = async (userId: string) => {
 	return safeApiCall(() => api.get<BaseResponse<FavoriteTourItem[]>>(`${Gateway.BOOKING}/favorites/${userId}`), []);
 };
