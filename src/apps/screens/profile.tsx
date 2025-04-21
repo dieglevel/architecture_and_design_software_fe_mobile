@@ -215,11 +215,11 @@ const ProfileScreenBooking = () => {
 
 					{favoriteLoading ? (
 						<View style={styles.loadingContainer}>
-							<Text style={styles.loadingText}>Loading...</Text>
+							<Text style={styles.loadingText}>Đang tải...</Text>
 						</View>
 					) : favorites.length === 0 ? (
 						<View style={styles.emptyContainer}>
-							<Text style={styles.emptyText}>No saved places yet</Text>
+							<Text style={styles.emptyText}>Không có địa điểm đã thích</Text>
 						</View>
 					) : (
 						<FlatList
@@ -229,7 +229,10 @@ const ProfileScreenBooking = () => {
 							keyExtractor={(item) => item.tour.tourId}
 							contentContainerStyle={styles.savedPlacesContainer}
 							renderItem={({ item }) => (
-								<TouchableOpacity style={styles.savedPlaceItem}>
+								<TouchableOpacity
+									style={styles.savedPlaceItem}
+									onPress={() => navigate("TourDetailScreen", { tourId: item.tour.tourId })}
+								>
 									<Image
 										source={{
 											uri: item.tour.thumbnail || "https://via.placeholder.com/150",
@@ -279,7 +282,7 @@ const ProfileScreenBooking = () => {
 
 					{historyLoading ? (
 						<View style={styles.loadingContainer}>
-							<Text style={styles.loadingText}>Loading...</Text>
+							<Text style={styles.loadingText}>Đang tải...</Text>
 						</View>
 					) : history.length === 0 ? (
 						<View style={styles.emptyContainer}>
@@ -290,6 +293,7 @@ const ProfileScreenBooking = () => {
 							<TouchableOpacity
 								key={booking.tour.tourId}
 								style={styles.bookingItem}
+								onPress={() => navigate("TourDetailScreen", { tourId: booking.tour.tourId })}
 							>
 								<Image
 									source={{
@@ -307,7 +311,7 @@ const ProfileScreenBooking = () => {
 									<Text style={styles.bookingLocation}>
 										{booking.tour.duration || "Unknown location"}
 									</Text>
-									<Text style={styles.bookingDate}>{booking.tour.duration || "N/A"}</Text>
+									{/* <Text style={styles.bookingDate}>{booking.tour.duration || "N/A"}</Text> */}
 									{/* <View
 										style={[
 											styles.bookingStatus,
@@ -330,7 +334,7 @@ const ProfileScreenBooking = () => {
 
 				{/* Support & Help Section */}
 				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Support & Help</Text>
+					<Text style={styles.sectionTitle}>Hỗ trợ & Trợ giúp</Text>
 
 					<TouchableOpacity style={styles.menuItem}>
 						<View style={styles.menuIconContainer}>
@@ -341,7 +345,7 @@ const ProfileScreenBooking = () => {
 							/>
 						</View>
 						<View style={styles.menuTextContainer}>
-							<Text style={styles.menuItemText}>Help center</Text>
+							<Text style={styles.menuItemText}>Cộng đồng hỗ trợ</Text>
 						</View>
 						<MaterialIcons
 							name="chevron-right"
@@ -359,7 +363,7 @@ const ProfileScreenBooking = () => {
 							/>
 						</View>
 						<View style={styles.menuTextContainer}>
-							<Text style={styles.menuItemText}>Contact customer service</Text>
+							<Text style={styles.menuItemText}>Liên hệ dịch vụ khách hàng</Text>
 						</View>
 						<MaterialIcons
 							name="chevron-right"
