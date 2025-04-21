@@ -18,9 +18,12 @@ export function goBack() {
 	}
 }
 
-export function reset(name: keyof RootStackParamList, params?: RootStackParamList[keyof RootStackParamList]) {
+export function reset<RouteName extends keyof RootStackParamList>(
+	name: RouteName,
+	params?: RootStackParamList[RouteName],
+) {
 	if (navigationRef.isReady()) {
-		navigationRef.reset({
+		navigationRef.resetRoot({
 			index: 0,
 			routes: [{ name, params }],
 		});

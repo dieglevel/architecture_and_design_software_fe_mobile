@@ -54,11 +54,30 @@ export const updateInfo = async (userInfo: Partial<User>): Promise<BaseResponse<
 		return response.data;
 	} catch (error) {
 		const axiosError = error as AxiosError<BaseResponse<null>>;
-		// Handle server response errors
 		if (axiosError.response) {
 			return axiosError.response.data;
 		}
-		// Handle network or no response errors
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
+	}
+};
+
+export const changePassword = async (oldPassword: string, newPassword: string): Promise<BaseResponse<User | null>> => {
+	try {
+		const response = await api.post<BaseResponse<User>>(`${Gateway.USER}/users/change-password`, {
+			oldPassword,
+			newPassword,
+		});
+		return response.data;
+	} catch (error) {
+		const axiosError = error as AxiosError<BaseResponse<null>>;
+		if (axiosError.response) {
+			return axiosError.response.data;
+		}
 		return {
 			message: "Không thể kết nối đến server",
 			data: null,

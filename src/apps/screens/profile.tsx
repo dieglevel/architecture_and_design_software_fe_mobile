@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProfile, updateAvatar } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
-import { CommonActions, useIsFocused, useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser, reset } from "@/libs/redux/stores/user.store.";
 import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
@@ -12,36 +12,24 @@ import { MaterialIcons, Ionicons, FontAwesome, FontAwesome5 } from "@expo/vector
 import { Colors } from "@/constants";
 import imagePicker from "@/services/image-picker";
 import { navigate } from "@/libs/navigation/navigationService";
+import { fetchFavoriteTours, fetchHistoryTours } from "@/libs/redux/thunks/tour.thunk";
 
 const ProfileScreenBooking = () => {
-	const isFocused = useIsFocused();
 	const user = useAppSelector((state) => state.user.data);
+	const favorites = useAppSelector((state) => state.favorite.data);
+	const history = useAppSelector((state) => state.history.data);
+	const favoriteLoading = useAppSelector((state) => state.favorite.loading);
+	const historyLoading = useAppSelector((state) => state.history.loading);
+
 	const dispatch = useAppDispatch<AppDispatch>();
 	const navigation = useNavigation();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
-		const fetchProfile = async () => {
-			try {
-				const response = await getProfile();
-				if (response.statusCode === 200) {
-					dispatch(setUser(response.data ?? null));
-				} else {
-					console.error("Error fetching profile:", response?.message ?? "Unknown error");
-				}
-			} catch (error) {
-				console.error("Error fetching profile:", error);
-			}
-		};
-
-		if (isFocused) {
-			setIsLoading(true);
-			fetchProfile();
-			setTimeout(() => {
-				setIsLoading(false);
-			}, 1000);
+		if (user?.userId) {
+			dispatch(fetchFavoriteTours());
+			dispatch(fetchHistoryTours());
 		}
-	}, [isFocused, dispatch]);
+	}, [dispatch, user?.userId]);
 
 	const handleLogout = async () => {
 		try {
@@ -66,215 +54,189 @@ const ProfileScreenBooking = () => {
 		}
 	};
 
-	// Mock data for saved places
-	const savedPlaces = [
-		{
-			id: "1",
-			name: "Paris Hotel",
-			location: "Paris, France",
-			image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
-			savedDate: "26/03/2023",
-		},
-		{
-			id: "2",
-			name: "Rome Villa",
-			location: "Rome, Italy",
-			image: "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076&auto=format&fit=crop",
-			savedDate: "14/05/2023",
-		},
-		{
-			id: "3",
-			name: "Tokyo Tower View",
-			location: "Tokyo, Japan",
-			image: "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?q=80&w=2036&auto=format&fit=crop",
-			savedDate: "02/06/2023",
-		},
-	];
-
-	// Mock data for recent bookings
-	const recentBookings = [
-		{
-			id: "1",
-			name: "Sunset Beach Resort",
-			location: "Phuket, Thailand",
-			image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070&auto=format&fit=crop",
-			date: "12-15 Apr 2023",
-			status: "Completed",
-		},
-		{
-			id: "2",
-			name: "Mountain View Lodge",
-			location: "Swiss Alps, Switzerland",
-			image: "https://images.unsplash.com/photo-1548704606-42fb99c59845?q=80&w=2070&auto=format&fit=crop",
-			date: "23-28 Jun 2023",
-			status: "Upcoming",
-		},
-	];
+	// Chuyển đổi ngày sang định dạng dd/MM/yyyy
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
+			.toString()
+			.padStart(2, "0")}/${date.getFullYear()}`;
+	};
 
 	return (
 		<SafeAreaView style={styles.container}>
-			{isLoading ? (
-				<ActivityIndicatorCustom />
-			) : (
-				<ScrollView showsVerticalScrollIndicator={false}>
-					{/* Header Section */}
-					<View style={styles.header}>
-						<View style={styles.headerContent}>
-							<View style={styles.avatarContainer}>
-								<Image
-									source={{ uri: user?.avatarUrl || "https://via.placeholder.com/150" }}
-									style={styles.avatar}
-								/>
-								<TouchableOpacity
-									onPress={handleChangAvatar}
-									style={styles.editAvatarButton}
-								>
-									<MaterialIcons
-										name="camera-alt"
-										size={16}
-										color={Colors.gray[950]}
-									/>
-								</TouchableOpacity>
-							</View>
-
-							<View style={styles.userInfo}>
-								<Text style={styles.userName}>{user?.fullName || "User Name"}</Text>
-								<Text style={styles.userLevel}>Genius Level 1</Text>
-								<View style={styles.badge}>
-									<MaterialIcons
-										name="star"
-										size={12}
-										color="#fff"
-									/>
-									<Text style={styles.badgeText}>10% Genius discount</Text>
-								</View>
-							</View>
-						</View>
-
-						<View style={styles.statsContainer}>
-							<View style={styles.statItem}>
-								<Text style={styles.statValue}>2</Text>
-								<Text style={styles.statLabel}>Stays</Text>
-							</View>
-							<View style={styles.statDivider} />
-							<View style={styles.statItem}>
-								<Text style={styles.statValue}>3</Text>
-								<Text style={styles.statLabel}>Saved</Text>
-							</View>
-							<View style={styles.statDivider} />
-							<View style={styles.statItem}>
-								<Text style={styles.statValue}>$216</Text>
-								<Text style={styles.statLabel}>Rewards</Text>
-							</View>
-						</View>
-					</View>
-
-					{/* Account Settings Section */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>Cài đặt tài khoản</Text>
-
-						<TouchableOpacity
-							style={styles.menuItem}
-							onPress={() => navigate("ProfileDetailsScreen")}
-						>
-							<View style={styles.menuIconContainer}>
-								<Ionicons
-									name="person-outline"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Thông tin cá nhân</Text>
-								<Text style={styles.menuItemSubtext}>Họ tên, email, điện thoại</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
+			<ScrollView showsVerticalScrollIndicator={false}>
+				{/* Header Section */}
+				<View style={styles.header}>
+					<View style={styles.headerContent}>
+						<View style={styles.avatarContainer}>
+							<Image
+								source={{ uri: user?.avatarUrl || "https://via.placeholder.com/150" }}
+								style={styles.avatar}
 							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity
-							style={styles.menuItem}
-							onPress={() => navigate("ProfileSecurityScreen")}
-						>
-							<View style={styles.menuIconContainer}>
-								<Ionicons
-									name="lock-closed-outline"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Mật khẩu và bảo mật</Text>
-								<Text style={styles.menuItemSubtext}>Thay đổi mật khẩu</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
+							<TouchableOpacity
+								onPress={handleChangAvatar}
+								style={styles.editAvatarButton}
+							>
 								<MaterialIcons
-									name="payment"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
+									name="camera-alt"
+									size={16}
+									color={Colors.gray[950]}
 								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Thông tin thanh toán</Text>
-								<Text style={styles.menuItemSubtext}>Phương thức thanh toán</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
-								<Ionicons
-									name="notifications-outline"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Thông báo</Text>
-								<Text style={styles.menuItemSubtext}>Đặt tour, đặt trước</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-					</View>
-
-					{/* Saved Places Section */}
-					<View style={styles.section}>
-						<View style={styles.sectionHeader}>
-							<Text style={styles.sectionTitle}>Saved Places</Text>
-							<TouchableOpacity>
-								<Text style={styles.seeAllText}>See all</Text>
 							</TouchableOpacity>
 						</View>
 
+						<View style={styles.userInfo}>
+							<Text style={styles.userName}>{user?.fullName || "User Name"}</Text>
+							<Text style={styles.userLevel}>Genius Level 1</Text>
+							<View style={styles.badge}>
+								<MaterialIcons
+									name="star"
+									size={12}
+									color="#fff"
+								/>
+								<Text style={styles.badgeText}>10% Genius discount</Text>
+							</View>
+						</View>
+					</View>
+
+					<View style={styles.statsContainer}>
+						<View style={styles.statItem}>
+							<Text style={styles.statValue}>{history.length || 0}</Text>
+							<Text style={styles.statLabel}>Stays</Text>
+						</View>
+						<View style={styles.statDivider} />
+						<View style={styles.statItem}>
+							<Text style={styles.statValue}>{favorites.length || 0}</Text>
+							<Text style={styles.statLabel}>Saved</Text>
+						</View>
+						<View style={styles.statDivider} />
+						<View style={styles.statItem}>
+							<Text style={styles.statValue}>$216</Text>
+							<Text style={styles.statLabel}>Rewards</Text>
+						</View>
+					</View>
+				</View>
+
+				{/* Account Settings Section */}
+				<View style={styles.section}>
+					<Text style={styles.sectionTitle}>Cài đặt tài khoản</Text>
+
+					<TouchableOpacity
+						style={styles.menuItem}
+						onPress={() => navigate("ProfileDetailsScreen")}
+					>
+						<View style={styles.menuIconContainer}>
+							<Ionicons
+								name="person-outline"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Thông tin cá nhân</Text>
+							<Text style={styles.menuItemSubtext}>Họ tên, email, điện thoại</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={styles.menuItem}
+						onPress={() => navigate("ProfileSecurityScreen")}
+					>
+						<View style={styles.menuIconContainer}>
+							<Ionicons
+								name="lock-closed-outline"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Mật khẩu và bảo mật</Text>
+							<Text style={styles.menuItemSubtext}>Thay đổi mật khẩu</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<MaterialIcons
+								name="payment"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Thông tin thanh toán</Text>
+							<Text style={styles.menuItemSubtext}>Phương thức thanh toán</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<Ionicons
+								name="notifications-outline"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Thông báo</Text>
+							<Text style={styles.menuItemSubtext}>Đặt tour, đặt trước</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+				</View>
+
+				{/* Saved Places Section */}
+				<View style={styles.section}>
+					<View style={styles.sectionHeader}>
+						<Text style={styles.sectionTitle}>Đã Thích</Text>
+						<TouchableOpacity>
+							<Text style={styles.seeAllText}>Xem tất cả</Text>
+						</TouchableOpacity>
+					</View>
+
+					{favoriteLoading ? (
+						<View style={styles.loadingContainer}>
+							<Text style={styles.loadingText}>Đang tải...</Text>
+						</View>
+					) : favorites.length === 0 ? (
+						<View style={styles.emptyContainer}>
+							<Text style={styles.emptyText}>Không có địa điểm đã thích</Text>
+						</View>
+					) : (
 						<FlatList
-							data={savedPlaces}
+							data={favorites}
 							horizontal
 							showsHorizontalScrollIndicator={false}
-							keyExtractor={(item) => item.id}
+							keyExtractor={(item) => item.tour.tourId}
 							contentContainerStyle={styles.savedPlacesContainer}
 							renderItem={({ item }) => (
-								<TouchableOpacity style={styles.savedPlaceItem}>
+								<TouchableOpacity
+									style={styles.savedPlaceItem}
+									onPress={() => navigate("TourDetailScreen", { tourId: item.tour.tourId })}
+								>
 									<Image
-										source={{ uri: item.image }}
+										source={{
+											uri: item.tour.thumbnail || "https://via.placeholder.com/150",
+										}}
 										style={styles.savedPlaceImage}
 									/>
 									<View style={styles.savedPlaceOverlay}>
@@ -290,37 +252,53 @@ const ProfileScreenBooking = () => {
 											style={styles.savedPlaceName}
 											numberOfLines={1}
 										>
-											{item.name}
+											{item.tour.name}
 										</Text>
 										<Text
 											style={styles.savedPlaceLocation}
 											numberOfLines={1}
 										>
-											{item.location}
+											{item.tour.duration || "Unknown location"}
 										</Text>
-										<Text style={styles.savedPlaceDate}>Saved on {item.savedDate}</Text>
+										{/* <Text style={styles.savedPlaceDate}>
+											Saved on{" "}
+											{item.createdDate ? formatDate(item.createdDate) : "N/A"}
+										</Text> */}
 									</View>
 								</TouchableOpacity>
 							)}
 						/>
+					)}
+				</View>
+
+				{/* Recent Bookings Section */}
+				<View style={styles.section}>
+					<View style={styles.sectionHeader}>
+						<Text style={styles.sectionTitle}>Tour Đã Xem Gần Đây</Text>
+						<TouchableOpacity>
+							<Text style={styles.seeAllText}>Xem tất cả</Text>
+						</TouchableOpacity>
 					</View>
 
-					{/* Recent Bookings Section */}
-					<View style={styles.section}>
-						<View style={styles.sectionHeader}>
-							<Text style={styles.sectionTitle}>Recent Bookings</Text>
-							<TouchableOpacity>
-								<Text style={styles.seeAllText}>See all</Text>
-							</TouchableOpacity>
+					{historyLoading ? (
+						<View style={styles.loadingContainer}>
+							<Text style={styles.loadingText}>Đang tải...</Text>
 						</View>
-
-						{recentBookings.map((booking) => (
+					) : history.length === 0 ? (
+						<View style={styles.emptyContainer}>
+							<Text style={styles.emptyText}>Không có lịch sử đặt tour</Text>
+						</View>
+					) : (
+						history.slice(0, 3).map((booking) => (
 							<TouchableOpacity
-								key={booking.id}
+								key={booking.tour.tourId}
 								style={styles.bookingItem}
+								onPress={() => navigate("TourDetailScreen", { tourId: booking.tour.tourId })}
 							>
 								<Image
-									source={{ uri: booking.image }}
+									source={{
+										uri: booking.tour.thumbnail || "https://via.placeholder.com/150",
+									}}
 									style={styles.bookingImage}
 								/>
 								<View style={styles.bookingContent}>
@@ -328,79 +306,85 @@ const ProfileScreenBooking = () => {
 										style={styles.bookingName}
 										numberOfLines={1}
 									>
-										{booking.name}
+										{booking.tour.name}
 									</Text>
-									<Text style={styles.bookingLocation}>{booking.location}</Text>
-									<Text style={styles.bookingDate}>{booking.date}</Text>
-									<View
+									<Text style={styles.bookingLocation}>
+										{booking.tour.duration || "Unknown location"}
+									</Text>
+									{/* <Text style={styles.bookingDate}>{booking.tour.duration || "N/A"}</Text> */}
+									{/* <View
 										style={[
 											styles.bookingStatus,
-											booking.status === "Completed"
+											new Date(booking.endDate) < new Date()
 												? styles.completedStatus
 												: styles.upcomingStatus,
 										]}
 									>
-										<Text style={styles.bookingStatusText}>{booking.status}</Text>
-									</View>
+										<Text style={styles.bookingStatusText}>
+											{new Date(booking.endDate) < new Date()
+												? "Completed"
+												: "Upcoming"}
+										</Text>
+									</View> */}
 								</View>
 							</TouchableOpacity>
-						))}
-					</View>
+						))
+					)}
+				</View>
 
-					{/* Support & Help Section */}
-					<View style={styles.section}>
-						<Text style={styles.sectionTitle}>Support & Help</Text>
+				{/* Support & Help Section */}
+				<View style={styles.section}>
+					<Text style={styles.sectionTitle}>Hỗ trợ & Trợ giúp</Text>
 
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
-								<FontAwesome
-									name="question-circle-o"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Help center</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<FontAwesome
+								name="question-circle-o"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
 							/>
-						</TouchableOpacity>
-
-						<TouchableOpacity style={styles.menuItem}>
-							<View style={styles.menuIconContainer}>
-								<FontAwesome5
-									name="headset"
-									size={22}
-									color={Colors.colorBrand.burntSienna[500]}
-								/>
-							</View>
-							<View style={styles.menuTextContainer}>
-								<Text style={styles.menuItemText}>Contact customer service</Text>
-							</View>
-							<MaterialIcons
-								name="chevron-right"
-								size={24}
-								color={Colors.gray[400]}
-							/>
-						</TouchableOpacity>
-					</View>
-
-					{/* Logout Button */}
-					<TouchableOpacity
-						style={styles.logoutButton}
-						onPress={handleLogout}
-					>
-						<Text style={styles.logoutText}>Đăng xuất</Text>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Cộng đồng hỗ trợ</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
 					</TouchableOpacity>
 
-					<View style={styles.versionContainer}>
-						<Text style={styles.versionText}>Phiên bản 1.0.0</Text>
-					</View>
-				</ScrollView>
-			)}
+					<TouchableOpacity style={styles.menuItem}>
+						<View style={styles.menuIconContainer}>
+							<FontAwesome5
+								name="headset"
+								size={22}
+								color={Colors.colorBrand.burntSienna[500]}
+							/>
+						</View>
+						<View style={styles.menuTextContainer}>
+							<Text style={styles.menuItemText}>Liên hệ dịch vụ khách hàng</Text>
+						</View>
+						<MaterialIcons
+							name="chevron-right"
+							size={24}
+							color={Colors.gray[400]}
+						/>
+					</TouchableOpacity>
+				</View>
+
+				{/* Logout Button */}
+				<TouchableOpacity
+					style={styles.logoutButton}
+					onPress={handleLogout}
+				>
+					<Text style={styles.logoutText}>Đăng xuất</Text>
+				</TouchableOpacity>
+
+				<View style={styles.versionContainer}>
+					<Text style={styles.versionText}>Phiên bản 1.0.0</Text>
+				</View>
+			</ScrollView>
 		</SafeAreaView>
 	);
 };
@@ -452,7 +436,7 @@ const styles = StyleSheet.create({
 	userName: {
 		fontSize: 20,
 		fontWeight: "bold",
-		color: Colors.gray[950],
+		color: Colors.gray[900],
 		marginBottom: 4,
 	},
 	userLevel: {
@@ -684,6 +668,24 @@ const styles = StyleSheet.create({
 	},
 	versionText: {
 		fontSize: 12,
+		color: Colors.gray[500],
+	},
+	loadingContainer: {
+		padding: 20,
+		alignItems: "center",
+	},
+	loadingText: {
+		fontSize: 14,
+		color: Colors.gray[500],
+	},
+	emptyContainer: {
+		padding: 20,
+		alignItems: "center",
+		backgroundColor: Colors.gray[50],
+		borderRadius: 8,
+	},
+	emptyText: {
+		fontSize: 14,
 		color: Colors.gray[500],
 	},
 });
