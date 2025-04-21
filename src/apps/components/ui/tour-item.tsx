@@ -7,6 +7,8 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "rea
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
+import { addHistoryTour } from "@/libs/redux/thunks/tour.thunk";
+import { useAppDispatch } from "@/libs/redux/redux.config";
 
 interface Props {
 	tour: Tour;
@@ -16,13 +18,17 @@ interface Props {
 }
 
 export const TourItem = React.memo(({ discount = 0, tour, rating = 3.5, horizontal = false }: Props) => {
+	const dispatch = useAppDispatch();
 	const discountCalculation = (price: number, discount: number) => {
 		if (discount > 0) {
 			return price - (price * discount) / 100;
 		}
 		return price;
 	};
-
+	const handleAddHistory = async () => {
+		await dispatch(addHistoryTour(tour.tourId));
+		navigate("TourDetailScreen", { tourId: tour.tourId });
+	};
 
 	return (
 		<TouchableOpacity
@@ -32,7 +38,7 @@ export const TourItem = React.memo(({ discount = 0, tour, rating = 3.5, horizont
 				horizontal ? styles.horizontalContainer : null,
 				discount > 0 && styles.containerDiscount,
 			]}
-			onPress={() => navigate("TourDetailScreen", { tourId: tour.tourId })}
+			onPress={handleAddHistory}
 		>
 			<View style={horizontal ? styles.horizontalImageContainer : styles.imageContainer}>
 				<Image

@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView, Modal, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, Modal, Dimensions } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Texts } from "@/constants";
 import { TourItem } from "../../components/ui";
@@ -6,17 +6,15 @@ import BookingButton from "../../components/ui/booking-btn";
 import { Divider } from "react-native-paper";
 import TourDetail from "@/apps/components/ui/tour-detail-tabview";
 import { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
-import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 import { getTourDetails } from "@/services/tour-service";
 import { TourDetailRouteProp } from "@/libs/navigation";
 import { Tour, TourDestinationResponse } from "@/types/implement";
 import { handleGetTours } from "../home/handle";
-import { set } from "lodash";
 import { LoadingSpin } from "@/apps/components";
+import React from "react";
 
 export const TourDetailScreen = () => {
-	const navigator = useNavigation();
 	const route = useRoute<TourDetailRouteProp>();
 
 	const tourId = route.params?.tourId;
@@ -40,11 +38,9 @@ export const TourDetailScreen = () => {
 
 	useEffect(() => {
 		const fetchTourData = async () => {
-
-			try{
+			try {
 				handleGetTours(setListData);
-			}
-			catch (error) {
+			} catch (error) {
 				console.error("Error fetching tour data:", error);
 			}
 
@@ -206,7 +202,7 @@ export const TourDetailScreen = () => {
 							</View>
 						}
 					/>
-					<BookingButton />
+					{data && <BookingButton tour={data} />}
 				</View>
 			)}
 		</>

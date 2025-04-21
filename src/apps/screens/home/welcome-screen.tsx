@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import LottieView from "lottie-react-native";
-import { navigate } from "@/libs/navigation/navigationService";
+import { navigate, reset } from "@/libs/navigation/navigationService";
 
 const WelcomeScreen = () => {
 	const [isDataLoaded, setIsDataLoaded] = useState<boolean>(false);
@@ -18,17 +18,25 @@ const WelcomeScreen = () => {
 
 	useEffect(() => {
 		if (isDataLoaded) {
-			navigate("BottomTabScreenApp");
+			reset("BottomTabScreenApp");
 		}
 	}, [isDataLoaded]);
 
 	return (
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center", margin: 15.5, backgroundColor: "#fffefe" }}>
+		<View
+			style={{
+				flex: 1,
+				justifyContent: "center",
+				alignItems: "center",
+				margin: 15.5,
+				backgroundColor: "#fffefe",
+			}}
+		>
 			<LottieView
 				source={require("../../../assets/svgs/welcome.json")}
 				autoPlay
 				loop
-				style={{ width: 350, height: 350,  }}
+				style={{ width: 350, height: 350 }}
 			/>
 		</View>
 	);

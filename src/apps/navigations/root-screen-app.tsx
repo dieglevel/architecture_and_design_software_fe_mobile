@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { getProfile } from "@/services/user-service";
 import { setUser } from "@/libs/redux/stores/user.store.";
 import { LoadingSpin } from "../components";
+import React from "react";
 
 export const RootScreenApp = () => {
 	const insets = useSafeAreaInsets();
