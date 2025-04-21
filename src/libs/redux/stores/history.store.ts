@@ -1,12 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Tour } from "@/types/implement";
+import { fetchHistoryTours } from "../thunks/tour.thunk";
+import { TourHistoryItem } from "@/types/implement/tour-history";
 
 interface HistoryState {
 	history: Tour[];
+	data: TourHistoryItem[];
+	loading: boolean;
+	error: string | null;
 }
 
 const initialState: HistoryState = {
 	history: [],
+	data: [],
+	loading: false,
+	error: null,
 };
 
 const historySlice = createSlice({
@@ -24,6 +32,21 @@ const historySlice = createSlice({
 		clearHistory: (state) => {
 			state.history = [];
 		},
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(fetchHistoryTours.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(fetchHistoryTours.fulfilled, (state, action) => {
+				state.loading = false;
+				state.data = action.payload ?? [];
+			})
+			.addCase(fetchHistoryTours.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload as string | null;
+			});
 	},
 });
 
