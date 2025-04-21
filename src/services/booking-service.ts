@@ -3,6 +3,9 @@ import { api } from "../libs/axios/axios.config";
 import { Gateway } from "@/libs/axios";
 import { AxiosError } from "axios";
 import { Tour } from "@/types/implement/tour";
+import { TourHistoryItem } from "@/types/implement/tour-history";
+import { FavoriteTourItem } from "@/types/implement/tour-favorite";
+import { safeApiCall } from "@/libs/axios/safe-api-call";
 
 export const getCategory = async (): Promise<BaseResponse<any[] | null>> => {
 	try {
@@ -24,39 +27,28 @@ export const getCategory = async (): Promise<BaseResponse<any[] | null>> => {
 	}
 };
 
-export const searchFullText = async (keyword: string): Promise<BaseResponse<Tour[]>> => {
-	try {
-		const response = await api.get<BaseResponse<Tour[]>>(`${Gateway.BOOKING}/tours/search/${keyword}`);
-		return response.data;
-	} catch (error) {
-		const axiosError = error as AxiosError<BaseResponse<null>>;
-		// Nếu lỗi là "không tìm thấy kết quả" (thường là 404), xử lý như là tìm kiếm thành công nhưng không có kết quả
-		if (axiosError.response && axiosError.response.status === 404) {
-			return {
-				message: "Không tìm thấy kết quả",
-				data: [], // Trả về mảng rỗng thay vì null
-				statusCode: 200, // Đổi status code thành 200
-				success: true, // Đánh dấu thành công để không hiển thị lỗi
-			};
-		}
-
-		// Các lỗi khác
-		if (axiosError.response) {
-			// Chuyển data từ null thành mảng rỗng để tránh lỗi
-			return {
-				...axiosError.response.data,
-				data: [],
-				success: true,
-			};
-		}
-
-		// Lỗi mạng hoặc không có response
-		return {
-			message: "Không thể kết nối đến server",
-			data: [], // Trả về mảng rỗng thay vì null
-			statusCode: 500,
-			success: true,
-		};
-	}
+export const searchFullText = async (keyword: string) => {
+	return safeApiCall(() => api.get<BaseResponse<Tour[]>>(`${Gateway.BOOKING}/tours/search/${keyword}`), []);
 };
-  
+
+export const getHistoryTours = async (userId: string) => {
+	return safeApiCall(() => api.get<BaseResponse<TourHistoryItem[]>>(`${Gateway.BOOKING}/history/${userId}`), []);
+};
+
+export const getFavoriteTours = async (userId: string) => {
+	return safeApiCall(() => api.get<BaseResponse<FavoriteTourItem[]>>(`${Gateway.BOOKING}/favorites/${userId}`), []);
+};
+
+export const addFavoriteTour = async (userId: string, tourId: string) => {
+	return safeApiCall(
+		() => api.post<BaseResponse<FavoriteTourItem[]>>(`${Gateway.BOOKING}/favorites`, { userId, tourId }),
+		[],
+	);
+};
+
+export const deleteFavoriteTour = async (userId: string, tourId: string) => {
+	return safeApiCall(
+		() => api.delete<BaseResponse<FavoriteTourItem[]>>(`${Gateway.BOOKING}/favorites/${userId}/${tourId}`),
+		[],
+	);
+};

@@ -10,7 +10,8 @@ import { Colors } from "@/constants";
 import { navigate } from "@/libs/navigation/navigationService";
 import { CarouselBanner } from "./components/carousel-banner";
 import { CategoriesScroll } from "./components/categories-scroll";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useAppSelector } from "@/libs/redux/redux.config";
 
 export const HomeScreen = () => {
 	const [listTour, setListTour] = useState<Tour[]>([]);
@@ -22,6 +23,9 @@ export const HomeScreen = () => {
 	const [isSearchActive, setIsSearchActive] = useState(false);
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+
+	const favoriteTours = useAppSelector((state) => state.favorite.data);
+	console.log("favoriteTours", favoriteTours);
 
 	const fetchData = async () => {
 		await handleGetTours(setListTour);

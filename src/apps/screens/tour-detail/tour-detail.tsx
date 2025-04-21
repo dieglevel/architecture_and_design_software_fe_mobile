@@ -204,7 +204,7 @@ export const TourDetailScreen = () => {
 							</View>
 						}
 					/>
-					<BookingButton />
+					<BookingButton tour={data} />
 				</View>
 			)}
 		</>

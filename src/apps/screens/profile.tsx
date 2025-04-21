@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProfile, updateAvatar } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
-import { CommonActions, useIsFocused, useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser, reset } from "@/libs/redux/stores/user.store.";
 import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
@@ -12,11 +12,24 @@ import { MaterialIcons, Ionicons, FontAwesome, FontAwesome5 } from "@expo/vector
 import { Colors } from "@/constants";
 import imagePicker from "@/services/image-picker";
 import { navigate } from "@/libs/navigation/navigationService";
+import { fetchFavoriteTours, fetchHistoryTours } from "@/libs/redux/thunks/tour.thunk";
 
 const ProfileScreenBooking = () => {
 	const user = useAppSelector((state) => state.user.data);
+	const favorites = useAppSelector((state) => state.favorite.data);
+	const history = useAppSelector((state) => state.history.data);
+	const favoriteLoading = useAppSelector((state) => state.favorite.loading);
+	const historyLoading = useAppSelector((state) => state.history.loading);
+
 	const dispatch = useAppDispatch<AppDispatch>();
 	const navigation = useNavigation();
+
+	useEffect(() => {
+		if (user?.userId) {
+			dispatch(fetchFavoriteTours());
+			dispatch(fetchHistoryTours());
+		}
+	}, [dispatch, user?.userId]);
 
 	const handleLogout = async () => {
 		try {
@@ -41,50 +54,13 @@ const ProfileScreenBooking = () => {
 		}
 	};
 
-	// Mock data for saved places
-	const savedPlaces = [
-		{
-			id: "1",
-			name: "Paris Hotel",
-			location: "Paris, France",
-			image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
-			savedDate: "26/03/2023",
-		},
-		{
-			id: "2",
-			name: "Rome Villa",
-			location: "Rome, Italy",
-			image: "https://images.unsplash.com/photo-1529260830199-42c24126f198?q=80&w=2076&auto=format&fit=crop",
-			savedDate: "14/05/2023",
-		},
-		{
-			id: "3",
-			name: "Tokyo Tower View",
-			location: "Tokyo, Japan",
-			image: "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?q=80&w=2036&auto=format&fit=crop",
-			savedDate: "02/06/2023",
-		},
-	];
-
-	// Mock data for recent bookings
-	const recentBookings = [
-		{
-			id: "1",
-			name: "Sunset Beach Resort",
-			location: "Phuket, Thailand",
-			image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=2070&auto=format&fit=crop",
-			date: "12-15 Apr 2023",
-			status: "Completed",
-		},
-		{
-			id: "2",
-			name: "Mountain View Lodge",
-			location: "Swiss Alps, Switzerland",
-			image: "https://images.unsplash.com/photo-1548704606-42fb99c59845?q=80&w=2070&auto=format&fit=crop",
-			date: "23-28 Jun 2023",
-			status: "Upcoming",
-		},
-	];
+	// Chuyển đổi ngày sang định dạng dd/MM/yyyy
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
+			.toString()
+			.padStart(2, "0")}/${date.getFullYear()}`;
+	};
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -125,12 +101,12 @@ const ProfileScreenBooking = () => {
 
 					<View style={styles.statsContainer}>
 						<View style={styles.statItem}>
-							<Text style={styles.statValue}>2</Text>
+							<Text style={styles.statValue}>{history.length || 0}</Text>
 							<Text style={styles.statLabel}>Stays</Text>
 						</View>
 						<View style={styles.statDivider} />
 						<View style={styles.statItem}>
-							<Text style={styles.statValue}>3</Text>
+							<Text style={styles.statValue}>{favorites.length || 0}</Text>
 							<Text style={styles.statLabel}>Saved</Text>
 						</View>
 						<View style={styles.statDivider} />
@@ -231,92 +207,125 @@ const ProfileScreenBooking = () => {
 				{/* Saved Places Section */}
 				<View style={styles.section}>
 					<View style={styles.sectionHeader}>
-						<Text style={styles.sectionTitle}>Saved Places</Text>
+						<Text style={styles.sectionTitle}>Đã Thích</Text>
 						<TouchableOpacity>
-							<Text style={styles.seeAllText}>See all</Text>
+							<Text style={styles.seeAllText}>Xem tất cả</Text>
 						</TouchableOpacity>
 					</View>
 
-					<FlatList
-						data={savedPlaces}
-						horizontal
-						showsHorizontalScrollIndicator={false}
-						keyExtractor={(item) => item.id}
-						contentContainerStyle={styles.savedPlacesContainer}
-						renderItem={({ item }) => (
-							<TouchableOpacity style={styles.savedPlaceItem}>
-								<Image
-									source={{ uri: item.image }}
-									style={styles.savedPlaceImage}
-								/>
-								<View style={styles.savedPlaceOverlay}>
-									<MaterialIcons
-										name="favorite"
-										size={20}
-										color="#fff"
-										style={styles.favoriteIcon}
+					{favoriteLoading ? (
+						<View style={styles.loadingContainer}>
+							<Text style={styles.loadingText}>Loading...</Text>
+						</View>
+					) : favorites.length === 0 ? (
+						<View style={styles.emptyContainer}>
+							<Text style={styles.emptyText}>No saved places yet</Text>
+						</View>
+					) : (
+						<FlatList
+							data={favorites}
+							horizontal
+							showsHorizontalScrollIndicator={false}
+							keyExtractor={(item) => item.tour.tourId}
+							contentContainerStyle={styles.savedPlacesContainer}
+							renderItem={({ item }) => (
+								<TouchableOpacity style={styles.savedPlaceItem}>
+									<Image
+										source={{
+											uri: item.tour.thumbnail || "https://via.placeholder.com/150",
+										}}
+										style={styles.savedPlaceImage}
 									/>
-								</View>
-								<View style={styles.savedPlaceInfo}>
-									<Text
-										style={styles.savedPlaceName}
-										numberOfLines={1}
-									>
-										{item.name}
-									</Text>
-									<Text
-										style={styles.savedPlaceLocation}
-										numberOfLines={1}
-									>
-										{item.location}
-									</Text>
-									<Text style={styles.savedPlaceDate}>Saved on {item.savedDate}</Text>
-								</View>
-							</TouchableOpacity>
-						)}
-					/>
+									<View style={styles.savedPlaceOverlay}>
+										<MaterialIcons
+											name="favorite"
+											size={20}
+											color="#fff"
+											style={styles.favoriteIcon}
+										/>
+									</View>
+									<View style={styles.savedPlaceInfo}>
+										<Text
+											style={styles.savedPlaceName}
+											numberOfLines={1}
+										>
+											{item.tour.name}
+										</Text>
+										<Text
+											style={styles.savedPlaceLocation}
+											numberOfLines={1}
+										>
+											{item.tour.duration || "Unknown location"}
+										</Text>
+										{/* <Text style={styles.savedPlaceDate}>
+											Saved on{" "}
+											{item.createdDate ? formatDate(item.createdDate) : "N/A"}
+										</Text> */}
+									</View>
+								</TouchableOpacity>
+							)}
+						/>
+					)}
 				</View>
 
 				{/* Recent Bookings Section */}
 				<View style={styles.section}>
 					<View style={styles.sectionHeader}>
-						<Text style={styles.sectionTitle}>Recent Bookings</Text>
+						<Text style={styles.sectionTitle}>Tour Đã Xem Gần Đây</Text>
 						<TouchableOpacity>
-							<Text style={styles.seeAllText}>See all</Text>
+							<Text style={styles.seeAllText}>Xem tất cả</Text>
 						</TouchableOpacity>
 					</View>
 
-					{recentBookings.map((booking) => (
-						<TouchableOpacity
-							key={booking.id}
-							style={styles.bookingItem}
-						>
-							<Image
-								source={{ uri: booking.image }}
-								style={styles.bookingImage}
-							/>
-							<View style={styles.bookingContent}>
-								<Text
-									style={styles.bookingName}
-									numberOfLines={1}
-								>
-									{booking.name}
-								</Text>
-								<Text style={styles.bookingLocation}>{booking.location}</Text>
-								<Text style={styles.bookingDate}>{booking.date}</Text>
-								<View
-									style={[
-										styles.bookingStatus,
-										booking.status === "Completed"
-											? styles.completedStatus
-											: styles.upcomingStatus,
-									]}
-								>
-									<Text style={styles.bookingStatusText}>{booking.status}</Text>
+					{historyLoading ? (
+						<View style={styles.loadingContainer}>
+							<Text style={styles.loadingText}>Loading...</Text>
+						</View>
+					) : history.length === 0 ? (
+						<View style={styles.emptyContainer}>
+							<Text style={styles.emptyText}>Không có lịch sử đặt tour</Text>
+						</View>
+					) : (
+						history.slice(0, 3).map((booking) => (
+							<TouchableOpacity
+								key={booking.tour.tourId}
+								style={styles.bookingItem}
+							>
+								<Image
+									source={{
+										uri: booking.tour.thumbnail || "https://via.placeholder.com/150",
+									}}
+									style={styles.bookingImage}
+								/>
+								<View style={styles.bookingContent}>
+									<Text
+										style={styles.bookingName}
+										numberOfLines={1}
+									>
+										{booking.tour.name}
+									</Text>
+									<Text style={styles.bookingLocation}>
+										{booking.tour.duration || "Unknown location"}
+									</Text>
+									<Text style={styles.bookingDate}>{booking.tour.duration || "N/A"}</Text>
+									{/* <View
+										style={[
+											styles.bookingStatus,
+											new Date(booking.endDate) < new Date()
+												? styles.completedStatus
+												: styles.upcomingStatus,
+										]}
+									>
+										<Text style={styles.bookingStatusText}>
+											{new Date(booking.endDate) < new Date()
+												? "Completed"
+												: "Upcoming"}
+										</Text>
+									</View> */}
 								</View>
-							</View>
-						</TouchableOpacity>
-					))}
+							</TouchableOpacity>
+						))
+					)}
 				</View>
 
 				{/* Support & Help Section */}
@@ -423,7 +432,7 @@ const styles = StyleSheet.create({
 	userName: {
 		fontSize: 20,
 		fontWeight: "bold",
-		color: Colors.gray[950],
+		color: Colors.gray[900],
 		marginBottom: 4,
 	},
 	userLevel: {
@@ -655,6 +664,24 @@ const styles = StyleSheet.create({
 	},
 	versionText: {
 		fontSize: 12,
+		color: Colors.gray[500],
+	},
+	loadingContainer: {
+		padding: 20,
+		alignItems: "center",
+	},
+	loadingText: {
+		fontSize: 14,
+		color: Colors.gray[500],
+	},
+	emptyContainer: {
+		padding: 20,
+		alignItems: "center",
+		backgroundColor: Colors.gray[50],
+		borderRadius: 8,
+	},
+	emptyText: {
+		fontSize: 14,
 		color: Colors.gray[500],
 	},
 });
