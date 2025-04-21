@@ -10,7 +10,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { register } from "@/services/auth-service";
+import { registerApi } from "@/services/auth-service";
 import Toast from "react-native-toast-message";
 
 export const SignupScreen = () => {
@@ -115,13 +115,14 @@ export const SignupScreen = () => {
 			console.log("Gửi API đăng ký");
 			// Gọi API đăng ký ở đây
 			try {
-				const result = await register({
+				const result = await registerApi(
 					fullName,
 					email,
 					phone,
 					username,
 					password,
-				});
+					
+				);
 				console.log("Register result:", result);
 				if (result.statusCode === 200 && result.data) {
 					Toast.show({
