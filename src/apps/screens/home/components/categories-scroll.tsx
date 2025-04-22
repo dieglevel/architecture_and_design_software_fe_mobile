@@ -1,23 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { Colors } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
+import { getCategory } from "@/services/booking-service";
+import { Category } from "@/types/implement/category";
+import { navigate } from "@/libs/navigation/navigationService";
 
-// Sample categories data
-const categories = [
-	{ id: 1, name: "Biển", icon: "water-outline" as const },
-	{ id: 2, name: "Núi", icon: "triangle-outline" as const },
-	{ id: 3, name: "Đô thị", icon: "business-outline" as const },
-	{ id: 4, name: "Di tích", icon: "fitness-outline" as const },
-	{ id: 5, name: "Khám phá", icon: "compass-outline" as const },
-	{ id: 6, name: "Ẩm thực", icon: "restaurant-outline" as const },
-];
+const categoryIconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
+	biển: "water-outline",
+	núi: "triangle-outline",
+	"đô thị": "business-outline",
+	"di tích": "fitness-outline",
+	"khám phá": "compass-outline",
+	"ẩm thực": "restaurant-outline",
+};
 
 export const CategoriesScroll = () => {
-	const handleCategoryPress = (categoryId: number) => {
-		// In a real app, navigate to category specific screen
-		// For now, just print to console
-		console.log(`Pressed category ${categoryId}`);
+	const [categories, setCategories] = useState<Category[]>([]);
+	useEffect(() => {
+		fetchCategory();
+	}, []);
+
+	const fetchCategory = async () => {
+		const response = await getCategory();
+		if (response.success) {
+			setCategories(response.data ?? []);
+		}
+	};
+
+	const categoriesWithIcon = categories.map((category) => ({
+		...category,
+		icon: categoryIconMap[category.name?.toLowerCase() as keyof typeof categoryIconMap] || "compass-outline",
+	}));
+
+	const handleCategoryPress = (category: {
+		categoryTourId?: string;
+		name?: string;
+		icon?: string;
+		image?: string;
+		description?: string;
+	}) => {
+		navigate("CategoryDetailScreen", {
+			categoryId: category.categoryTourId || "",
+			categoryName: category.name || "",
+			categoryIcon: category.icon || "compass-outline",
+			categoryImage: category.image || "",
+			categoryDescription: category.description || "",
+		});
 	};
 
 	return (
@@ -26,22 +55,25 @@ export const CategoriesScroll = () => {
 			showsHorizontalScrollIndicator={false}
 			contentContainerStyle={styles.categoriesContainer}
 		>
-			{categories.map((category) => (
-				<TouchableOpacity
-					key={category.id}
-					style={styles.categoryItem}
-					onPress={() => console.log(`Pressed category ${category.id}`)}
-				>
-					<View style={styles.iconContainer}>
-						<Ionicons
-							name={category.icon}
-							size={24}
-							color={Colors.colorBrand.burntSienna[500]}
-						/>
-					</View>
-					<Text style={styles.categoryName}>{category.name}</Text>
-				</TouchableOpacity>
-			))}
+			{categoriesWithIcon.map(
+				(category) =>
+					category.active === true && (
+						<TouchableOpacity
+							key={category.categoryTourId}
+							style={styles.categoryItem}
+							onPress={() => handleCategoryPress(category)}
+						>
+							<View style={styles.iconContainer}>
+								<Ionicons
+									name={category.icon as keyof typeof Ionicons.glyphMap}
+									size={24}
+									color={Colors.colorBrand.burntSienna[500]}
+								/>
+							</View>
+							<Text style={styles.categoryName}>{category.name}</Text>
+						</TouchableOpacity>
+					),
+			)}
 		</ScrollView>
 	);
 };

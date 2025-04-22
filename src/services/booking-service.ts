@@ -6,25 +6,14 @@ import { Tour } from "@/types/implement/tour";
 import { TourHistoryItem } from "@/types/implement/tour-history";
 import { FavoriteTourItem } from "@/types/implement/tour-favorite";
 import { safeApiCall } from "@/libs/axios/safe-api-call";
+import { Category } from "@/types/implement/category";
 
-export const getCategory = async (): Promise<BaseResponse<any[] | null>> => {
-	try {
-		const response = await api.get<BaseResponse<any[]>>(`${Gateway.BOOKING}/category-tours`);
-		return response.data;
-	} catch (error) {
-		const axiosError = error as AxiosError<BaseResponse<null>>;
-		// Trường hợp có response từ server
-		if (axiosError.response) {
-			return axiosError.response.data;
-		}
-		// Trường hợp lỗi do network hoặc không có response
-		return {
-			message: "Không thể kết nối đến server",
-			data: null,
-			statusCode: 500,
-			success: false,
-		};
-	}
+export const getCategory = async (): Promise<BaseResponse<Category[] | null>> => {
+	return safeApiCall(() => api.get<BaseResponse<Category[] | null>>(`${Gateway.BOOKING}/category-tours`), []);
+};
+
+export const getToursByCategory = async (categoryId: string) => {
+	return safeApiCall(() => api.get<BaseResponse<Tour[]>>(`${Gateway.BOOKING}/tours/${categoryId}/tours`), []);
 };
 
 export const searchFullText = async (keyword: string) => {
