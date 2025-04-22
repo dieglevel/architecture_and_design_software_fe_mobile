@@ -19,7 +19,7 @@ export type RootStackParamList = {
 	// PaymentResult: undefined;
 	// Cart: { productId: string; callback: () => void };
 	// ChatAdmin: { userId: string };
-	TourDetailScreen: {tourId: string};
+	TourDetailScreen: { tourId: string };
 	ProfileScreen: undefined;
 	ProfileScreenBooking: undefined;
 	ProfileDetailsScreen: undefined;
@@ -29,6 +29,13 @@ export type RootStackParamList = {
 		destination?: string;
 		departureDate?: string;
 		returnDate?: string;
+	};
+	CategoryDetailScreen: {
+		categoryId: string;
+		categoryName: string;
+		categoryIcon: string;
+		categoryImage: string;
+		categoryDescription: string;
 	};
 };
 
@@ -40,7 +47,7 @@ declare global {
 
 export type StackScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export type TourDetailRouteProp = RouteProp<RootStackParamList, 'TourDetailScreen'>;
+export type TourDetailRouteProp = RouteProp<RootStackParamList, "TourDetailScreen">;
 
 // export type ProductDetailRouteProp = RouteProp<
 // 	RootStackParamList,
