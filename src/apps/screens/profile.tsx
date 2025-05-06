@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getProfile, updateAvatar } from "@/services/user-service";
+import { updateAvatar } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser, reset } from "@/libs/redux/stores/user.store.";
-import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
 import { MaterialIcons, Ionicons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { Colors } from "@/constants";
 import imagePicker from "@/services/image-picker";
