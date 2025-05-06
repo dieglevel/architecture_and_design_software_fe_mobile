@@ -39,7 +39,7 @@ export const updateAvatar = async (avatarUri: string): Promise<BaseResponse<User
 		formData.append("avatar", {
 			uri: avatarUri,
 			name: fileName,
-			type: "image/jpeg|jpg|png", // Định dạng hợp lệ: "image/jpeg" hoặc "image/png"
+			type: "image/jpeg|jpg|png",
 		} as any);
 
 		const response = await api.put<BaseResponse<User>>(`${Gateway.USER}/users/me/avatar`, formData, {

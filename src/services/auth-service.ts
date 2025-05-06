@@ -18,3 +18,16 @@ export const loginApi = async (username: string, password: string) => {
 		throw e as BaseResponse<null>;
 	}
 };
+
+export const logoutApi = async () => {
+	try {
+		const response = await api.post<BaseResponse<null>>(`${Gateway.USER}/auth/logout`);
+		if (response.data.statusCode === 200) {
+			await AsyncStorage.removeItem(AsyncStorageKey.TOKEN);
+		}
+		return response.data;
+	} catch (e) {
+		throw e as BaseResponse<null>;
+	}
+};
+
