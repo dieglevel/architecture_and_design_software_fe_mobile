@@ -10,7 +10,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { register } from "@/services/auth-service";
+import { registerApi } from "@/services/auth-service";
 import Toast from "react-native-toast-message";
 
 export const SignupScreen = () => {
@@ -99,7 +99,6 @@ export const SignupScreen = () => {
 		return regex.test(text) ? null : "Mật khẩu ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt";
 	};
 
-	// SubmitAPI
 	const handleRegister = async () => {
 		const newErrors = {
 			fullName: validateName(fullName),
@@ -110,12 +109,10 @@ export const SignupScreen = () => {
 		};
 		setErrors(newErrors);
 
-		// Nếu không có lỗi nào
 		if (Object.values(newErrors).every((error) => error === null) && checked) {
 			console.log("Gửi API đăng ký");
-			// Gọi API đăng ký ở đây
 			try {
-				const result = await register({
+				const result = await registerApi({
 					fullName,
 					email,
 					phone,
@@ -123,7 +120,7 @@ export const SignupScreen = () => {
 					password,
 				});
 				console.log("Register result:", result);
-				if (result.statusCode === 200 && result.data) {
+				if (result?.statusCode === 200 && result.data) {
 					Toast.show({
 						type: "success",
 						text1: "✅ Thành công",
@@ -134,7 +131,7 @@ export const SignupScreen = () => {
 					Toast.show({
 						type: "error",
 						text1: "❌Lỗi",
-						text2: result.message || "Đã xảy ra lỗi!",
+						text2: result?.message || "Đã xảy ra lỗi!",
 					});
 				}
 			} catch (error) {
