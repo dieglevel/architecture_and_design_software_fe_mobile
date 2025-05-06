@@ -15,8 +15,6 @@ import { LoadingSpin } from "../components";
 import React from "react";
 
 export const RootScreenApp = () => {
-	const insets = useSafeAreaInsets();
-
 	const dispatch = useDispatch();
 
 	const [isLoading, setIsLoading] = useState(true);
@@ -60,11 +58,11 @@ export const RootScreenApp = () => {
 						/>
 						<Stack.Screen
 							name="RegisterScreen"
-							component={SignupScreen} // Add RegisterScreen here
+							component={SignupScreen}
 						/>
 						<Stack.Screen
 							name="ForgotPasswordScreen"
-							component={ForgotPasswordScreen} // Add RegisterScreen here
+							component={ForgotPasswordScreen}
 						/>
 					</Stack.Navigator>
 					<Toast />
