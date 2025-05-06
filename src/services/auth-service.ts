@@ -1,7 +1,7 @@
 import { BaseResponse } from "@/types";
 import { api } from "../libs/axios/axios.config"; // Import instance đã cấu hình
 import { Gateway } from "@/libs/axios";
-import { Auth } from "@/types/implement";
+import { Auth, RegisterParams, RegisterResponse } from "@/types/implement";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AsyncStorageKey } from "@/libs/async-storage";
 
@@ -31,3 +31,14 @@ export const logoutApi = async () => {
 	}
 };
 
+export const registerApi = async (params: RegisterParams) => {
+	try {
+		const response = await api.post<BaseResponse<RegisterResponse>>(`${Gateway.USER}/users/register`, params);
+
+		if (response.data.statusCode === 200) {
+			return response.data;
+		}
+	} catch (e) {
+		throw e as BaseResponse<null>;
+	}
+};
