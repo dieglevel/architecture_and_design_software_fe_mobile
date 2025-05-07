@@ -4,7 +4,7 @@
 
 export const AI_CONFIG = {
 	// Google Gemini API
-	GEMINI_API_KEY: "AIzaSyDYb715CPwGxVmxvN1d_UAo7AtZGiHNZVc", // Get from https://makersuite.google.com/app/apikey
+	GEMINI_API_KEY: "", // Get from https://makersuite.google.com/app/apikey
 
 	// Anthropic Claude API
 	CLAUDE_API_KEY: "", // Get from https://console.anthropic.com/
