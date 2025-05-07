@@ -28,7 +28,26 @@
     },
     "jsEngine": "hermes",
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "299c3a94-7d97-40a6-bcb4-007fe17e35a4"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/299c3a94-7d97-40a6-bcb4-007fe17e35a4"
+    }
   }
 }

@@ -22,7 +22,7 @@ export const RootScreenApp = () => {
 	useEffect(() => {
 		const getUser = async () => {
 			const profile = await getProfile();
-			if (profile.statusCode === 200) {
+			if (profile?.statusCode === 200) {
 				dispatch(setUser(profile.data || null));
 			}
 			setIsLoading(false);
