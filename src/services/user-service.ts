@@ -5,23 +5,12 @@ import { User } from "@/types/implement/user";
 import { AxiosError } from "axios";
 import * as Crypto from "expo-crypto";
 
-export const getProfile = async (): Promise<BaseResponse<User | null>> => {
+export const getProfile = async () => {
 	try {
 		const response = await api.get<BaseResponse<User>>(`${Gateway.USER}/users/my-info`);
 		return response.data;
 	} catch (error) {
-		const axiosError = error as AxiosError<BaseResponse<null>>;
-		// Trường hợp có response từ server
-		if (axiosError.response) {
-			return axiosError.response.data;
-		}
-		// Trường hợp lỗi do network hoặc không có response
-		return {
-			message: "Không thể kết nối đến server",
-			data: null,
-			statusCode: 500,
-			success: false,
-		};
+		const e = error as BaseResponse<null>;
 	}
 };
 
