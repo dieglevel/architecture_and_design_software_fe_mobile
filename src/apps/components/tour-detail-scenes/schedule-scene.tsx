@@ -12,7 +12,12 @@ export const ScheduleScene = ({ schedules }: { schedules: TourDestinationRespons
 		<FlatList
 			contentContainerStyle={{ padding: 10 }}
 			data={schedules}
-			renderItem={({ item, index }) => <ScheduleItem schedules={item}  index={index} />}
+			renderItem={({ item, index }) => (
+				<ScheduleItem
+					schedules={item}
+					index={index}
+				/>
+			)}
 			keyExtractor={(item, index) => index.toString()}
 			nestedScrollEnabled
 			showsVerticalScrollIndicator={false}
