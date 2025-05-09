@@ -45,7 +45,9 @@
     "react-native-tab-view": "^4.0.5",
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "^0.20.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "expo-build-properties": "~0.14.6",
+    "react-native-screens": "~4.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -68,4 +70,3 @@
     }
   }
 }
-
