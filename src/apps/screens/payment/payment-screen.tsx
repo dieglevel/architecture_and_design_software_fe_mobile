@@ -1,3 +1,4 @@
+import { SelectDate } from "@/apps/components/payment";
 import { Colors } from "@/constants";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -25,40 +26,10 @@ export const PaymentScreen = () => {
 
 				{/* Month Selector */}
 				<View style={styles.monthSelector}>
-					<FlatList
-						data={date}
-						renderItem={({ item }) => (
-							<TouchableOpacity
-								style={[
-									styles.month,
-									{
-										backgroundColor:
-											selectTime === item
-												? Colors.colorBrand.burntSienna[500]
-												: "white",
-									},
-								]}
-								onPress={() => setSelectTime(item)}
-							>
-								<Text
-									style={{
-										color:
-											selectTime === item
-												? "white"
-												: Colors.colorBrand.midnightBlue[950],
-										fontWeight: "bold",
-									}}
-								>
-									{item.toLocaleString("default", {
-										month: "long",
-									})}
-								</Text>
-							</TouchableOpacity>
-						)}
-						keyExtractor={(item) => item.toString()}
-						horizontal
-						showsHorizontalScrollIndicator={false}
-						showsVerticalScrollIndicator={false}
+					<SelectDate
+						date={date}
+						selectTime={selectTime}
+						setSelectTime={setSelectTime}
 					/>
 				</View>
 			</View>
@@ -100,7 +71,7 @@ export const PaymentScreen = () => {
 						marginTop: 12,
 						backgroundColor: "white",
 						paddingVertical: 16,
-                  gap: 8,
+						gap: 8,
 					},
 					styles.priceSection,
 				]}
@@ -147,7 +118,7 @@ export const PaymentScreen = () => {
 						</TouchableOpacity>
 					</View>
 				</View>
-            <View style={[styles.priceRow, { width: "100%", paddingHorizontal: 16 }]}>
+				<View style={[styles.priceRow, { width: "100%", paddingHorizontal: 16 }]}>
 					<View>
 						<Text style={{ fontSize: 18, color: Colors.colorBrand.midnightBlue[950] }}>
 							Người lớn
@@ -187,7 +158,7 @@ export const PaymentScreen = () => {
 						</TouchableOpacity>
 					</View>
 				</View>
-            <View style={[styles.priceRow, { width: "100%", paddingHorizontal: 16 }]}>
+				<View style={[styles.priceRow, { width: "100%", paddingHorizontal: 16 }]}>
 					<View>
 						<Text style={{ fontSize: 18, color: Colors.colorBrand.midnightBlue[950] }}>
 							Người lớn
@@ -227,8 +198,6 @@ export const PaymentScreen = () => {
 						</TouchableOpacity>
 					</View>
 				</View>
-
-            
 			</View>
 
 			{/* Button */}
