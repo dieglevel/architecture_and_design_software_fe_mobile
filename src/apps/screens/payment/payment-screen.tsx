@@ -1,4 +1,4 @@
-import { SelectDate } from "@/apps/components/payment";
+import { SelectDate } from "@/apps/components/payment/select-date";
 import { Colors } from "@/constants";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -121,7 +121,7 @@ export const PaymentScreen = () => {
 				<View style={[styles.priceRow, { width: "100%", paddingHorizontal: 16 }]}>
 					<View>
 						<Text style={{ fontSize: 18, color: Colors.colorBrand.midnightBlue[950] }}>
-							Người lớn
+							Trẻ em
 						</Text>
 						<Text style={{ fontSize: 12, color: Colors.gray[500] }}>(Người 12 tuổi trở lên)</Text>
 						<Text
@@ -161,7 +161,7 @@ export const PaymentScreen = () => {
 				<View style={[styles.priceRow, { width: "100%", paddingHorizontal: 16 }]}>
 					<View>
 						<Text style={{ fontSize: 18, color: Colors.colorBrand.midnightBlue[950] }}>
-							Người lớn
+							Em bé
 						</Text>
 						<Text style={{ fontSize: 12, color: Colors.gray[500] }}>(Người 12 tuổi trở lên)</Text>
 						<Text
