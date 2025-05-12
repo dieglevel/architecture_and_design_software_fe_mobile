@@ -1,5 +1,6 @@
 import { Colors } from "@/constants";
 import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { ItemSelectDate } from "./item-select-date";
 
 interface Props {
 	date: Date[];
@@ -12,26 +13,11 @@ export const SelectDate = ({ date, selectTime, setSelectTime }: Props) => {
 		<FlatList
 			data={date}
 			renderItem={({ item }) => (
-				<TouchableOpacity
-					style={[
-						styles.month,
-						{
-							backgroundColor: selectTime === item ? Colors.colorBrand.burntSienna[500] : "white",
-						},
-					]}
-					onPress={() => setSelectTime(item)}
-				>
-					<Text
-						style={{
-							color: selectTime === item ? "white" : Colors.colorBrand.midnightBlue[950],
-							fontWeight: "bold",
-						}}
-					>
-						{item.toLocaleString("default", {
-							month: "long",
-						})}
-					</Text>
-				</TouchableOpacity>
+				<ItemSelectDate
+					item={item}
+					selectTime={selectTime}
+					setSelectTime={setSelectTime}
+				/>
 			)}
 			keyExtractor={(item) => item.toString()}
 			horizontal
@@ -40,13 +26,3 @@ export const SelectDate = ({ date, selectTime, setSelectTime }: Props) => {
 		/>
 	);
 };
-
-const styles = StyleSheet.create({
-	month: {
-		fontSize: 16,
-		color: Colors.colorBrand.midnightBlue[950],
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		borderRadius: 8,
-	},
-});
