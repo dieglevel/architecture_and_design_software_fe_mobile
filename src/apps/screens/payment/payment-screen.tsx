@@ -1,5 +1,7 @@
+import { ItemTypeTicket } from "@/apps/components/payment";
 import { SelectDate } from "@/apps/components/payment/select-date";
 import { Colors } from "@/constants";
+import { localePrice } from "@/utils";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
@@ -21,68 +23,107 @@ export const PaymentScreen = () => {
 	return (
 		<View style={styles.container}>
 			{/* Header */}
-			<View style={{ backgroundColor: "white", borderRadius: 8, padding: 16 }}>
-				<Text style={styles.header}>GIÁ VÉ</Text>
+			<View style={{ padding: 16, backgroundColor: Colors.colorBrand.midnightBlue[50], flex: 1 }}>
+				<View style={{ backgroundColor: "white", borderRadius: 8, padding: 16 }}>
+					<Text style={styles.header}>GIÁ VÉ</Text>
 
-				{/* Month Selector */}
-				<View style={styles.monthSelector}>
-					<SelectDate
-						date={date}
-						selectTime={selectTime}
-						setSelectTime={setSelectTime}
+					{/* Month Selector */}
+					<View style={styles.monthSelector}>
+						<SelectDate
+							date={date}
+							selectTime={selectTime}
+							setSelectTime={setSelectTime}
+						/>
+					</View>
+				</View>
+
+				{/* Date Section */}
+				<Text style={styles.date}>
+					{selectTime.toLocaleString("default", {
+						day: "2-digit",
+						month: "2-digit",
+						year: "numeric",
+					})}
+				</Text>
+				<View
+					style={{
+						backgroundColor: "white",
+						borderRadius: 8,
+						justifyContent: "space-around",
+						alignItems: "center",
+						paddingVertical: 16,
+					}}
+				>
+					<Text style={{ fontWeight: "bold", fontSize: 20 }}>Thời gian xuất phát</Text>
+					<View style={styles.dateRange}>
+						<Text
+							style={{
+								fontSize: 16,
+								color: Colors.colorBrand.midnightBlue[950],
+								fontWeight: "500",
+							}}
+						>
+							Ngày đi: 31/01/2025
+						</Text>
+						<Text
+							style={{
+								fontSize: 16,
+								color: Colors.colorBrand.midnightBlue[950],
+								fontWeight: "500",
+							}}
+						>
+							Ngày về: 22/02/2025
+						</Text>
+					</View>
+				</View>
+
+				{/* Price Section */}
+				<View
+					style={[
+						{
+							justifyContent: "center",
+							alignItems: "center",
+							marginTop: 12,
+							backgroundColor: "white",
+							paddingVertical: 16,
+							gap: 8,
+						},
+						styles.priceSection,
+					]}
+				>
+					<Text style={{ fontWeight: "700", fontSize: 20 }}>Giá Tour</Text>
+					<ItemTypeTicket
+						title="Người lớn"
+						description="Từ 12 tuổi trở lên"
+						price={2000000}
+						value={adultCount}
+						setValue={setAdultCount}
+					/>
+
+					<ItemTypeTicket
+						title="Trẻ em"
+						description="Từ 2 tuổi đến 12 tuổi"
+						price={2000000}
+						value={childCount}
+						setValue={setChildCount}
+					/>
+
+					<ItemTypeTicket
+						title="Em bé"
+						description="Từ 2 tuổi trở xuống"
+						price={2000000}
+						value={infantCount}
+						setValue={setInfantCount}
 					/>
 				</View>
 			</View>
 
-			{/* Date Section */}
-			<Text style={styles.date}>
-				{selectTime.toLocaleString("default", {
-					day: "2-digit",
-					month: "2-digit",
-					year: "numeric",
-				})}
-			</Text>
-			<View
-				style={{
-					backgroundColor: "white",
-					borderRadius: 8,
-					justifyContent: "space-around",
-					alignItems: "center",
-					paddingVertical: 16,
-				}}
-			>
-				<Text style={{ fontWeight: "bold", fontSize: 20 }}>Thời gian xuất phát</Text>
-				<View style={styles.dateRange}>
-					<Text style={{ fontSize: 16, color: Colors.colorBrand.midnightBlue[950], fontWeight: "500" }}>
-						Ngày đi: 31/01/2025
-					</Text>
-					<Text style={{ fontSize: 16, color: Colors.colorBrand.midnightBlue[950], fontWeight: "500" }}>
-						Ngày về: 22/02/2025
-					</Text>
-				</View>
-			</View>
-
-			{/* Price Section */}
-			<View
-				style={[
-					{
-						justifyContent: "center",
-						alignItems: "center",
-						marginTop: 12,
-						backgroundColor: "white",
-						paddingVertical: 16,
-						gap: 8,
-					},
-					styles.priceSection,
-				]}
-			>
-				<Text style={{ fontWeight: "700", fontSize: 20 }}>Giá Tour</Text>
-			
-         </View>
-
 			{/* Button */}
 			<TouchableOpacity style={styles.button}>
 				<Text style={styles.buttonText}>Đặt ngay</Text>
+				<Text style={{ fontSize: 16, color: "white", fontWeight: "bold" }}>
+					{localePrice(adultCount * 2000000 + childCount * 2000000 + infantCount * 2000000)}
+				</Text>
 			</TouchableOpacity>
 		</View>
 	);
@@ -147,10 +188,12 @@ const styles = StyleSheet.create({
 		padding: 16,
 		borderRadius: 8,
 		alignItems: "center",
+		justifyContent: "space-between",
+		flexDirection: "row",
 	},
 	buttonText: {
 		color: "#fff",
-		fontSize: 16,
+		fontSize: 20,
 		fontWeight: "bold",
 	},
 });
