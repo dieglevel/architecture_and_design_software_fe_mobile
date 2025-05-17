@@ -35,10 +35,7 @@ export const logoutApi = async () => {
 export const registerApi = async (params: RegisterParams) => {
 	try {
 		const response = await api.post<BaseResponse<RegisterResponse>>(`${Gateway.USER}/users/register`, params);
-
-		if (response.data.statusCode === 200) {
-			return response.data;
-		}
+		return response.data;
 	} catch (e) {
 		throw e as BaseResponse<null>;
 	}

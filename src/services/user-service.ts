@@ -10,7 +10,16 @@ export const getProfile = async () => {
 		const response = await api.get<BaseResponse<User>>(`${Gateway.USER}/users/my-info`);
 		return response.data;
 	} catch (error) {
-		const e = error as BaseResponse<null>;
+		const axiosError = error as AxiosError<BaseResponse<null>>;
+		if (axiosError.response) {
+			return axiosError.response.data;
+		}
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
 	}
 };
 

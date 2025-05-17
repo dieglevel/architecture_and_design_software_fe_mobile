@@ -8,6 +8,7 @@ import { Dimensions, ScrollView, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { registerApi } from "@/services/auth-service";
 import Toast from "react-native-toast-message";
+import { BaseResponse } from "@/types";
 
 export const SignupScreen = () => {
 	const navigate = useNavigation();
@@ -132,8 +133,14 @@ export const SignupScreen = () => {
 						text2: result?.message || "Đã xảy ra lỗi!",
 					});
 				}
-			} catch (error) {
-				console.error("Register failed:", error);
+			} catch (error: any) {
+				console.log("Register error:", error.response?.data);
+				const errorResponse = error.response?.data;
+				Toast.show({
+					type: "error",
+					text1: "❌Lỗi",
+					text2: errorResponse?.message || "Đã xảy ra lỗi!",
+				});
 			}
 		} else {
 			console.log("Thông tin không hợp lệ");
@@ -142,9 +149,6 @@ export const SignupScreen = () => {
 
 	return (
 		<SafeAreaView>
-			<Press style={{ position: "absolute", backgroundColor: "transpert", padding: 4, top: 40, right: 20 }}>
-				<Close size={25} />
-			</Press>
 			<ScrollView style={{ flex: 1, width: "100%", paddingHorizontal: 10, gap: 10 }}>
 				<View style={{ flex: 1, justifyContent: "center", height: height }}>
 					<View style={{ marginVertical: 20 }}>
