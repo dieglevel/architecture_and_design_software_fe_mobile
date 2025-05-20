@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HomeScreen, TourDetailScreen } from "../screens";
+import { HomeScreen, TourDetailScreen, UserFavoriteTourScreen } from "../screens";
 import { CategoryDetailScreen } from "../screens/category-detail/category-detail";
 
 const Stack = createNativeStackNavigator();
@@ -19,13 +19,19 @@ export default function HomeStack() {
 				component={TourDetailScreen}
 				options={({ route }) => ({
 					headerShown: true,
-					presentation: "modal" 
+					presentation: "modal",
 				})}
 			/>
 
 			<Stack.Screen
 				name="CategoryDetailScreen"
 				component={CategoryDetailScreen}
+				options={{ headerShown: false }}
+			/>
+
+			<Stack.Screen
+				name="UserFavoriteTourScreen"
+				component={UserFavoriteTourScreen}
 				options={{ headerShown: false }}
 			/>
 		</Stack.Navigator>

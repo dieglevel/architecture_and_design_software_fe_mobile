@@ -18,6 +18,7 @@ import { searchFullText } from "@/services/booking-service";
 import { Tour } from "@/types/implement";
 import SearchResults from "../components/search-results";
 import { useAppSelector } from "@/libs/redux/redux.config";
+import { navigate } from "@/libs/navigation/navigationService";
 
 const { width } = Dimensions.get("window");
 
@@ -38,6 +39,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 	const [isSearching, setIsSearching] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const user = useAppSelector((state) => state.user.data);
+	const favoriteTours = useAppSelector((state) => state.favorite.data);
 
 	// Calculate the translation for the entire header
 	const headerTranslateY = scrollY.interpolate({
@@ -139,12 +141,22 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 					</View>
 
 					<View style={styles.iconContainer}>
-						<TouchableOpacity style={styles.iconButton}>
+						<TouchableOpacity
+							style={styles.iconButton}
+							onPress={() => navigate("UserFavoriteTourScreen")}
+						>
 							<Ionicons
 								name="heart-outline"
 								size={24}
 								color={Colors.colorBrand.midnightBlue[800]}
 							/>
+							{favoriteTours && favoriteTours.length > 0 && (
+								<View style={styles.favoriteBadge}>
+									<Text style={styles.badgeText}>
+										{favoriteTours.length > 99 ? "99+" : favoriteTours.length}
+									</Text>
+								</View>
+							)}
 						</TouchableOpacity>
 						<TouchableOpacity style={styles.iconButton}>
 							<Ionicons
@@ -314,6 +326,22 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	favoriteBadge: {
+		position: "absolute",
+		top: 0,
+		right: -5,
+		width: 12,
+		height: 12,
+		borderRadius: 10,
+		backgroundColor: Colors.colorBrand.burntSienna[500],
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	badgeText: {
+		fontSize: 8,
+		fontWeight: "bold",
+		color: "#fff",
 	},
 });
 

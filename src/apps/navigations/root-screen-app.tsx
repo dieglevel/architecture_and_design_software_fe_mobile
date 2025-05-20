@@ -15,6 +15,7 @@ import { getProfile } from "@/services/user-service";
 import { setUser } from "@/libs/redux/stores/user.store.";
 import { LoadingSpin } from "../components";
 import * as Linking from "expo-linking";
+import UserFavoriteTourScreen from "../screens/user-favorite-tour";
 
 import React from "react";
 const prefix = Linking.createURL("/");
@@ -110,6 +111,10 @@ export const RootScreenApp = () => {
 								headerShown: true,
 							}}
 							component={PaymentScreen}
+						/>
+						<Stack.Screen
+							name="UserFavoriteTourScreen"
+							component={UserFavoriteTourScreen}
 						/>
 					</Stack.Navigator>
 					<NavigationEventListener />

@@ -7,6 +7,7 @@ import { Text, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { Colors } from "@/constants";
+import { navigate } from "@/libs/navigation/navigationService";
 
 const Stack = createNativeStackNavigator();
 export default function UserStack() {
@@ -27,7 +28,7 @@ export default function UserStack() {
 					headerTitleAlign: "center",
 					headerLeft: () => (
 						<TouchableOpacity
-							onPress={() => navigation.goBack()}
+							onPress={() => navigate("ProfileScreenBooking")}
 							style={{ marginLeft: 10, flexDirection: "row", alignItems: "center" }}
 						>
 							<Ionicons
@@ -47,7 +48,7 @@ export default function UserStack() {
 					headerTitleAlign: "center",
 					headerLeft: () => (
 						<TouchableOpacity
-							onPress={() => navigation.goBack()}
+							onPress={() => navigate("ProfileScreenBooking")}
 							style={{ marginLeft: 10, flexDirection: "row", alignItems: "center" }}
 						>
 							<Ionicons
