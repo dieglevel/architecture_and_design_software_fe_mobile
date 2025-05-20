@@ -4,7 +4,7 @@ import { ItemSelectDate } from "./item-select-date";
 
 interface Props {
 	date: Date[];
-	selectTime: Date;
+	selectTime?: Date;
 	setSelectTime: (date: Date) => void;
 }
 

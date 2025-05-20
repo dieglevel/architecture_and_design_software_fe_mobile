@@ -8,6 +8,7 @@ export interface Tour {
 	tourDestinationResponses?: TourDestinationResponse[];
 	tourImageResponses?: TourImageResponse[];
 	active?: boolean;
+	tourScheduleResponses: TourScheduleResponses[];
 }
 
 export interface TourDestinationResponse {
@@ -24,4 +25,16 @@ export interface TourImageResponse {
 	description?: string
 	orderIndex?: number
 	active?: boolean
+}
+export interface TourScheduleResponses {
+	tourScheduleId: string;
+	name?: string
+	description?: string;
+	startDate?: Date;
+	endDate?: Date;
+	adultPrice?: number;
+	childPrice?: number;
+	babyPrice?: number;
+	slot?: number;
+	tourId: string;
 }

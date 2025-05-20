@@ -3,24 +3,25 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface Props {
 	item: Date;
-	selectTime: Date;
+	selectTime?: Date;
 	setSelectTime: (date: Date) => void;
 }
 
 export const ItemSelectDate = ({ item, selectTime, setSelectTime }: Props) => {
+	const isSelected = selectTime?.getMonth() === item.getMonth() && selectTime?.getFullYear() === item.getFullYear();
 	return (
 		<TouchableOpacity
 			style={[
 				styles.month,
 				{
-					backgroundColor: selectTime === item ? Colors.colorBrand.burntSienna[500] : "white",
+					backgroundColor: isSelected ? Colors.colorBrand.burntSienna[500] : "white",
 				},
 			]}
 			onPress={() => setSelectTime(item)}
 		>
 			<Text
 				style={{
-					color: selectTime === item ? "white" : Colors.colorBrand.midnightBlue[950],
+					color: isSelected ? "white" : Colors.colorBrand.midnightBlue[950],
 					fontWeight: "bold",
 				}}
 			>

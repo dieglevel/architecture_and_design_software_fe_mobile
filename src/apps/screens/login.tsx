@@ -40,20 +40,20 @@ export const LoginScreen = () => {
 
 				const resultFetchProfile = await dispatch(fetchUserProfile());
 
-				if (fetchUserProfile.fulfilled.match(resultFetchProfile)) {
-					dispatch(fetchHistoryTours());
-					dispatch(fetchFavoriteTours());
-					reset("WelcomeScreen");
-				} else {
-					Toast.show({
-						type: "error",
-						text1: "Lỗi khi lấy thông tin người dùng",
-					});
-				}
-			}
-			
-		} catch (error) {
+				dispatch(fetchHistoryTours());
+				dispatch(fetchFavoriteTours());
+				reset("WelcomeScreen");
 
+				// if (fetchUserProfile.fulfilled.match(resultFetchProfile)) {
+
+				// } else {
+				// 	Toast.show({
+				// 		type: "error",
+				// 		text1: "Lỗi khi lấy thông tin người dùng",
+				// 	});
+				// }
+			}
+		} catch (error) {
 			const err = error as BaseResponse<any>;
 			if (err.statusCode === 401) {
 				Toast.show({

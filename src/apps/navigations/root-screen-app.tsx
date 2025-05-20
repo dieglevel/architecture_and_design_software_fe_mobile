@@ -12,10 +12,10 @@ import { useEffect, useState } from "react";
 import { getProfile } from "@/services/user-service";
 import { setUser } from "@/libs/redux/stores/user.store.";
 import { LoadingSpin } from "../components";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 
 import React from "react";
-const prefix = Linking.createURL('/');
+const prefix = Linking.createURL("/");
 
 export const RootScreenApp = () => {
 	const dispatch = useDispatch();
@@ -35,7 +35,7 @@ export const RootScreenApp = () => {
 	}, []);
 
 	const linking: LinkingOptions<RootStackParamList> = {
-		prefixes: [prefix, 'https://app.example.com', "myapp://"],
+		prefixes: [prefix, "https://travelsummornersrift.quindart.shop"],
 		config: {
 			screens: {
 				WelcomeScreen: "welcome",
@@ -43,18 +43,38 @@ export const RootScreenApp = () => {
 				RegisterScreen: "register",
 				ForgotPasswordScreen: "forgot-password",
 				PaymentScreen: "payment",
-				
-
 			},
 		},
-	}
+	};
+
+	useEffect(() => {
+		const handleDeepLink = (event: Linking.EventType) => {
+			const url = event.url;
+			console.log("URL received: ", url);
+			// xử lý theo url
+		};
+
+		const subscription = Linking.addEventListener("url", handleDeepLink);
+
+		// Kiểm tra nếu app được mở từ link khi đã đóng
+		Linking.getInitialURL().then((url) => {
+			if (url) {
+				console.log("App opened with URL: ", url);
+			}
+		});
+
+		return () => subscription.remove();
+	}, []);
 
 	return (
 		<>
 			{isLoading ? (
 				<LoadingSpin />
 			) : (
-				<NavigationContainer ref={navigationRef} linking={linking}>
+				<NavigationContainer
+					ref={navigationRef}
+					linking={linking}
+				>
 					<Stack.Navigator
 						initialRouteName="LoginScreen"
 						screenOptions={{

@@ -9,20 +9,20 @@ import Toast from "react-native-toast-message";
 import * as Linking from "expo-linking";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { size } from "lodash";
-
-const date: Date[] = [
-	new Date("2025-01-31"),
-	new Date("2025-02-01"),
-	new Date("2025-03-02"),
-	new Date("2025-04-03"),
-	new Date("2025-05-04"),
-];
+import { getTourDetails } from "@/services/tour-service";
+import { PaymentRouteProp } from "@/libs/navigation";
+import { TourScheduleResponses } from "@/types/implement";
+import { formatDateToDDMMYYYY } from "@/utils/format-date";
 
 export const PaymentScreen = () => {
 	const { setOptions, goBack } = useNavigation();
-	const route = useRoute()
+	const route = useRoute<PaymentRouteProp>();
 
-	const [selectTime, setSelectTime] = useState<Date>(date[0]);
+	const [data, setData] = useState<TourScheduleResponses[]>();
+
+	const [selecteData, setSelectedData] = useState<TourScheduleResponses>();
+
+	const [selectTime, setSelectTime] = useState<Date>();
 	const [adultCount, setAdultCount] = useState<number>(1);
 	const [childCount, setChildCount] = useState<number>(0);
 	const [infantCount, setInfantCount] = useState<number>(0);
@@ -48,7 +48,7 @@ export const PaymentScreen = () => {
 				<TouchableOpacity
 					style={{ padding: 8 }}
 					onPress={() => {
-						goBack()
+						goBack();
 					}}
 				>
 					<AntDesign
@@ -59,6 +59,30 @@ export const PaymentScreen = () => {
 				</TouchableOpacity>
 			),
 		});
+
+		const fetchData = async () => {
+			const { params } = route;
+			try {
+				const response = await getTourDetails(params.tourId);
+				if (response && response.statusCode === 200) {
+					setData(response.data?.tourScheduleResponses || []);
+					if (response.data?.tourScheduleResponses && response.data.tourScheduleResponses.length > 0) {
+						setSelectedData(response.data.tourScheduleResponses[0]);
+						setSelectTime(new Date(response.data.tourScheduleResponses[0].startDate ?? ""));
+						console.log("Tour Details:", response.data);
+					}
+				}
+			} catch (error) {
+				Toast.show({
+					type: "error",
+					text1: "Lỗi",
+					text2: "Không thể tải thông tin tour. Vui lòng thử lại sau.",
+					autoHide: true,
+				});
+			}
+		};
+
+		fetchData();
 	}, []);
 
 	useEffect(() => {
@@ -66,14 +90,31 @@ export const PaymentScreen = () => {
 			setIsDisabled(false);
 		} else {
 			setIsDisabled(true);
-
 		}
-
 	}, [adultCount, childCount, infantCount]);
 
 	const handleBookTicket = () => {
-		const totalPrice = adultCount * 2000000 + childCount * 2000000 + infantCount * 2000000;
+		const totalPrice =
+			adultCount * (selecteData?.adultPrice || 0) +
+			childCount * (selecteData?.childPrice || 0) +
+			infantCount * (selecteData?.babyPrice || 0);
 		Linking.openURL("https://docs.expo.dev/versions/latest/sdk/linking/");
+	};
+
+	const calculatorTotalPrice = () => {
+		return localePrice(
+			adultCount * (selecteData?.adultPrice || 0) +
+				childCount * (selecteData?.childPrice || 0) +
+				infantCount * (selecteData?.babyPrice || 0),
+		);
+	};
+
+	const getListStartDate = (): Date[] => {
+		if (!data || data.length === 0) return [];
+		const startDates = data
+			.filter((item) => item.startDate !== undefined)
+			.map((item) => new Date(item.startDate as string | number | Date));
+		return startDates.sort((a, b) => a.getTime() - b.getTime());
 	};
 
 	return (
@@ -83,76 +124,85 @@ export const PaymentScreen = () => {
 				<View style={styles.headerCard}>
 					<Text style={styles.header}>GIÁ VÉ</Text>
 					<View style={styles.monthSelector}>
-						<SelectDate
-							date={date}
-							selectTime={selectTime}
-							setSelectTime={setSelectTime}
-						/>
+						{data && data.length > 0 && (
+							<SelectDate
+								date={getListStartDate()}
+								selectTime={selectTime}
+								setSelectTime={setSelectTime}
+							/>
+						)}
 					</View>
 					<Text style={styles.date}>
-						{selectTime.toLocaleString("default", {
-							day: "2-digit",
-							month: "2-digit",
-							year: "numeric",
-						})}
+						{selectTime &&
+							selectTime.toLocaleString("default", {
+								day: "2-digit",
+								month: "2-digit",
+								year: "numeric",
+							})}
 					</Text>
 				</View>
 
-				{/* Date Section */}
-				<View style={styles.card}>
-					<Text style={styles.sectionTitle}>Thời gian xuất phát</Text>
-					<View style={styles.dateRange}>
-						<Text style={styles.dateLabel}>Ngày đi: 31/01/2025</Text>
-						<Text style={styles.dateLabel}>Ngày về: 22/02/2025</Text>
-					</View>
-				</View>
+				{selectTime && (
+					<>
+						{/* Date Section */}
+						<View style={styles.card}>
+							<Text style={styles.sectionTitle}>Thời gian xuất phát</Text>
+							<View style={styles.dateRange}>
+								<Text style={styles.dateLabel}>{`Ngày đi: ${formatDateToDDMMYYYY(
+									selecteData?.startDate || null,
+								)}`}</Text>
+								<Text style={styles.dateLabel}>{`Ngày về: ${formatDateToDDMMYYYY(
+									selecteData?.endDate || null,
+								)}`}</Text>
+							</View>
+						</View>
 
-				{/* Price Section */}
-				<View style={[styles.card, styles.priceSection]}>
-					<Text style={styles.sectionTitle}>Giá Tour</Text>
-					<ItemTypeTicket
-						icon="user"
-						title="Người lớn"
-						description="Từ 12 tuổi trở lên"
-						price={2000000}
-						value={adultCount}
-						setValue={setAdultCount}
-						minValue={1}
-					/>
-					<ItemTypeTicket
-						icon="child"
-						title="Trẻ em"
-						description="Từ 2 tuổi đến 12 tuổi"
-						price={2000000}
-						value={childCount}
-						setValue={setChildCount}
-					/>
-					<ItemTypeTicket
-						icon="baby"
-						title="Em bé"
-						description="Từ 2 tuổi trở xuống"
-						price={2000000}
-						value={infantCount}
-						setValue={setInfantCount}
-					/>
-					<View style={styles.divider} />
-					<View style={styles.totalRow}>
-						<Text style={styles.totalLabel}>Tổng cộng</Text>
-						<Text style={styles.totalPrice}>
-							{localePrice(adultCount * 2000000 + childCount * 2000000 + infantCount * 2000000)}
-						</Text>
-					</View>
-				</View>
+						{/* Price Section */}
+						<View style={[styles.card, styles.priceSection]}>
+							<Text style={styles.sectionTitle}>Giá Tour</Text>
+							<ItemTypeTicket
+								icon="user"
+								title="Người lớn"
+								description="Từ 12 tuổi trở lên"
+								price={selecteData?.adultPrice || 0}
+								value={adultCount}
+								setValue={setAdultCount}
+								minValue={1}
+							/>
+							<ItemTypeTicket
+								icon="child"
+								title="Trẻ em"
+								description="Từ 2 tuổi đến 12 tuổi"
+								price={selecteData?.childPrice || 0}
+								value={childCount}
+								setValue={setChildCount}
+							/>
+							<ItemTypeTicket
+								icon="baby"
+								title="Em bé"
+								description="Từ 2 tuổi trở xuống"
+								price={selecteData?.babyPrice || 0}
+								value={infantCount}
+								setValue={setInfantCount}
+							/>
+							<View style={styles.divider} />
+							<View style={styles.totalRow}>
+								<Text style={styles.totalLabel}>Tổng cộng</Text>
+								<Text style={styles.totalPrice}>{calculatorTotalPrice()}</Text>
+							</View>
+						</View>
 
-				{/* Button */}
-				<TouchableOpacity
-					style={[styles.button, isDisabled && styles.buttonDisabled]}
-					onPress={handleBookTicket}
-					disabled={isDisabled}
-					activeOpacity={0.85}
-				>
-					<Text style={styles.buttonText}>Đặt ngay</Text>
-				</TouchableOpacity>
+						{/* Button */}
+						<TouchableOpacity
+							style={[styles.button, isDisabled && styles.buttonDisabled]}
+							onPress={handleBookTicket}
+							disabled={isDisabled}
+							activeOpacity={0.85}
+						>
+							<Text style={styles.buttonText}>Đặt ngay</Text>
+						</TouchableOpacity>
+					</>
+				)}
 			</View>
 		</ScrollView>
 	);

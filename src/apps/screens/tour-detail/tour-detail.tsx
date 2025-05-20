@@ -46,27 +46,27 @@ export const TourDetailScreen = () => {
 
 	useEffect(() => {
 		if (focus) {
-					const fetchTourData = async () => {
-			try {
-				handleGetTours(setListData);
-			} catch (error) {
-				console.error("Error fetching tour data:", error);
-			}
-
-			try {
-				const data = await getTourDetails(tourId);
-				if (data) {
-					setData(data.data || null);
-					console.log("Tour data fetched:", data);
+			const fetchTourData = async () => {
+				try {
+					handleGetTours(setListData);
+				} catch (error) {
+					console.error("Error fetching tour data:", error);
 				}
-			} catch (error) {
-				console.error("Error fetching tour data:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
 
-		fetchTourData();
+				try {
+					const data = await getTourDetails(tourId);
+					if (data) {
+						setData(data.data || null);
+						console.log("Tour data fetched:", data);
+					}
+				} catch (error) {
+					console.error("Error fetching tour data:", error);
+				} finally {
+					setIsLoading(false);
+				}
+			};
+
+			fetchTourData();
 		}
 	}, [focus]);
 
@@ -84,7 +84,6 @@ export const TourDetailScreen = () => {
 
 		return destinationString.slice(0, -3); // Remove the last " - "
 	};
-
 
 	return (
 		<>
@@ -234,7 +233,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: "100%",
 		borderRadius: 10,
-		marginRight: 4
+		marginRight: 4,
 	},
 	paginationContainer: {
 		position: "absolute",

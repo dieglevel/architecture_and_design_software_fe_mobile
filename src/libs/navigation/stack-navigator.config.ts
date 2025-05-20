@@ -42,6 +42,7 @@ declare global {
 export type StackScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export type TourDetailRouteProp = RouteProp<RootStackParamList, "TourDetailScreen">;
+export type PaymentRouteProp = RouteProp<RootStackParamList, "PaymentScreen">;
 
 // export type ProductDetailRouteProp = RouteProp<
 // 	RootStackParamList,
