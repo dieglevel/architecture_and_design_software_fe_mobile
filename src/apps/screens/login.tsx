@@ -15,6 +15,7 @@ import { fetchUserProfile } from "@/libs/redux/thunks/user.thunk";
 import { fetchFavoriteTours } from "@/libs/redux/thunks/tour.thunk";
 import { fetchHistoryTours } from "@/libs/redux/thunks/tour.thunk";
 import { getProfile } from "@/services/user-service";
+import { initialState } from "@/libs/navigation/handle-initial-state";
 
 export const LoginScreen = () => {
 	const [username, setUsername] = useState<string>("client");
@@ -38,18 +39,13 @@ export const LoginScreen = () => {
 					autoHide: true,
 				});
 
-				const resultFetchProfile = await dispatch(fetchUserProfile());
-
-				if (fetchUserProfile.fulfilled.match(resultFetchProfile)) {
-					dispatch(fetchHistoryTours());
-					dispatch(fetchFavoriteTours());
-					reset("WelcomeScreen");
-				} else {
-					Toast.show({
-						type: "error",
-						text1: "Lỗi khi lấy thông tin người dùng",
-					});
-				}
+				initialState();
+				reset("WelcomeScreen");
+			} else {
+				Toast.show({
+					type: "error",
+					text1: "Lỗi khi lấy thông tin người dùng",
+				});
 			}
 		} catch (error) {
 			const err = error as BaseResponse<any>;
@@ -69,11 +65,9 @@ export const LoginScreen = () => {
 					visibilityTime: 2000,
 					autoHide: true,
 				});
-				navigate("BottomTabScreenApp");
 			}
 		}
 	};
-
 	useEffect(() => {
 		const checkLogin = async () => {
 			const token = await AsyncStorage.getItem(AsyncStorageKey.TOKEN);
