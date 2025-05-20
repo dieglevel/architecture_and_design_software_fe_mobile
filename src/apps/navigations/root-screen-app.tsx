@@ -1,5 +1,5 @@
 import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
-import { LoginScreen, PaymentScreen, SignupScreen } from "@/apps/screens";
+import { LoginScreen, PaymentFormBooking, PaymentScreen, PaymentSuccessPage, SignupScreen } from "@/apps/screens";
 import { RootStackParamList, Stack } from "@/libs/navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
@@ -15,6 +15,7 @@ import { LoadingSpin } from "../components";
 import * as Linking from "expo-linking";
 
 import React from "react";
+import { Colors } from "@/constants";
 const prefix = Linking.createURL("/");
 
 export const RootScreenApp = () => {
@@ -43,6 +44,7 @@ export const RootScreenApp = () => {
 				RegisterScreen: "register",
 				ForgotPasswordScreen: "forgot-password",
 				PaymentScreen: "payment",
+				PaymentSuccessPage: "payment-success",
 			},
 		},
 	};
@@ -101,6 +103,24 @@ export const RootScreenApp = () => {
 						<Stack.Screen
 							name="ForgotPasswordScreen"
 							component={ForgotPasswordScreen}
+						/>
+						<Stack.Screen
+							name="PaymentSuccessPage"
+							component={PaymentSuccessPage}
+						/>
+						<Stack.Screen
+							name="PaymentFormBooking"
+							options={{
+								headerShown: true,
+								headerTitle: "Thông tin đặt vé",
+								headerTintColor: Colors.colorBrand.burntSienna[500],
+								headerTitleStyle: {
+									fontSize: 24,
+									fontWeight: "bold",
+									color: Colors.colorBrand.burntSienna[500],
+								},
+							}}
+							component={PaymentFormBooking}
 						/>
 						<Stack.Screen
 							name="PaymentScreen"

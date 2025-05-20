@@ -8,3 +8,5 @@ export * from "./tour-detail/tour-detail";
 export * from "./profile";
 export * from "./category-detail/category-detail";
 export * from "./payment/payment-screen";
+export * from "./payment/payment-success";
+export * from "./payment/payment-form-booking";

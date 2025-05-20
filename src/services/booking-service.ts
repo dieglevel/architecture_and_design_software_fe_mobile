@@ -7,6 +7,7 @@ import { TourHistoryItem } from "@/types/implement/tour-history";
 import { FavoriteTourItem } from "@/types/implement/tour-favorite";
 import { safeApiCall } from "@/libs/axios/safe-api-call";
 import { Category } from "@/types/implement/category";
+import { BookingRequest } from "@/types/implement/booking";
 
 export const getCategory = async (): Promise<BaseResponse<Category[] | null>> => {
 	// return safeApiCall(() => api.get<BaseResponse<Category[] | null>>(`${Gateway.BOOKING}/category-tours`), []);
@@ -52,3 +53,25 @@ export const deleteFavoriteTour = async (userId: string, tourId: string) => {
 		[],
 	);
 };
+
+export const createBooking = async () => {
+	try {
+		const response = await api.post<BaseResponse<BookingRequest>>(`${Gateway.BOOKING}/books/create-booking`)
+		if (response.data.statusCode === 200){
+			return response.data.data;
+		}
+	} catch (e) {
+		throw e as BaseResponse<null>;
+	}
+}
+
+export const paymentUrlAmount = async (amount: number, bookingId: string) => {
+	try {
+		const response = await api.post<BaseResponse<string>>(`${Gateway.BOOKING}/vnpay/create-payment-url?amount=${amount}&bankCode=NCB&bookingId=${bookingId}`)
+		if (response.data.success){
+			return response.data.data;
+		}
+	} catch (e) {
+		throw e as BaseResponse<null>;
+	}
+}

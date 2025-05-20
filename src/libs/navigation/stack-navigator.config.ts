@@ -30,7 +30,9 @@ export type RootStackParamList = {
 	PaymentScreen: {
 		tourId: string;
 		
-	}
+	};
+	PaymentSuccessPage: undefined;
+	PaymentFormBooking: undefined;
 };
 
 declare global {
