@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
 	View,
 	Text,
@@ -40,6 +40,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const user = useAppSelector((state) => state.user.data);
 	const favoriteTours = useAppSelector((state) => state.favorite.data);
+	const searchInputRef = useRef<TextInput>(null);
 
 	// Calculate the translation for the entire header
 	const headerTranslateY = scrollY.interpolate({
@@ -55,7 +56,6 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 		extrapolate: "clamp",
 	});
 
-	// Debounced search function
 	const debouncedSearch = useCallback(
 		(() => {
 			let timer: ReturnType<typeof setTimeout>;
@@ -63,7 +63,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 				clearTimeout(timer);
 				timer = setTimeout(() => {
 					performSearch(text);
-				}, 500); // Delay for 300ms
+				}, 500);
 			};
 		})(),
 		[],
@@ -112,9 +112,11 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 		setSearchText("");
 		setSearchResults([]);
 		setIsSearching(false);
+		searchInputRef.current?.blur();
 		if (onSearchStateChange) {
 			onSearchStateChange(false);
 		}
+		Keyboard.dismiss();
 	};
 
 	return (
@@ -190,6 +192,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 									onSearchStateChange(true);
 								}
 							}}
+							ref={searchInputRef}
 						/>
 						{searchText.length > 0 && (
 							<TouchableOpacity onPress={clearSearch}>
@@ -212,7 +215,11 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 			</Animated.View>
 
 			{isSearching && (
-				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						clearSearch();
+					}}
+				>
 					<Animated.View
 						style={[
 							{
@@ -220,6 +227,8 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 								top: HEADER_HEIGHT,
 								left: 0,
 								right: 0,
+								bottom: 0,
+								backgroundColor: "rgba(0,0,0,0.3)",
 								zIndex: 5,
 							},
 							{ transform: [{ translateY: searchResultsTranslateY }] },

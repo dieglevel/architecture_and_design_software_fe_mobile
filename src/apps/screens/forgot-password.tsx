@@ -7,18 +7,13 @@ import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
 
 export const ForgotPasswordScreen = () => {
-	const [phone, setPhone] = useState<string>("");
+	const [email, setEmail] = useState<string>("");
 	const navigate = useNavigation();
 
 	const { height } = Dimensions.get("window");
 
 	return (
 		<SafeAreaView>
-			<View style={{ position: "absolute", backgroundColor: "transpert", padding: 4, top: 40, right: 20 }}>
-				<Press onPress={() => navigate.navigate("LoginScreen")}>
-					<Close size={25} />
-				</Press>
-			</View>
 			<ScrollView style={{ flex: 1, width: "100%", paddingHorizontal: 10, gap: 10 }}>
 				<View style={{ flex: 1, justifyContent: "center", height: height }}>
 					<View style={{ marginVertical: 20 }}>
@@ -35,10 +30,10 @@ export const ForgotPasswordScreen = () => {
 						</Text>
 					</View>
 					<InputForm
-						label="Số điện thoại"
-						value={phone}
-						onChangeText={setPhone}
-						placeholder="Nhập số điện thoại"
+						label="Địa chỉ email"
+						value={email}
+						onChangeText={setEmail}
+						placeholder="Nhập địa chỉ email của bạn"
 						required
 					/>
 					<Button
