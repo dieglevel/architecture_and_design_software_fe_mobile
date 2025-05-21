@@ -1,3 +1,4 @@
+import { TourScheduleResponses } from "@/types/implement";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface PaymentState {
@@ -13,9 +14,11 @@ interface PaymentState {
       userEmail: string | null;
       userAddress: string | null;
    }
+   data: TourScheduleResponses | null;
 }
 
 const initialState: PaymentState = {
+   data: null,
    bookingId: null,
    tourScheduleId: null,
    adultCount: 1,
@@ -35,12 +38,14 @@ const paymentSlice = createSlice({
    initialState,
    reducers: {
       setPage1: (state, action: PayloadAction<{
+         data?: TourScheduleResponses | null;
          tourScheduleId?: string | null;
          adultCount?: number | null;
          childCount?: number | null;
          babyCount?: number | null;
          totalPrice?: number | null;
       }>) => {
+         action.payload.data && (state.data = action.payload.data);
          action.payload.tourScheduleId && (state.tourScheduleId = action.payload.tourScheduleId);
          action.payload.adultCount && (state.adultCount = action.payload.adultCount);
          action.payload.childCount && (state.childCount = action.payload.childCount);

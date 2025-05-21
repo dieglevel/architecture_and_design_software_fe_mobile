@@ -4,7 +4,7 @@ import { Colors } from "@/constants";
 import { localePrice } from "@/utils";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator } from "react-native";
 import Toast from "react-native-toast-message";
 import * as Linking from "expo-linking";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
@@ -33,6 +33,8 @@ export const PaymentScreen = () => {
 	const [selectTime, setSelectTime] = useState<TourScheduleResponses>();
 
 	const [isDisabled, setIsDisabled] = useState<boolean>(false);
+
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const focus = useIsFocused();
 	useEffect(() => {
@@ -67,6 +69,7 @@ export const PaymentScreen = () => {
 		});
 
 		const fetchData = async () => {
+			setIsLoading(true);
 			const { params } = route;
 			try {
 				const response = await getTourDetails(params.tourId);
@@ -75,6 +78,8 @@ export const PaymentScreen = () => {
 					if (response.data?.tourScheduleResponses && response.data.tourScheduleResponses.length > 0) {
 						setSelectedData(response.data.tourScheduleResponses[0]);
 						setSelectTime(response.data.tourScheduleResponses[0]);
+						dispatch(setPage1({ tourScheduleId: response.data.tourScheduleResponses[0].tourScheduleId, data: response.data.tourScheduleResponses[0] }));
+						
 					}
 				}
 			} catch (error) {
@@ -84,6 +89,8 @@ export const PaymentScreen = () => {
 					text2: "Không thể tải thông tin tour. Vui lòng thử lại sau.",
 					autoHide: true,
 				});
+			} finally {
+				setIsLoading(false);
 			}
 		};
 
@@ -104,8 +111,7 @@ export const PaymentScreen = () => {
 			childCount * (selecteData?.childPrice || 0) +
 			babyCount * (selecteData?.babyPrice || 0);
 		dispatch(setPage1({ totalPrice }));
-		navigation.navigate("PaymentFormBooking")
-
+		navigation.navigate("PaymentFormBooking");
 	};
 
 	const calculatorTotalPrice = () => {
@@ -144,85 +150,116 @@ export const PaymentScreen = () => {
 
 	return (
 		<ScrollView>
-			{data && (
-				<View style={styles.container}>
-					{/* Header */}
-					<View style={styles.headerCard}>
-						<Text style={styles.header}>GIÁ VÉ</Text>
-						<View style={styles.monthSelector}>
-							{data && data.length > 0 && (
-								<SelectDate
-									date={data}
-									selectTime={selectTime || data[0]}
-									setSelectTime={setSelectTime}
-								/>
+			{isLoading ? (
+				<View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 32 }}>
+					<ActivityIndicator size="large" color={Colors.colorBrand.burntSienna[500]} />
+				</View>
+			) : (
+				<>
+					{data && data.length > 0 ? (
+						<View style={styles.container}>
+							{/* Header */}
+							<View style={styles.headerCard}>
+								<Text style={styles.header}>GIÁ VÉ</Text>
+								<View style={styles.monthSelector}>
+									{data && data.length > 0 && (
+										<SelectDate
+											date={data}
+											selectTime={selectTime || data[0]}
+											setSelectTime={setSelectTime}
+										/>
+									)}
+								</View>
+							</View>
+
+							{selectTime && (
+								<>
+									{/* Date Section */}
+									<View style={styles.card}>
+										<Text style={styles.sectionTitle}>Thời gian xuất phát</Text>
+										<View style={styles.dateRange}>
+											<Text style={styles.dateLabel}>{`Ngày đi: ${formatDateToDDMMYYYY(
+												selecteData?.startDate || null,
+											)}`}</Text>
+											<Text style={styles.dateLabel}>{`Ngày về: ${formatDateToDDMMYYYY(
+												selecteData?.endDate || null,
+											)}`}</Text>
+										</View>
+									</View>
+
+									{/* Price Section */}
+									<View style={[styles.card, styles.priceSection]}>
+										<Text style={styles.sectionTitle}>Giá Tour</Text>
+										<ItemTypeTicket
+											icon="user"
+											title="Người lớn"
+											description="Từ 12 tuổi trở lên"
+											price={selecteData?.adultPrice || 0}
+											value={adultCount}
+											setValue={setAdultCount}
+											minValue={1}
+										/>
+										<ItemTypeTicket
+											icon="child"
+											title="Trẻ em"
+											description="Từ 2 tuổi đến 12 tuổi"
+											price={selecteData?.childPrice || 0}
+											value={childCount}
+											setValue={setChildCount}
+										/>
+										<ItemTypeTicket
+											icon="baby"
+											title="Em bé"
+											description="Từ 2 tuổi trở xuống"
+											price={selecteData?.babyPrice || 0}
+											value={babyCount}
+											setValue={setBabyCount}
+										/>
+										<View style={styles.divider} />
+										<View style={styles.totalRow}>
+											<Text style={styles.totalLabel}>Tổng cộng</Text>
+											<Text style={styles.totalPrice}>{calculatorTotalPrice()}</Text>
+										</View>
+									</View>
+
+									{/* Button */}
+									<TouchableOpacity
+										style={[styles.button, isDisabled && styles.buttonDisabled]}
+										onPress={handleBookTicket}
+										disabled={isDisabled}
+										activeOpacity={0.85}
+									>
+										<Text style={styles.buttonText}>Đặt ngay</Text>
+									</TouchableOpacity>
+								</>
 							)}
 						</View>
-
-					</View>
-
-					{selectTime && (
+					) : (
 						<>
-							{/* Date Section */}
-							<View style={styles.card}>
-								<Text style={styles.sectionTitle}>Thời gian xuất phát</Text>
-								<View style={styles.dateRange}>
-									<Text style={styles.dateLabel}>{`Ngày đi: ${formatDateToDDMMYYYY(
-										selecteData?.startDate || null,
-									)}`}</Text>
-									<Text style={styles.dateLabel}>{`Ngày về: ${formatDateToDDMMYYYY(
-										selecteData?.endDate || null,
-									)}`}</Text>
-								</View>
+							<View style={{ alignItems: "center", justifyContent: "center", padding: 32, flex :1  }}>
+								<AntDesign
+									name="calendar"
+									size={48}
+									color={Colors.colorBrand.burntSienna[300]}
+									style={{ marginBottom: 16 }}
+								/>
+								<Text
+									style={{
+										fontSize: 18,
+										color: Colors.colorBrand.midnightBlue[700],
+										fontWeight: "600",
+										marginBottom: 8,
+									}}
+								>
+									Hiện chưa có lịch đặt
+								</Text>
+								<Text style={{ fontSize: 15, color: Colors.gray[500], textAlign: "center" }}>
+									Vui lòng quay lại sau hoặc liên hệ với chúng tôi để biết thêm thông tin.
+								</Text>
 							</View>
-
-							{/* Price Section */}
-							<View style={[styles.card, styles.priceSection]}>
-								<Text style={styles.sectionTitle}>Giá Tour</Text>
-								<ItemTypeTicket
-									icon="user"
-									title="Người lớn"
-									description="Từ 12 tuổi trở lên"
-									price={selecteData?.adultPrice || 0}
-									value={adultCount}
-									setValue={setAdultCount}
-									minValue={1}
-								/>
-								<ItemTypeTicket
-									icon="child"
-									title="Trẻ em"
-									description="Từ 2 tuổi đến 12 tuổi"
-									price={selecteData?.childPrice || 0}
-									value={childCount}
-									setValue={setChildCount}
-								/>
-								<ItemTypeTicket
-									icon="baby"
-									title="Em bé"
-									description="Từ 2 tuổi trở xuống"
-									price={selecteData?.babyPrice || 0}
-									value={babyCount}
-									setValue={setBabyCount}
-								/>
-								<View style={styles.divider} />
-								<View style={styles.totalRow}>
-									<Text style={styles.totalLabel}>Tổng cộng</Text>
-									<Text style={styles.totalPrice}>{calculatorTotalPrice()}</Text>
-								</View>
-							</View>
-
-							{/* Button */}
-							<TouchableOpacity
-								style={[styles.button, isDisabled && styles.buttonDisabled]}
-								onPress={handleBookTicket}
-								disabled={isDisabled}
-								activeOpacity={0.85}
-							>
-								<Text style={styles.buttonText}>Đặt ngay</Text>
-							</TouchableOpacity>
 						</>
 					)}
-				</View>
+				</>
 			)}
 		</ScrollView>
 	);

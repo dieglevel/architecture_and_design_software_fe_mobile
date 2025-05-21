@@ -54,9 +54,9 @@ export const deleteFavoriteTour = async (userId: string, tourId: string) => {
 	);
 };
 
-export const createBooking = async () => {
+export const createBooking = async (data: BookingRequest) => {
 	try {
-		const response = await api.post<BaseResponse<BookingRequest>>(`${Gateway.BOOKING}/books/create-booking`)
+		const response = await api.post<BaseResponse<BookingRequest>>(`${Gateway.BOOKING}/books/create-booking`, data)
 		if (response.data.statusCode === 200){
 			return response.data.data;
 		}

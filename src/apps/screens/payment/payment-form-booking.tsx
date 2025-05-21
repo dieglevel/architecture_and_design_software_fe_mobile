@@ -3,19 +3,79 @@ import { useAppSelector } from "@/libs/redux/redux.config";
 import { useState } from "react";
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
 import { Colors } from "@/constants";
+import { BookingRequest, BookingRequestTicket } from "@/types/implement/booking";
+import { createBooking } from "@/services/booking-service";
 
 export const PaymentFormBooking = () => {
-	const { adultCount, babyCount, bookingId, childCount, information, totalPrice, tourScheduleId } = useAppSelector(
-		(state) => state.payment,
-	);
+	const { adultCount, babyCount, bookingId, childCount, information, totalPrice, tourScheduleId, data } =
+		useAppSelector((state) => state.payment);
 
 	const [userFullName, setUserFullName] = useState<string>();
 	const [userPhone, setUserPhone] = useState<string>();
 	const [userEmail, setUserEmail] = useState<string>();
 	const [userAddress, setUserAddress] = useState<string>();
 
-	const handleSubmit = () => {
-		// Handle submit logic here
+	const handleSubmit = async () => {
+		if (!userFullName || !userPhone || !userEmail || !userAddress) {
+			return;
+		}
+
+		let tickets: BookingRequestTicket[] = [];
+
+		for (let i = 0; i < adultCount; i++) {
+			tickets.push({
+				ticketType: "ADULT",
+				fullName: "",
+				status: 1,
+				gender: "male",
+				birthDate: "",
+				price: data?.adultPrice || 0,
+			});
+		}
+
+		for (let i = 0; i < babyCount; i++) {
+			tickets.push({
+				ticketType: "BABY",
+				fullName: "",
+				status: 1,
+				gender: "male",
+				birthDate: "",
+				price: data?.babyPrice || 0,
+			});
+		}
+
+		for (let i = 0; i < childCount; i++) {
+			tickets.push({
+				ticketType: "CHILD",
+				fullName: "",
+				status: 1,
+				gender: "male",
+				birthDate: "",
+				price: data?.childPrice || 0,
+			});
+		}
+
+		const bookingRequest: BookingRequest = {
+			userFullName: userFullName,
+			userPhone: userPhone,
+			userEmail: userEmail,
+			userAddress: userAddress,
+			tourScheduleId: tourScheduleId || "",
+			note: "",
+			tickets: tickets,
+		};
+
+		try {
+			const responseBooking = await createBooking(bookingRequest)
+			if (responseBooking) {
+				console.log("Booking created successfully:", responseBooking);
+				// Handle successful booking creation (e.g., navigate to payment screen)
+			} else {
+				console.error("Failed to create booking");
+			}
+		} catch (error) {
+			console.error("Error creating booking:", error);
+		}
 	};
 
 	return (
