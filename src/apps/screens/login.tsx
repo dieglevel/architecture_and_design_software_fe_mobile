@@ -1,6 +1,6 @@
 import { Loading, Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
-import { Close, Eye, EyeOff } from "@/assets/svgs";
+import { Close, Eye, EyeOff, Logo } from "@/assets/svgs";
 import { Colors, Texts } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
@@ -18,8 +18,8 @@ import { getProfile } from "@/services/user-service";
 import { initialState } from "@/libs/navigation/handle-initial-state";
 
 export const LoginScreen = () => {
-	const [username, setUsername] = useState<string>("client");
-	const [password, setPassword] = useState<string>("123456");
+	const [username, setUsername] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
 	const dispatch = useAppDispatch();
 	const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
@@ -99,6 +99,12 @@ export const LoginScreen = () => {
 			</Press> */}
 					<ScrollView style={{ flex: 1, width: "100%", paddingHorizontal: 10, gap: 10 }}>
 						<View style={{ flex: 1, justifyContent: "center", height: height }}>
+							<View style={{ alignItems: "center", marginBottom: 20 }}>
+								<Logo
+									width={300}
+									height={100}
+								/>
+							</View>
 							<View style={{ marginVertical: 20 }}>
 								<Text
 									style={[

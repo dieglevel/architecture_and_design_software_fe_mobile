@@ -8,3 +8,4 @@ export * from "./search";
 export * from "./message";
 export * from "./home";
 export * from "./user";
+export * from "./logo"
