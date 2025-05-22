@@ -1,30 +1,24 @@
-import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { LoginScreen, PaymentFormBooking, PaymentScreen, PaymentSuccessPage, SignupScreen } from "@/apps/screens";
-import { RootStackParamList, Stack } from "@/libs/navigation";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
-import { navigationRef } from "@/libs/navigation/navigationService";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
 import { OtpInputScreen } from "@/apps/screens/otp-input";
 import { ResetPasswordScreen } from "@/apps/screens/reset-password";
-import { RootStackParamList, Stack, StackScreenNavigationProp } from "@/libs/navigation";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
-import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
 import { eventEmitter } from "@/libs/eventemitter3";
-import WelcomeScreen from "../screens/home/welcome-screen";
-import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
-import { getProfile } from "@/services/user-service";
+import { RootStackParamList, Stack, StackScreenNavigationProp } from "@/libs/navigation";
+import { navigationRef } from "@/libs/navigation/navigationService";
 import { setUser } from "@/libs/redux/stores/user.store.";
+import { getProfile } from "@/services/user-service";
+import { LinkingOptions, NavigationContainer, useNavigation } from "@react-navigation/native";
+import * as Linking from "expo-linking";
+import { useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
+import { useDispatch } from "react-redux";
 import { LoadingSpin } from "../components";
-import * as Linking from "expo-linking";
-import * as Linking from "expo-linking";
+import WelcomeScreen from "../screens/home/welcome-screen";
 import UserFavoriteTourScreen from "../screens/user-favorite-tour";
+import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
 
-import React from "react";
 import { Colors } from "@/constants";
+import React from "react";
 const prefix = Linking.createURL("/");
 
 // Separate component for event listener logic inside NavigationContainer
