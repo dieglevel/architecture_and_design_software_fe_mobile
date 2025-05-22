@@ -186,7 +186,7 @@ export const CategoryDetailScreen = () => {
 						<TourItem
 							tour={item}
 							rating={4.5}
-							discount={10}
+							// discount={10}
 							horizontal={false}
 						/>
 					</View>

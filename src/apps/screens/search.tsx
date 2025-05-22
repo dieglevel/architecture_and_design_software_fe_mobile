@@ -20,8 +20,8 @@ import { navigate } from "@/libs/navigation/navigationService";
 
 const { width } = Dimensions.get("window");
 const popularDestinations = [
-	{ id: 1, name: "Đà Lạt", image: "https://images.unsplash.com/photo-1589997384675-13ccc9d9da18?q=80&w=2500" },
-	{ id: 2, name: "Nha Trang", image: "https://images.unsplash.com/photo-1549867436-403a3e163d11?q=80&w=2500" },
+	{ id: 1, name: "Đà Lạt", image: "https://phuyentourist.com/wp-content/uploads/2019/07/tour-phu-yen-da-lat-3-ngay-2-dem-phuyentourist-4.png" },
+	{ id: 2, name: "Nha Trang", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtvE4GIx3LYi2Du6FBRRDZS6hPsNKM_U25Ew&s" },
 	{ id: 3, name: "Phú Quốc", image: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?q=80&w=2500" },
 	{ id: 4, name: "Hạ Long", image: "https://images.unsplash.com/photo-1543348750-466b55f32f16?q=80&w=2500" },
 ];

@@ -8,7 +8,7 @@ export interface Tour {
 	tourDestinationResponses?: TourDestinationResponse[];
 	tourImageResponses?: TourImageResponse[];
 	active?: boolean;
-	tourScheduleResponses: TourScheduleResponses[];
+	tourScheduleResponses?: TourScheduleResponses[];
 }
 
 export interface TourDestinationResponse {

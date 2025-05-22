@@ -72,6 +72,7 @@ export const HomeScreen = () => {
 				<ListItem
 					listTour={popularTours}
 					horizontal={true}
+					numberOfList={1}
 				/>
 			</View>
 
@@ -84,6 +85,7 @@ export const HomeScreen = () => {
 				<ListItem
 					listTour={discountedTours}
 					horizontal={true}
+					numberOfList={2}
 				/>
 			</View>
 

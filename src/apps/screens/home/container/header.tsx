@@ -160,14 +160,14 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 								</View>
 							)}
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.iconButton}>
+						{/* <TouchableOpacity style={styles.iconButton}>
 							<Ionicons
 								name="notifications-outline"
 								size={24}
 								color={Colors.colorBrand.midnightBlue[800]}
 							/>
 							<View style={styles.notificationBadge} />
-						</TouchableOpacity>
+						</TouchableOpacity> */}
 					</View>
 				</View>
 

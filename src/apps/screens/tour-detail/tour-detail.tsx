@@ -13,23 +13,16 @@ import { Tour, TourDestinationResponse } from "@/types/implement";
 import { handleGetTours } from "../home/handle";
 import { LoadingSpin } from "@/apps/components";
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/libs/redux/redux.config";
-import { setCurrentTour, setShowTourDetail } from "@/libs/redux/stores/user.store.";
-import { navigate } from "@/libs/navigation/navigationService";
 
 export const TourDetailScreen = () => {
 	const route = useRoute<TourDetailRouteProp>();
-	const { setOptions } = useNavigation();
-	const dispatch = useDispatch();
 
-	// Lấy tour ID từ route hoặc Redux store
-	const currentTour = useSelector((state: RootState) => state.user.currentTour);
-	const tourId = route.params?.tourId || currentTour?.tourId;
+	const { setOptions } = useNavigation();
+
+	const tourId = route.params?.tourId;
 
 	const [data, setData] = useState<Tour | null>(null);
-	const [recommendedTours, setRecommendedTours] = useState<Tour[]>([]);
-	const [allTours, setAllTours] = useState<Tour[]>([]);
+	const [listData, setListData] = useState<Tour[]>([]);
 
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -41,72 +34,44 @@ export const TourDetailScreen = () => {
 
 	const focus = useIsFocused();
 
-	// Cập nhật tiêu đề khi có dữ liệu tour
 	useEffect(() => {
 		if (data?.name) {
 			setOptions({ title: data.name });
 		}
 	}, [data?.name]);
 
-	// Đánh dấu đang tải khi focus thay đổi
 	useEffect(() => {
 		setIsLoading(true);
 	}, [focus]);
 
-	// Cập nhật store khi có tourId từ route params
 	useEffect(() => {
-		if (route.params?.tourId) {
-			dispatch(setShowTourDetail(true));
-		}
-	}, [route.params?.tourId]);
-
-	// Tải dữ liệu tour khi tourId thay đổi
-	useEffect(() => {
-		if (!tourId) return;
-
-		const fetchTourData = async () => {
-			setIsLoading(true);
-
+		if (focus) {
+					const fetchTourData = async () => {
 			try {
-				const data = await getTourDetails(tourId);
-				if (data) {
-					const tourData = data.data;
-					setData(tourData || null);
-
-					// Lưu tour hiện tại vào Redux store
-					if (tourData) {
-						dispatch(setCurrentTour(tourData));
-					}
-
-					console.log("Tour data fetched:", data);
-				}
+				handleGetTours(setListData);
 			} catch (error) {
 				console.error("Error fetching tour data:", error);
 			}
 
 			try {
-				handleGetTours(setAllTours);
+				const data = await getTourDetails(tourId);
+				if (data) {
+					setData(data.data || null);
+					console.log("Tour data fetched:", data);
+				}
 			} catch (error) {
-				console.error("Error fetching all tours:", error);
+				console.error("Error fetching tour data:", error);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 
 		fetchTourData();
-	}, [tourId]);
-
-	// Cập nhật danh sách tour đề xuất
-	useEffect(() => {
-		if (allTours.length > 0 && tourId) {
-			// Lọc ra các tour khác với tour hiện tại
-			const filtered = allTours.filter((tour) => tour.tourId !== tourId);
-			// Lấy tối đa 5 tour để hiển thị
-			setRecommendedTours(filtered.slice(0, 5));
 		}
-	}, [allTours, tourId]);
+	}, [focus]);
 
 	const renderTourDestination = (tourDestinations: TourDestinationResponse[] | null) => {
+		// String
 		let destinationString = "";
 
 		if (!tourDestinations) return destinationString;
@@ -120,12 +85,6 @@ export const TourDetailScreen = () => {
 		return destinationString.slice(0, -3); // Remove the last " - "
 	};
 
-	const handleRecommendedTourPress = (tour: Tour) => {
-		// Dispatch tour được chọn vào Redux
-		dispatch(setCurrentTour(tour));
-		// Navigate đến trang chi tiết tour với ID mới
-		navigate("TourDetailScreen", { tourId: tour.tourId });
-	};
 
 	return (
 		<>
@@ -142,8 +101,8 @@ export const TourDetailScreen = () => {
 				>
 					<FlatList
 						showsVerticalScrollIndicator={false}
-						data={[]}
-						renderItem={() => null}
+						data={listData}
+						renderItem={({ item }) => <TourItem tour={item} />}
 						keyExtractor={(item, index) => index.toString()}
 						style={{ marginBottom: 20, padding: 4 }}
 						contentContainerStyle={{ paddingBottom: 50 }} // Tạo khoảng cách để không bị che
@@ -230,13 +189,11 @@ export const TourDetailScreen = () => {
 									</View>
 								</View>
 
-								<View style={{ flex: 1, minHeight: 400 }}>
 									<TourDetail
 										schedules={data?.tourDestinationResponses || []}
 										ratingDetails={ratingDetails}
 										commentData={commentData}
 									/>
-								</View>
 								<Divider />
 
 								<Text
@@ -250,32 +207,6 @@ export const TourDetailScreen = () => {
 								>
 									Có thể bạn sẽ thích
 								</Text>
-								<FlatList
-									data={recommendedTours}
-									horizontal
-									keyExtractor={(item) => item.tourId}
-									showsHorizontalScrollIndicator={false}
-									renderItem={({ item }) => (
-										<TouchableOpacity onPress={() => handleRecommendedTourPress(item)}>
-											<View style={{ marginRight: 12 }}>
-												<Image
-													source={{ uri: item.thumbnail }}
-													style={{ width: 160, height: 100, borderRadius: 8 }}
-													resizeMode="cover"
-												/>
-												<Text
-													numberOfLines={1}
-													style={{ fontWeight: "bold", width: 160 }}
-												>
-													{item.name}
-												</Text>
-												<Text style={{ color: "#555", fontSize: 12 }}>
-													{item.duration}
-												</Text>
-											</View>
-										</TouchableOpacity>
-									)}
-								/>
 							</View>
 						}
 					/>
@@ -301,7 +232,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: "100%",
 		borderRadius: 10,
-		marginRight: 4,
+		marginRight: 4
 	},
 	paginationContainer: {
 		position: "absolute",

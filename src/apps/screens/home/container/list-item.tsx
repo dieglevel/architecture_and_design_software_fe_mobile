@@ -10,9 +10,10 @@ interface Props {
 	horizontal?: boolean;
 	showTitle?: boolean;
 	title?: string;
+	numberOfList?: number;
 }
 
-const ListItem = ({ listTour, horizontal = true, showTitle = false, title }: Props) => {
+const ListItem = ({ listTour, horizontal = true, showTitle = false, title, numberOfList }: Props) => {
 	const [showAll, setShowAll] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -42,7 +43,7 @@ const ListItem = ({ listTour, horizontal = true, showTitle = false, title }: Pro
 						discount={Math.random() > 0.6 ? Math.floor(Math.random() * 30) + 5 : 0}
 					/>
 				)}
-				keyExtractor={(item) => item.tourId?.toString()}
+				keyExtractor={(item, index) => item.tourId?.toString() + index + numberOfList}
 			/>
 
 			{isLoading ? (

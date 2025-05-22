@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, FlatList, ActivityIndicator, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { updateAvatar } from "@/services/user-service";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -100,7 +100,7 @@ const ProfileScreenBooking = () => {
 						</View>
 					</View>
 
-					<View style={styles.statsContainer}>
+					{/* <View style={styles.statsContainer}>
 						<View style={styles.statItem}>
 							<Text style={styles.statValue}>{history.length || 0}</Text>
 							<Text style={styles.statLabel}>Stays</Text>
@@ -115,7 +115,7 @@ const ProfileScreenBooking = () => {
 							<Text style={styles.statValue}>$216</Text>
 							<Text style={styles.statLabel}>Rewards</Text>
 						</View>
-					</View>
+					</View> */}
 				</View>
 
 				{/* Account Settings Section */}
@@ -166,7 +166,7 @@ const ProfileScreenBooking = () => {
 						/>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={styles.menuItem}>
+					{/* <TouchableOpacity style={styles.menuItem}>
 						<View style={styles.menuIconContainer}>
 							<MaterialIcons
 								name="payment"
@@ -183,7 +183,7 @@ const ProfileScreenBooking = () => {
 							size={24}
 							color={Colors.gray[400]}
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 
 					<TouchableOpacity style={styles.menuItem} onPress={() => navigate.navigate("BookingHistoryScreen")}>
 						<View style={styles.menuIconContainer}>
@@ -348,7 +348,7 @@ const ProfileScreenBooking = () => {
 				<View style={styles.section}>
 					<Text style={styles.sectionTitle}>Hỗ trợ & Trợ giúp</Text>
 
-					<TouchableOpacity style={styles.menuItem}>
+					<TouchableOpacity style={styles.menuItem} onPress={() => Alert.alert("Liên hệ Trần Thị Thuý Vy")}>
 						<View style={styles.menuIconContainer}>
 							<FontAwesome
 								name="question-circle-o"
@@ -366,7 +366,7 @@ const ProfileScreenBooking = () => {
 						/>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={styles.menuItem}>
+					<TouchableOpacity style={styles.menuItem} onPress={() => Alert.alert("Liên hệ Trần Thị Thuý Vy")}>
 						<View style={styles.menuIconContainer}>
 							<FontAwesome5
 								name="headset"

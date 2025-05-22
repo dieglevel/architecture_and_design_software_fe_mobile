@@ -16,62 +16,64 @@ interface Props {
 	rating?: number;
 	discount?: number;
 	horizontal?: boolean;
+	showDiscount?: boolean;
 }
 
-export const TourItem = React.memo(({ discount = 0, tour, rating = 3.5, horizontal = false }: Props) => {
-	const dispatch = useAppDispatch();
-	const discountCalculation = (price: number, discount: number) => {
-		if (discount > 0) {
-			return price - (price * discount) / 100;
-		}
-		return price;
-	};
-	const handleAddHistory = async () => {
-		await dispatch(addHistoryTour(tour.tourId));
-		navigate("TourDetailScreen", { tourId: tour.tourId });
-	};
+export const TourItem = React.memo(
+	({ discount = 0, tour, rating = 3.5, horizontal = false, showDiscount = true }: Props) => {
+		const dispatch = useAppDispatch();
+		const discountCalculation = (price: number, discount: number) => {
+			if (discount > 0) {
+				return price - (price * discount) / 100;
+			}
+			return price;
+		};
+		const handleAddHistory = async () => {
+			await dispatch(addHistoryTour(tour.tourId));
+			navigate("TourDetailScreen", { tourId: tour.tourId });
+		};
 
-	return (
-		<TouchableOpacity
-			delayPressIn={500}
-			style={[
-				styles.container,
-				horizontal ? styles.horizontalContainer : null,
-				discount > 0 && styles.containerDiscount,
-			]}
-			onPress={handleAddHistory}
-		>
-			<View style={horizontal ? styles.horizontalImageContainer : styles.imageContainer}>
-				<Image
-					source={{ uri: tour.thumbnail }}
-					style={styles.image}
-					resizeMode="cover"
-					borderTopLeftRadius={16}
-					borderTopRightRadius={16}
-				/>
+		return (
+			<TouchableOpacity
+				delayPressIn={500}
+				style={[
+					styles.container,
+					horizontal ? styles.horizontalContainer : null,
+					discount > 0 && styles.containerDiscount,
+				]}
+				onPress={handleAddHistory}
+			>
+				<View style={horizontal ? styles.horizontalImageContainer : styles.imageContainer}>
+					<Image
+						source={{ uri: tour.thumbnail }}
+						style={styles.image}
+						resizeMode="cover"
+						borderTopLeftRadius={16}
+						borderTopRightRadius={16}
+					/>
 
-				{/* Location tag */}
-				<LinearGradient
-					colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.7)"]}
-					style={styles.gradientOverlay}
-				>
-					<View style={styles.locationContainer}>
-						<Ionicons
-							name="location"
-							size={14}
-							color="#fff"
-						/>
-						<Text
-							style={styles.locationText}
-							numberOfLines={1}
-						>
-							{tour.name ? tour.name.split(" - ")[1] || "Việt Nam" : "Việt Nam"}
-						</Text>
-					</View>
-				</LinearGradient>
+					{/* Location tag */}
+					<LinearGradient
+						colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.7)"]}
+						style={styles.gradientOverlay}
+					>
+						<View style={styles.locationContainer}>
+							<Ionicons
+								name="location"
+								size={14}
+								color="#fff"
+							/>
+							<Text
+								style={styles.locationText}
+								numberOfLines={1}
+							>
+								{tour.name ? tour.name.split(" - ")[1] || "Việt Nam" : "Việt Nam"}
+							</Text>
+						</View>
+					</LinearGradient>
 
-				{/* Favorite button */}
-				{/* <TouchableOpacity style={styles.favoriteButton}>
+					{/* Favorite button */}
+					{/* <TouchableOpacity style={styles.favoriteButton}>
 					<Ionicons
 						name="heart-outline"
 						size={20}
@@ -79,57 +81,64 @@ export const TourItem = React.memo(({ discount = 0, tour, rating = 3.5, horizont
 					/>
 				</TouchableOpacity> */}
 
-				{discount > 0 && (
-					<View style={styles.discountBadge}>
-						<Text style={styles.discountText}>-{discount}%</Text>
-					</View>
-				)}
-			</View>
-
-			<View style={styles.details}>
-				<Text
-					style={styles.name}
-					numberOfLines={horizontal ? 1 : 2}
-				>
-					{tour.name}
-				</Text>
-
-				<View style={styles.infoRow}>
-					<View style={styles.infoItem}>
-						<Ionicons
-							name="time-outline"
-							size={14}
-							color={Colors.gray[500]}
-						/>
-						<Text style={styles.infoText}>{tour.duration}</Text>
-					</View>
-
-					<View style={styles.infoItem}>
-						<Ionicons
-							name="star"
-							size={14}
-							color="#FFD700"
-						/>
-						<Text style={styles.infoText}>{rating.toFixed(1)}</Text>
-					</View>
-				</View>
-
-				<View style={styles.priceContainer}>
-					{discount > 0 ? (
-						<>
-							<Text style={styles.originalPrice}>{localePrice(tour.price ? tour.price : 0)}</Text>
-							<Text style={styles.discountedPrice}>
-								{localePrice(discountCalculation(tour.price ? tour.price : 0, discount))}
-							</Text>
-						</>
-					) : (
-						<Text style={styles.discountedPrice}>{localePrice(tour.price ? tour.price : 0)}</Text>
+					{discount > 0 && (
+						<View style={styles.discountBadge}>
+							<Text style={styles.discountText}>-{discount}%</Text>
+						</View>
 					)}
 				</View>
-			</View>
-		</TouchableOpacity>
-	);
-});
+
+				<View style={styles.details}>
+					<Text
+						style={styles.name}
+						numberOfLines={horizontal ? 1 : 2}
+					>
+						{tour.name}
+					</Text>
+
+					<View style={styles.infoRow}>
+						<View style={styles.infoItem}>
+							<Ionicons
+								name="time-outline"
+								size={14}
+								color={Colors.gray[500]}
+							/>
+							<Text style={styles.infoText}>{tour.duration}</Text>
+						</View>
+
+						<View style={styles.infoItem}>
+							<Ionicons
+								name="star"
+								size={14}
+								color="#FFD700"
+							/>
+							<Text style={styles.infoText}>{rating.toFixed(1)}</Text>
+						</View>
+					</View>
+
+					<View style={styles.priceContainer}>
+						{discount > 0 ? (
+							<>
+								{showDiscount && (
+									<Text style={styles.originalPrice}>
+										{localePrice(tour.price ? tour.price : 0)}
+									</Text>
+								)}
+								<Text style={styles.discountedPrice}>
+									{localePrice(discountCalculation(tour.price ? tour.price : 0, discount))}
+								</Text>
+							</>
+						) : (
+							<Text style={styles.discountedPrice}>
+								{localePrice(tour.price ? tour.price : 0)}
+							</Text>
+						)}
+					</View>
+				</View>
+			</TouchableOpacity>
+		);
+	},
+);
 
 const styles = StyleSheet.create({
 	container: {
@@ -146,7 +155,6 @@ const styles = StyleSheet.create({
 	horizontalContainer: {
 		width: 300,
 		marginRight: 15,
-		height: 280,
 	},
 	containerDiscount: {
 		borderWidth: 0,
@@ -197,6 +205,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	details: {
+		flex: 1,
 		padding: 12,
 	},
 	name: {
