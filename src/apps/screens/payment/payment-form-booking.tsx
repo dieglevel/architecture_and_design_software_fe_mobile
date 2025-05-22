@@ -1,10 +1,10 @@
 import { InputForm } from "@/apps/components/ui";
 import { useAppSelector } from "@/libs/redux/redux.config";
 import { useState } from "react";
-import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
+import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, ScrollView, Linking } from "react-native";
 import { Colors } from "@/constants";
 import { BookingRequest, BookingRequestTicket } from "@/types/implement/booking";
-import { createBooking } from "@/services/booking-service";
+import { createBooking, paymentUrlAmount } from "@/services/booking-service";
 
 export const PaymentFormBooking = () => {
 	const { adultCount, babyCount, bookingId, childCount, information, totalPrice, tourScheduleId, data } =
@@ -69,7 +69,14 @@ export const PaymentFormBooking = () => {
 			const responseBooking = await createBooking(bookingRequest)
 			if (responseBooking) {
 				console.log("Booking created successfully:", responseBooking);
-				// Handle successful booking creation (e.g., navigate to payment screen)
+
+				const responseUrlPayment = await paymentUrlAmount(totalPrice || 0, responseBooking.bookingId || "");
+				if (responseUrlPayment) {
+					console.log("Payment URL created successfully:", responseUrlPayment);
+					Linking.openURL(responseUrlPayment);
+				} else {
+					console.error("Failed to create payment URL");
+				}
 			} else {
 				console.error("Failed to create booking");
 			}

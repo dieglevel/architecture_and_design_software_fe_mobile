@@ -7,7 +7,7 @@ import { TourHistoryItem } from "@/types/implement/tour-history";
 import { FavoriteTourItem } from "@/types/implement/tour-favorite";
 import { safeApiCall } from "@/libs/axios/safe-api-call";
 import { Category } from "@/types/implement/category";
-import { BookingRequest } from "@/types/implement/booking";
+import { Booking, BookingRequest } from "@/types/implement/booking";
 
 export const getCategory = async (): Promise<BaseResponse<Category[] | null>> => {
 	// return safeApiCall(() => api.get<BaseResponse<Category[] | null>>(`${Gateway.BOOKING}/category-tours`), []);
@@ -56,7 +56,7 @@ export const deleteFavoriteTour = async (userId: string, tourId: string) => {
 
 export const createBooking = async (data: BookingRequest) => {
 	try {
-		const response = await api.post<BaseResponse<BookingRequest>>(`${Gateway.BOOKING}/books/create-booking`, data)
+		const response = await api.post<BaseResponse<Booking>>(`${Gateway.BOOKING}/books/create-booking`, data)
 		if (response.data.statusCode === 200){
 			return response.data.data;
 		}
