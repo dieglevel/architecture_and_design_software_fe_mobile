@@ -8,7 +8,6 @@ import MessageIcon from "@/assets/svgs/message";
 import UserIcon from "@/assets/svgs/user";
 import { TouchableOpacity } from "react-native";
 import { Colors } from "@/constants";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { MessageScreen } from "../screens";
 
 export const BottomTabScreenApp = () => {
@@ -78,18 +77,6 @@ export const BottomTabScreenApp = () => {
 			<Tab.Screen
 				name="HomeStack"
 				component={HomeStack}
-				options={({ route }) => {
-					const routeName = getFocusedRouteNameFromRoute(route);
-					const hideTabBar = routeName === "TourDetailScreen";
-
-					return {
-						tabBarStyle: {
-							display: hideTabBar ? "none" : "flex",
-							borderTopRightRadius: 7,
-							borderTopLeftRadius: 7,
-						},
-					};
-				}}
 			/>
 			<Tab.Screen
 				name="SearchStack"

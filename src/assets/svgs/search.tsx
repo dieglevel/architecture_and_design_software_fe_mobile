@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
+import { View, TextInput, StyleSheet, TouchableOpacity, Text } from "react-native";
 import Svg, { Path, Rect, Mask, Defs } from "react-native-svg";
+import { searchFilterTours } from "@/services/booking-service";
 
 interface SearchIconProps {
 	size?: number;
 	color?: string;
 	backgroundColor?: string;
-	borderRadius?: number; // Thêm prop borderRadius
+	borderRadius?: number;
 }
 
 const SearchIcon: React.FC<SearchIconProps> = ({
 	size = 36,
 	color = "black",
 	backgroundColor = "transparent",
-	borderRadius = 8, // Thêm giá trị mặc định cho borderRadius
+	borderRadius = 8,
 }) => {
 	return (
 		<Svg
@@ -29,19 +31,17 @@ const SearchIcon: React.FC<SearchIconProps> = ({
 					width="36"
 					height="36"
 				>
-					{/* Tạo nền với bo góc */}
 					<Rect
 						x="0"
 						y="0"
 						width="36"
 						height="36"
 						fill="white"
-						rx={borderRadius} // Bo góc
-						ry={borderRadius} // Bo góc
+						rx={borderRadius}
+						ry={borderRadius}
 					/>
 				</Mask>
 			</Defs>
-			{/* Áp dụng mask để tạo hiệu ứng bo góc */}
 			<Rect
 				width={size}
 				height={size}
@@ -58,4 +58,135 @@ const SearchIcon: React.FC<SearchIconProps> = ({
 	);
 };
 
+interface SearchFilterProps {
+	onSearchResults?: (results: any) => void;
+}
+
+const SearchFilter: React.FC<SearchFilterProps> = ({ onSearchResults }) => {
+	const [tourName, setTourName] = useState("");
+	const [minPrice, setMinPrice] = useState("");
+	const [maxPrice, setMaxPrice] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+
+	const handleSearch = async () => {
+		try {
+			setIsLoading(true);
+			const minPriceValue = minPrice ? parseFloat(minPrice) : 0;
+			const maxPriceValue = maxPrice ? parseFloat(maxPrice) : Number.MAX_SAFE_INTEGER;
+
+			const response = await searchFilterTours(tourName, maxPriceValue, minPriceValue);
+
+			if (response.success && onSearchResults) {
+				onSearchResults(response.data);
+			}
+		} catch (error) {
+			console.error("Search error:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	return (
+		<View style={styles.container}>
+			<View style={styles.inputContainer}>
+				<TextInput
+					style={styles.input}
+					placeholder="Tour name"
+					value={tourName}
+					onChangeText={setTourName}
+				/>
+				<SearchIcon
+					size={24}
+					color="#999"
+				/>
+			</View>
+
+			<View style={styles.priceContainer}>
+				<TextInput
+					style={styles.priceInput}
+					placeholder="Min price"
+					value={minPrice}
+					onChangeText={setMinPrice}
+					keyboardType="numeric"
+				/>
+				<Text style={styles.priceDivider}>-</Text>
+				<TextInput
+					style={styles.priceInput}
+					placeholder="Max price"
+					value={maxPrice}
+					onChangeText={setMaxPrice}
+					keyboardType="numeric"
+				/>
+			</View>
+
+			<TouchableOpacity
+				style={styles.searchButton}
+				onPress={handleSearch}
+				disabled={isLoading}
+			>
+				<Text style={styles.searchButtonText}>{isLoading ? "Searching..." : "Search"}</Text>
+			</TouchableOpacity>
+		</View>
+	);
+};
+
+const styles = StyleSheet.create({
+	container: {
+		padding: 16,
+		backgroundColor: "#fff",
+		borderRadius: 12,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 4,
+		elevation: 3,
+	},
+	inputContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		borderWidth: 1,
+		borderColor: "#ddd",
+		borderRadius: 8,
+		paddingHorizontal: 12,
+	},
+	input: {
+		flex: 1,
+		height: 48,
+		fontSize: 16,
+	},
+	priceContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginTop: 12,
+	},
+	priceInput: {
+		flex: 1,
+		height: 48,
+		borderWidth: 1,
+		borderColor: "#ddd",
+		borderRadius: 8,
+		paddingHorizontal: 12,
+		fontSize: 16,
+	},
+	priceDivider: {
+		marginHorizontal: 8,
+		fontSize: 18,
+		color: "#666",
+	},
+	searchButton: {
+		backgroundColor: "#3b82f6",
+		borderRadius: 8,
+		height: 48,
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 16,
+	},
+	searchButtonText: {
+		color: "#fff",
+		fontSize: 16,
+		fontWeight: "600",
+	},
+});
+
+export { SearchIcon, SearchFilter };
 export default SearchIcon;

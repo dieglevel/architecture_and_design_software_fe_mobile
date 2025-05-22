@@ -1,12 +1,16 @@
-import { User } from "@/types/implement";
+import { User, Tour } from "@/types/implement";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {
 	data: User | null;
+	currentTour: Tour | null;
+	showTourDetail: boolean;
 }
 
 const initialState: UserState = {
 	data: null,
+	currentTour: null,
+	showTourDetail: false,
 };
 
 const userSlice = createSlice({
@@ -17,10 +21,16 @@ const userSlice = createSlice({
 			state.data = action.payload;
 		},
 		reset: () => initialState,
+		setCurrentTour: (state, action: PayloadAction<Tour | null>) => {
+			state.currentTour = action.payload;
+		},
+		setShowTourDetail: (state, action: PayloadAction<boolean>) => {
+			state.showTourDetail = action.payload;
+		},
 	},
 });
 
-export const { setUser, reset } = userSlice.actions;
+export const { setUser, reset, setCurrentTour, setShowTourDetail } = userSlice.actions;
 
 const userReducer = userSlice.reducer;
 export default userReducer;

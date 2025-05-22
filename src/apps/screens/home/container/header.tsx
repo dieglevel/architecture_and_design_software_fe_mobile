@@ -204,7 +204,10 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 							</TouchableOpacity>
 						)}
 					</View>
-					<TouchableOpacity style={styles.filterButton}>
+					<TouchableOpacity
+						style={styles.filterButton}
+						onPress={() => navigate("SearchScreen")}
+					>
 						<Ionicons
 							name="options-outline"
 							size={20}

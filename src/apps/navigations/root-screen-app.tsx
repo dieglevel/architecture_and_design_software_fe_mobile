@@ -1,5 +1,5 @@
 import { LinkingOptions } from "@react-navigation/native";
-import { LoginScreen, PaymentScreen, SignupScreen } from "@/apps/screens";
+import { LoginScreen, PaymentScreen, SignupScreen, TourDetailScreen } from "@/apps/screens";
 import { navigationRef } from "@/libs/navigation/navigationService";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
 import { OtpInputScreen } from "@/apps/screens/otp-input";
@@ -11,13 +11,14 @@ import Toast from "react-native-toast-message";
 import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
 import { eventEmitter } from "@/libs/eventemitter3";
 import WelcomeScreen from "../screens/home/welcome-screen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getProfile } from "@/services/user-service";
 import { setUser } from "@/libs/redux/stores/user.store.";
 import { LoadingSpin } from "../components";
 import * as Linking from "expo-linking";
 import UserFavoriteTourScreen from "../screens/user-favorite-tour";
+import { RootState } from "@/libs/redux/redux.config";
 
 import React from "react";
 const prefix = Linking.createURL("/");
@@ -43,6 +44,8 @@ const NavigationEventListener = () => {
 
 export const RootScreenApp = () => {
 	const dispatch = useDispatch();
+	const showTourDetail = useSelector((state: RootState) => state.user.showTourDetail);
+	const currentTour = useSelector((state: RootState) => state.user.currentTour);
 
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -127,6 +130,14 @@ export const RootScreenApp = () => {
 						<Stack.Screen
 							name="UserFavoriteTourScreen"
 							component={UserFavoriteTourScreen}
+						/>
+						<Stack.Screen
+							name="TourDetailScreen"
+							component={TourDetailScreen}
+							options={{
+								headerShown: true,
+								presentation: "card",
+							}}
 						/>
 					</Stack.Navigator>
 					<NavigationEventListener />
