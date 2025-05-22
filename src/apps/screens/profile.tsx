@@ -11,6 +11,7 @@ import { MaterialIcons, Ionicons, FontAwesome, FontAwesome5 } from "@expo/vector
 import { Colors } from "@/constants";
 import imagePicker from "@/services/image-picker";
 import { fetchFavoriteTours, fetchHistoryTours } from "@/libs/redux/thunks/tour.thunk";
+import { StackScreenNavigationProp } from "@/libs/navigation";
 
 const ProfileScreenBooking = () => {
 	const user = useAppSelector((state) => state.user.data);
@@ -19,7 +20,7 @@ const ProfileScreenBooking = () => {
 	const favoriteLoading = useAppSelector((state) => state.favorite.loading);
 	const historyLoading = useAppSelector((state) => state.history.loading);
 
-	const navigate = useNavigation();
+	const navigate = useNavigation<StackScreenNavigationProp>();
 
 	const dispatch = useAppDispatch<AppDispatch>();
 	const navigation = useNavigation();
@@ -193,8 +194,8 @@ const ProfileScreenBooking = () => {
 							/>
 						</View>
 						<View style={styles.menuTextContainer}>
-							<Text style={styles.menuItemText}>Thông báo</Text>
-							<Text style={styles.menuItemSubtext}>Đặt tour, đặt trước</Text>
+							<Text style={styles.menuItemText}>Lịch sử đặt hàng</Text>
+							<Text style={styles.menuItemSubtext}>Xem lại lịch sử đã đặt</Text>
 						</View>
 						<MaterialIcons
 							name="chevron-right"
@@ -236,7 +237,7 @@ const ProfileScreenBooking = () => {
 								<TouchableOpacity
 									style={styles.savedPlaceItem}
 									onPress={() =>
-										navigate.navigate("TourDetailScreen", { tourId: item.tour.tourId })
+										navigate.push("TourDetailScreen", { tourId: item.tour.tourId })
 									}
 								>
 									<Image
