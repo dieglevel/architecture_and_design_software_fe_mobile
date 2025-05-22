@@ -204,7 +204,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 							</TouchableOpacity>
 						)}
 					</View>
-					<TouchableOpacity
+					{/* <TouchableOpacity
 						style={styles.filterButton}
 						onPress={() => navigate("SearchScreen")}
 					>
@@ -213,7 +213,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 							size={20}
 							color="#fff"
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 				</View>
 			</Animated.View>
 

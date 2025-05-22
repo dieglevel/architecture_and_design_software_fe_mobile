@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, Modal, Dimensions } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors, Texts } from "@/constants";
+import { TourItem } from "../../components/ui";
 import BookingButton from "../../components/ui/booking-btn";
 import { Divider } from "react-native-paper";
 import TourDetail from "@/apps/components/ui/tour-detail-tabview";
@@ -12,11 +13,6 @@ import { Tour, TourDestinationResponse } from "@/types/implement";
 import { handleGetTours } from "../home/handle";
 import { LoadingSpin } from "@/apps/components";
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/libs/redux/redux.config";
-import { setCurrentTour, setShowTourDetail } from "@/libs/redux/stores/user.store.";
-import { navigate } from "@/libs/navigation/navigationService";
-import { LinearGradient } from "expo-linear-gradient";
 
 export const TourDetailScreen = () => {
 	const route = useRoute<TourDetailRouteProp>();
@@ -71,15 +67,6 @@ export const TourDetailScreen = () => {
 		};
 
 		fetchTourData();
-	}, [tourId]);
-
-	// Cập nhật danh sách tour đề xuất
-	useEffect(() => {
-		if (allTours.length > 0 && tourId) {
-			// Lọc ra các tour khác với tour hiện tại
-			const filtered = allTours.filter((tour) => tour.tourId !== tourId);
-			// Lấy tối đa 5 tour để hiển thị
-			setRecommendedTours(filtered.slice(0, 6));
 		}
 	}, [focus]);
 
@@ -215,90 +202,11 @@ export const TourDetailScreen = () => {
 										{
 											color: Colors.colorBrand.midnightBlue[950],
 											alignSelf: "flex-start",
-											marginBottom: 16,
-											fontSize: 18,
-											fontWeight: "bold",
 										},
 									]}
 								>
 									Có thể bạn sẽ thích
 								</Text>
-								<FlatList
-									data={recommendedTours}
-									keyExtractor={(item) => item.tourId}
-									showsVerticalScrollIndicator={false}
-									scrollEnabled={false}
-									ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-									renderItem={({ item }) => (
-										<TouchableOpacity
-											onPress={() => handleRecommendedTourPress(item)}
-											style={styles.recommendedTourCard}
-										>
-											<View style={styles.recommendedImageContainer}>
-												<Image
-													source={{ uri: item.thumbnail }}
-													style={styles.recommendedImage}
-													resizeMode="cover"
-												/>
-												<LinearGradient
-													colors={["transparent", "rgba(0,0,0,0.7)"]}
-													style={styles.gradientOverlay}
-												>
-													<View style={styles.locationContainer}>
-														<FontAwesome
-															name="map-marker"
-															size={12}
-															color="#fff"
-														/>
-														<Text style={styles.locationText}>
-															{item.name
-																? item.name.split(" - ")[1] ||
-																  "Việt Nam"
-																: "Việt Nam"}
-														</Text>
-													</View>
-													<Text style={styles.tourDuration}>
-														<FontAwesome
-															name="clock-o"
-															size={12}
-															color="#fff"
-														/>{" "}
-														{item.duration}
-													</Text>
-												</LinearGradient>
-											</View>
-											<View style={styles.recommendedContent}>
-												<View style={styles.recommendedMainInfo}>
-													<Text
-														numberOfLines={2}
-														style={styles.recommendedTitle}
-													>
-														{item.name}
-													</Text>
-													<View style={styles.ratingContainer}>
-														<FontAwesome
-															name="star"
-															size={12}
-															color="#FFB400"
-														/>
-														<Text style={styles.ratingText}>4.8</Text>
-													</View>
-												</View>
-												<View style={styles.recommendedFooter}>
-													<Text style={styles.priceText}>
-														{item.price?.toLocaleString("vi-VN")}đ
-													</Text>
-													<TouchableOpacity
-														style={styles.bookNowButton}
-														onPress={() => handleRecommendedTourPress(item)}
-													>
-														<Text style={styles.bookNowText}>Đặt ngay</Text>
-													</TouchableOpacity>
-												</View>
-											</View>
-										</TouchableOpacity>
-									)}
-								/>
 							</View>
 						}
 					/>
@@ -403,114 +311,6 @@ const styles = StyleSheet.create({
 		resizeMode: "contain",
 	},
 	// backgroundColor: "#fff",
-	recommendedTourCard: {
-		backgroundColor: "#fff",
-		borderRadius: 12,
-		shadowColor: "#000",
-		shadowOffset: {
-			width: 0,
-			height: 4,
-		},
-		shadowOpacity: 0.1,
-		shadowRadius: 8,
-		elevation: 5,
-		overflow: "hidden",
-		width: "100%",
-	},
-	recommendedImageContainer: {
-		height: 180,
-		position: "relative",
-		borderTopLeftRadius: 12,
-		borderTopRightRadius: 12,
-		overflow: "hidden",
-	},
-	recommendedImage: {
-		width: "100%",
-		height: "100%",
-		borderTopLeftRadius: 12,
-		borderTopRightRadius: 12,
-	},
-	gradientOverlay: {
-		position: "absolute",
-		bottom: 0,
-		left: 0,
-		right: 0,
-		height: 80,
-		justifyContent: "space-between",
-		paddingVertical: 12,
-		paddingHorizontal: 12,
-	},
-	locationContainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 20,
-		alignSelf: "flex-start",
-	},
-	locationText: {
-		color: "#fff",
-		fontSize: 12,
-		marginLeft: 6,
-		fontWeight: "600",
-	},
-	tourDuration: {
-		color: "#fff",
-		fontSize: 12,
-		fontWeight: "600",
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-		paddingHorizontal: 8,
-		paddingVertical: 4,
-		borderRadius: 20,
-		alignSelf: "flex-start",
-	},
-	recommendedContent: {
-		padding: 16,
-		backgroundColor: "#fff",
-		gap: 12,
-	},
-	recommendedMainInfo: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		justifyContent: "space-between",
-		gap: 8,
-	},
-	recommendedTitle: {
-		fontSize: 16,
-		fontWeight: "bold",
-		color: Colors.colorBrand.midnightBlue[950],
-		flex: 1,
-		lineHeight: 22,
-	},
-
-	ratingText: {
-		fontSize: 12,
-		fontWeight: "600",
-		color: Colors.gray[700],
-		marginLeft: 6,
-	},
-	recommendedFooter: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-	},
-	priceText: {
-		fontSize: 18,
-		fontWeight: "bold",
-		color: Colors.colorBrand.burntSienna[600],
-	},
-	bookNowButton: {
-		backgroundColor: Colors.colorBrand.burntSienna[500],
-		paddingHorizontal: 12,
-		paddingVertical: 8,
-		borderRadius: 8,
-	},
-	bookNowText: {
-		fontSize: 12,
-		fontWeight: "bold",
-		color: "#fff",
-	},
 });
 
 const commentData = [

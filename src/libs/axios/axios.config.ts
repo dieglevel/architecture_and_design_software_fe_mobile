@@ -35,7 +35,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(response) => response,
 	(error) => {
-		console.error("⛔ Axios: ", error.toJSON());
+		// console.error("⛔ Axios: ", error.toJSON());
 
 		const errorResponse = error.response.data as BaseResponse<null>;
 		if (errorResponse.statusCode === 401 && error.config?.url !== "user-service/auth/token") {
