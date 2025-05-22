@@ -14,9 +14,55 @@ import {
 import { SafeAreaView } from "../components";
 import { Colors, Texts } from "@/constants";
 import { Ionicons } from "@expo/vector-icons";
-import { createDefaultAIService, Message as AIMessage, TourSuggestion } from "@/services/ai";
+import { Message as AIMessage, TourSuggestion } from "@/services/ai";
+import { exchangeMessage } from "@/services/chat-bot-service";
+import { RootState } from "@/libs/redux/redux.config";
+import { useSelector } from "react-redux";
 
-const aiService = createDefaultAIService();
+// Define an interface that matches the actual response structure
+interface ApiMessageContent {
+	content: string;
+	role: string;
+}
+
+interface ApiResponse {
+	data: {
+		question: string;
+		language: string;
+		next_state: string;
+		thread_id: string;
+		user_id: string;
+		messages: ApiMessageContent[];
+	};
+	status: number;
+	header: {
+		"Content-Type": string;
+	};
+	config: any;
+}
+
+// Helper function to convert API messages to client format
+const convertApiMessageToClientFormat = (message: any): AIMessage => {
+	return {
+		id: Date.now().toString(),
+		text: typeof message === "string" ? message : message.content || "",
+		type: "ai",
+		timestamp: new Date(),
+	};
+};
+
+// Mock tour data structure based on our UI requirements
+// This will be replaced with actual data when API provides tour suggestions
+const createMockTourFromResponse = (threadId: string, index: number): TourSuggestion => {
+	return {
+		id: `${threadId}_${index}`,
+		name: `Tour suggestion ${index + 1}`,
+		image: "https://picsum.photos/200/300", // Default placeholder image
+		duration: "2 days",
+		rating: 4.5,
+		price: 1000000,
+	};
+};
 
 const ChatMessage = ({ message }: { message: AIMessage }) => {
 	const isUser = message.type === "user";
@@ -92,6 +138,10 @@ export const MessageScreen = () => {
 	const [inputText, setInputText] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [suggestedTours, setSuggestedTours] = useState<TourSuggestion[]>([]);
+	// Store userId for API calls
+	const userId = useSelector((state: RootState) => state.user.data?.userId);
+	// Store thread ID from API response
+	const [threadId, setThreadId] = useState<string | null>(null);
 
 	const flatListRef = useRef<FlatList>(null);
 
@@ -107,6 +157,8 @@ export const MessageScreen = () => {
 	// Handle sending a message
 	const handleSendMessage = async () => {
 		if (inputText.trim() === "") return;
+		console.log("userId: ", userId);
+		console.log("inputText: ", inputText);
 
 		const userMessage: AIMessage = {
 			id: Date.now().toString(),
@@ -120,24 +172,60 @@ export const MessageScreen = () => {
 		setIsLoading(true);
 
 		try {
-			// Get tour suggestions based on the query
-			const tourSuggestions = aiService.generateTourSuggestions(inputText);
-			setSuggestedTours(tourSuggestions);
+			// Cast the response to our defined interface
+			const response = (await exchangeMessage(
+				inputText,
+				userId ?? "",
+				threadId ?? "",
+			)) as unknown as ApiResponse;
+			console.log("response:", JSON.stringify(response, null, 2));
 
-			// Get AI response using the real AI service
-			const aiResponseText = await aiService.generateResponse(inputText, messages);
+			// Kiểm tra response dựa trên cấu trúc thực tế
+			if (response && response.status === 200) {
+				// Lấy dữ liệu từ response
+				const responseData = response.data;
 
-			// Create AI message
-			const aiResponse: AIMessage = {
-				id: Date.now().toString(),
-				text: aiResponseText,
-				type: "ai",
-				timestamp: new Date(),
-			};
+				if (responseData) {
+					// Store thread ID for future use
+					setThreadId(responseData.thread_id);
 
-			setMessages((prevMessages) => [...prevMessages, aiResponse]);
+					// Xử lý messages từ response
+					console.log("Messages from API:", JSON.stringify(responseData.messages, null, 2));
+
+					// Kiểm tra cấu trúc message để trích xuất nội dung
+					let messageContent;
+
+					if (Array.isArray(responseData.messages)) {
+						// Nếu là mảng, lấy phần tử đầu tiên
+						const firstMessage = responseData.messages[0];
+						messageContent = firstMessage?.content || JSON.stringify(firstMessage);
+					} else if (typeof responseData.messages === "object") {
+						// Nếu là object, thử lấy content
+						const msgObj = responseData.messages as any;
+						messageContent = msgObj?.content || JSON.stringify(msgObj);
+					} else {
+						// Nếu là string hoặc dạng khác
+						messageContent = String(responseData.messages);
+					}
+
+					// Convert và thêm vào danh sách tin nhắn
+					if (messageContent) {
+						const aiResponse = convertApiMessageToClientFormat(messageContent);
+						setMessages((prevMessages) => [...prevMessages, aiResponse]);
+					}
+
+					// For now, create some mock tour suggestions based on thread ID
+					// This will be replaced with actual tour data when the API provides it
+					const mockTours = [1, 2, 3].map((i) =>
+						createMockTourFromResponse(responseData.thread_id || "default", i),
+					);
+					setSuggestedTours(mockTours);
+				}
+			} else {
+				throw new Error("Failed to get response from server");
+			}
 		} catch (error) {
-			console.error("Error getting AI response:", error);
+			console.error("Error getting chat response:", error);
 			const errorMessage: AIMessage = {
 				id: Date.now().toString(),
 				text: "Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.",
@@ -167,25 +255,6 @@ export const MessageScreen = () => {
 		);
 	};
 
-	// Render tour suggestions
-	const renderTourSuggestions = () => {
-		if (suggestedTours.length === 0) return null;
-
-		return (
-			<View style={styles.suggestionsContainer}>
-				<Text style={styles.suggestionsTitle}>Gợi ý tour du lịch:</Text>
-				<FlatList
-					data={suggestedTours}
-					keyExtractor={(item) => item.id}
-					horizontal
-					showsHorizontalScrollIndicator={false}
-					renderItem={({ item }) => <TourSuggestionCard tour={item} />}
-					contentContainerStyle={styles.suggestionsList}
-				/>
-			</View>
-		);
-	};
-
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.header}>
@@ -209,12 +278,7 @@ export const MessageScreen = () => {
 					renderItem={({ item }) => <ChatMessage message={item} />}
 					contentContainerStyle={styles.messagesContainer}
 					showsVerticalScrollIndicator={false}
-					ListFooterComponent={
-						<>
-							{renderLoading()}
-							{/* {renderTourSuggestions()} */}
-						</>
-					}
+					ListFooterComponent={<>{renderLoading()}</>}
 				/>
 
 				<View style={styles.inputContainer}>

@@ -18,14 +18,14 @@ const HeadText = ({ title, onSeeAll }: Props) => {
 			{onSeeAll && (
 				<TouchableOpacity
 					style={styles.seeAllButton}
-					onPress={onSeeAll}
+					// onPress={onSeeAll}
 				>
-					<Text style={styles.seeAllText}>Xem tất cả</Text>
+					{/* <Text style={styles.seeAllText}>Xem tất cả</Text>
 					<Ionicons
 						name="chevron-forward"
 						size={16}
 						color={Colors.colorBrand.burntSienna[500]}
-					/>
+					/> */}
 				</TouchableOpacity>
 			)}
 		</View>
