@@ -9,7 +9,7 @@ export interface TourSuggestionResponse {
 	next_state: string;
 	thread_id: string;
 	user_id: string;
-	messages: Message[];
+	messages: Message;
 }
 
 export interface ChatResponse<T> {
