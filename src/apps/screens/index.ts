@@ -5,7 +5,7 @@ export * from "./search";
 export * from "./search-results";
 export * from "./message";
 export * from "./tour-detail/tour-detail";
-export * from "./profile";
+export * from "./profile/profile";
 export * from "./category-detail/category-detail";
 export * from "./payment/payment-screen";
 export * from "./payment/payment-success";

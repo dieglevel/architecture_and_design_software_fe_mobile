@@ -20,7 +20,7 @@ const ProfileScreenBooking = () => {
 	const favoriteLoading = useAppSelector((state) => state.favorite.loading);
 	const historyLoading = useAppSelector((state) => state.history.loading);
 
-	const navigate = useNavigation<StackScreenNavigationProp>();
+	const navigate = useNavigation();
 
 	const dispatch = useAppDispatch<AppDispatch>();
 	const navigation = useNavigation();
@@ -185,7 +185,7 @@ const ProfileScreenBooking = () => {
 						/>
 					</TouchableOpacity>
 
-					<TouchableOpacity style={styles.menuItem}>
+					<TouchableOpacity style={styles.menuItem} onPress={() => navigate.navigate("BookingHistoryScreen")}>
 						<View style={styles.menuIconContainer}>
 							<Ionicons
 								name="notifications-outline"
@@ -237,7 +237,7 @@ const ProfileScreenBooking = () => {
 								<TouchableOpacity
 									style={styles.savedPlaceItem}
 									onPress={() =>
-										navigate.push("TourDetailScreen", { tourId: item.tour.tourId })
+										navigate.navigate("TourDetailScreen", { tourId: item.tour.tourId })
 									}
 								>
 									<Image

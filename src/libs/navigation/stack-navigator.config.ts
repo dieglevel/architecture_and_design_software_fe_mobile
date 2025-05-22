@@ -1,3 +1,5 @@
+import { Booking } from '@/types/implement/booking';
+import { BookingHistoryDetailScreen } from './../../apps/screens/profile/booking-history/booking-history-detail-screen';
 import { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -36,6 +38,10 @@ export type RootStackParamList = {
 	};
 	PaymentSuccessPage: undefined;
 	PaymentFormBooking: undefined;
+	BookingHistoryScreen:undefined;
+	BookingHistoryDetailScreen: {
+		bookingData: Booking;
+	}
 };
 
 declare global {
@@ -48,15 +54,4 @@ export type StackScreenNavigationProp = NativeStackNavigationProp<RootStackParam
 
 export type TourDetailRouteProp = RouteProp<RootStackParamList, "TourDetailScreen">;
 export type PaymentRouteProp = RouteProp<RootStackParamList, "PaymentScreen">;
-
-// export type ProductDetailRouteProp = RouteProp<
-// 	RootStackParamList,
-// 	'ProductDetail'
-// >;
-// export type OrderDetailRouteProp = RouteProp<RootStackParamList, 'OrderDetail'>;
-// export type CartRouteProp = RouteProp<RootStackParamList, 'Cart'>;
-// export type ChatAdminRouteProp = RouteProp<RootStackParamList, 'ChatAdmin'>;
-// export type PaymentOptionRouteProp = RouteProp<
-// 	RootStackParamList,
-// 	'PaymentOption'
-// >;
+export type BookingHistoryDetailScreenRouteProp = RouteProp<RootStackParamList, "BookingHistoryDetailScreen">;

@@ -2,8 +2,9 @@ export interface TourSchedule {
    tourScheduleId: string;
    name?: string | null;
    description?: string;
-   startDate?: string;
-   endDate?: string;
+   startDate?: Date;
+   endDate?: Date;
+   tourId: string;
 }
 
 export interface Ticket {
@@ -16,7 +17,7 @@ export interface Ticket {
 
 export interface Booking {
    bookingId: string;
-   status?: string;
+   status?: "PAID" | "PENDING" | "EXPIRED";
    totalPrice?: number;
    note?: string;
    userFullName?: string;
@@ -45,3 +46,4 @@ export interface BookingRequest {
    note?: string;
    tickets: BookingRequestTicket[];
 }
+

@@ -7,7 +7,7 @@ export type RootTabParamList = {
 	HomeStack: undefined;
 	SearchStack: undefined;
 	MessageStack: undefined;
-	UserStack: undefined;
+	ProfileScreenBooking: undefined;
 };
 
 declare global {

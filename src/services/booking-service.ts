@@ -57,7 +57,7 @@ export const deleteFavoriteTour = async (userId: string, tourId: string) => {
 export const createBooking = async (data: BookingRequest) => {
 	try {
 		const response = await api.post<BaseResponse<Booking>>(`${Gateway.BOOKING}/books/create-booking`, data)
-		if (response.data.statusCode === 200){
+		if (response.data.statusCode === 200) {
 			return response.data.data;
 		}
 	} catch (e) {
@@ -68,7 +68,18 @@ export const createBooking = async (data: BookingRequest) => {
 export const paymentUrlAmount = async (amount: number, bookingId: string) => {
 	try {
 		const response = await api.post<BaseResponse<string>>(`${Gateway.BOOKING}/vnpay/create-payment-url?amount=${amount}&bankCode=NCB&bookingId=${bookingId}`)
-		if (response.data.success){
+		if (response.data.success) {
+			return response.data.data;
+		}
+	} catch (e) {
+		throw e as BaseResponse<null>;
+	}
+}
+
+export const getMyBooking = async () => {
+	try {
+		const response = await api.get<BaseResponse<Booking[]>>(`${Gateway.BOOKING}/books/my-bookings`)
+		if (response.data.statusCode === 200) {
 			return response.data.data;
 		}
 	} catch (e) {

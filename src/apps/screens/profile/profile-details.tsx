@@ -14,7 +14,7 @@ import { getProfile, updateInfo } from "@/services/user-service";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/libs/redux/redux.config";
 import { setUser } from "@/libs/redux/stores/user.store.";
-import { ActivityIndicatorCustom } from "../components/activity-indicator-custom";
+import { ActivityIndicatorCustom } from "../../components/activity-indicator-custom";
 import { Calendar } from "@/assets/svgs/calendar";
 import { Colors } from "@/constants";
 import DateTimePicker from "react-native-modal-datetime-picker";

@@ -22,7 +22,7 @@ export const SelectDate = ({ date, selectTime, setSelectTime }: Props) => {
 							setSelectTime={setSelectTime}
 						/>
 					)}
-					keyExtractor={(item) => item.toString()}
+					keyExtractor={(item) => item.tourScheduleId.toString()}
 					horizontal
 					showsHorizontalScrollIndicator={false}
 					showsVerticalScrollIndicator={false}

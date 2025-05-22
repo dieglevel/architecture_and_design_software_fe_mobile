@@ -4,7 +4,7 @@ import { OtpInputScreen } from "@/apps/screens/otp-input";
 import { ResetPasswordScreen } from "@/apps/screens/reset-password";
 import { eventEmitter } from "@/libs/eventemitter3";
 import { RootStackParamList, Stack, StackScreenNavigationProp } from "@/libs/navigation";
-import { navigationRef } from "@/libs/navigation/navigationService";
+import { navigate, navigationRef } from "@/libs/navigation/navigationService";
 import { setUser } from "@/libs/redux/stores/user.store.";
 import { getProfile } from "@/services/user-service";
 import { LinkingOptions, NavigationContainer, useNavigation } from "@react-navigation/native";
@@ -19,6 +19,12 @@ import { BottomTabScreenApp } from "./bottom-tab-acreen-app";
 
 import { Colors } from "@/constants";
 import React from "react";
+import { ProfileDetailsScreen } from "../screens/profile/profile-details";
+import { BookingHistoryScreen } from "../screens/profile/booking-history/booking-history-screen";
+import { ProfileSecurityScreen } from "../screens/profile/profile-security";
+import { BookingHistoryDetailScreen } from "../screens/profile/booking-history/booking-history-detail-screen";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 const prefix = Linking.createURL("/");
 
 // Separate component for event listener logic inside NavigationContainer
@@ -164,6 +170,90 @@ export const RootScreenApp = () => {
 						<Stack.Screen
 							name="UserFavoriteTourScreen"
 							component={UserFavoriteTourScreen}
+						/>
+						<Stack.Screen
+							name="ProfileDetailsScreen"
+							component={ProfileDetailsScreen}
+							options={{
+								headerShown: true,
+								title: "Thông tin cá nhân",
+								headerTitleAlign: "center",
+								headerLeft: () => (
+									<TouchableOpacity
+										onPress={() => navigate("BottomTabScreenApp")}
+										style={{ marginLeft: 10, flexDirection: "row", alignItems: "center" }}
+									>
+										<Ionicons
+											name="chevron-back"
+											size={24}
+											color={Colors.colorBrand.burntSienna[500]}
+										/>
+									</TouchableOpacity>
+								),
+							}}
+						/>
+						<Stack.Screen
+							name="BookingHistoryScreen"
+							component={BookingHistoryScreen}
+							options={{
+								headerShown: true,
+								title: "Lịch sử đặt vé",
+								headerTitleAlign: "center",
+								headerLeft: () => (
+									<TouchableOpacity
+										onPress={() => navigate("BottomTabScreenApp")}
+										style={{ marginLeft: 10, flexDirection: "row", alignItems: "center" }}
+									>
+										<Ionicons
+											name="chevron-back"
+											size={24}
+											color={Colors.colorBrand.burntSienna[500]}
+										/>
+									</TouchableOpacity>
+								),
+							}}
+						/>
+						<Stack.Screen
+							name="ProfileSecurityScreen"
+							component={ProfileSecurityScreen}
+							options={{
+								headerShown: true,
+								title: "Bảo mật tài khoản",
+								headerTitleAlign: "center",
+								headerLeft: () => (
+									<TouchableOpacity
+										onPress={() => navigate("BottomTabScreenApp")}
+										style={{ marginLeft: 10, flexDirection: "row", alignItems: "center" }}
+									>
+										<Ionicons
+											name="chevron-back"
+											size={24}
+											color={Colors.colorBrand.burntSienna[500]}
+										/>
+									</TouchableOpacity>
+								),
+							}}
+						/>
+						<Stack.Screen
+							name="BookingHistoryDetailScreen"
+							component={BookingHistoryDetailScreen}
+							options={{
+								headerShown: true,
+								title: "Chi tiết đặt vé",
+								headerTitleAlign: "center",
+								headerLeft: () => (
+									<TouchableOpacity
+										onPress={() => navigate("BottomTabScreenApp")}
+										style={{ marginLeft: 10, flexDirection: "row", alignItems: "center" }}
+									>
+										<Ionicons
+											name="chevron-back"
+											size={24}
+											color={Colors.colorBrand.burntSienna[500]}
+										/>
+									</TouchableOpacity>
+								),
+							}}
 						/>
 					</Stack.Navigator>
 					<NavigationEventListener />

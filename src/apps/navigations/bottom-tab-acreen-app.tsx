@@ -1,7 +1,6 @@
 import { Tab } from "@/libs/navigation";
-import HomeStack from "../stacks/home-stack";
-import SearchStack from "../stacks/search-stack";
-import UserStack from "../stacks/user-stack";
+import HomeStack from "./stacks/home-stack";
+import SearchStack from "./stacks/search-stack";
 import HomeIcon from "@/assets/svgs/home";
 import SearchIcon from "@/assets/svgs/search";
 import MessageIcon from "@/assets/svgs/message";
@@ -10,6 +9,7 @@ import { TouchableOpacity } from "react-native";
 import { Colors } from "@/constants";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { MessageScreen } from "../screens";
+import ProfileScreenBooking from "../screens/profile/profile";
 
 export const BottomTabScreenApp = () => {
 	return (
@@ -43,7 +43,7 @@ export const BottomTabScreenApp = () => {
 								backgroundColor={backgroundColor}
 							/>
 						);
-					else if (route.name === "UserStack")
+					else if (route.name === "ProfileScreenBooking")
 						return (
 							<UserIcon
 								size={size}
@@ -100,8 +100,8 @@ export const BottomTabScreenApp = () => {
 				component={MessageScreen}
 			/>
 			<Tab.Screen
-				name="UserStack"
-				component={UserStack}
+				name="ProfileScreenBooking"
+				component={ProfileScreenBooking}
 			/>
 		</Tab.Navigator>
 	);

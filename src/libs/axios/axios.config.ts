@@ -3,12 +3,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Toast from "react-native-toast-message";
 import { AsyncStorageKey } from "../async-storage";
+import rateLimit from 'axios-rate-limit';
 
-export const api = axios.create({
+const apiTemp = axios.create({
 	baseURL: process.env.EXPO_PUBLIC_BACKEND_URL,
 	headers: { "content-type": "application/json" },
 });
 
+
+export const api = rateLimit(apiTemp.create(), {
+  maxRequests: 5,
+  perMilliseconds: 1000,
+  maxRPS: 2, // tùy chọn, tương đương maxRequests / perMilliseconds * 1000
+});
 // Interceptor trước khi gửi request
 api.interceptors.request.use(
 	async (config) => {
@@ -28,7 +35,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(response) => response,
 	(error) => {
-		// console.error("⛔ Axios: ", error.toJSON());
+		console.error("⛔ Axios: ", error.toJSON());
 
 		const errorResponse = error.response.data as BaseResponse<null>;
 		if (errorResponse.statusCode === 401 && error.config?.url !== "user-service/auth/token") {
