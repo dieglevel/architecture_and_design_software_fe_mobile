@@ -95,3 +95,45 @@ export const changePassword = async (oldPassword: string, newPassword: string): 
 		};
 	}
 };
+
+export const forgotPassword = async (email: string): Promise<BaseResponse<null>> => {
+	try {
+		const response = await api.post(`${Gateway.USER}/auth/forgot-password?email=${email}`);
+		console.log("Responsesss:", response.data);
+		return response.data;
+	} catch (error) {
+		const axiosError = error as AxiosError<BaseResponse<null>>;
+		if (axiosError.response) {
+			return axiosError.response.data;
+		}
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
+	}
+};
+
+export const resetPassword = async (email: string, otp: string, newPassword: string): Promise<BaseResponse<null>> => {
+	try {
+		const response = await api.post(`${Gateway.USER}/auth/reset-password`, {
+			email,
+			otp,
+			newPassword,
+		});
+
+		return response.data;
+	} catch (error) {
+		const axiosError = error as AxiosError<BaseResponse<null>>;
+		if (axiosError.response) {
+			return axiosError.response.data;
+		}
+		return {
+			message: "Không thể kết nối đến server",
+			data: null,
+			statusCode: 500,
+			success: false,
+		};
+	}
+};

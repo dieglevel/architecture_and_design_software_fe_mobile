@@ -2,6 +2,8 @@ import { LinkingOptions } from "@react-navigation/native";
 import { LoginScreen, PaymentScreen, SignupScreen } from "@/apps/screens";
 import { navigationRef } from "@/libs/navigation/navigationService";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
+import { OtpInputScreen } from "@/apps/screens/otp-input";
+import { ResetPasswordScreen } from "@/apps/screens/reset-password";
 import { RootStackParamList, Stack, StackScreenNavigationProp } from "@/libs/navigation";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -64,6 +66,8 @@ export const RootScreenApp = () => {
 				LoginScreen: "login",
 				RegisterScreen: "register",
 				ForgotPasswordScreen: "forgot-password",
+				OtpInputScreen: "otp-input",
+				ResetPasswordScreen: "reset-password",
 				PaymentScreen: "payment",
 			},
 		},
@@ -104,6 +108,14 @@ export const RootScreenApp = () => {
 						<Stack.Screen
 							name="ForgotPasswordScreen"
 							component={ForgotPasswordScreen}
+						/>
+						<Stack.Screen
+							name="OtpInputScreen"
+							component={OtpInputScreen}
+						/>
+						<Stack.Screen
+							name="ResetPasswordScreen"
+							component={ResetPasswordScreen}
 						/>
 						<Stack.Screen
 							name="PaymentScreen"
