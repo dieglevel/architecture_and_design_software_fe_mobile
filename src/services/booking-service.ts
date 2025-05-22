@@ -13,8 +13,7 @@ export const getCategory = async (): Promise<BaseResponse<Category[] | null>> =>
 	// return safeApiCall(() => api.get<BaseResponse<Category[] | null>>(`${Gateway.BOOKING}/category-tours`), []);
 	const a = await safeApiCall(() => api.get<BaseResponse<any>>(`${Gateway.BOOKING}/category-tours`), []);
 	const b = await api.get<BaseResponse<any>>(`${Gateway.BOOKING}/category-tours`);
-	return a
-
+	return a;
 };
 
 export const getToursByCategory = async (categoryId: string) => {
@@ -86,3 +85,17 @@ export const getMyBooking = async () => {
 		throw e as BaseResponse<null>;
 	}
 }
+
+export const searchFilterTours = async (tourName: string, maxPrice: number, minPrice: number) => {
+	return safeApiCall(
+		() =>
+			api.get<BaseResponse<Tour[]>>(`${Gateway.BOOKING}/tours/search`, {
+				params: {
+					tourName,
+					maxPrice,
+					minPrice,
+				},
+			}),
+		[],
+	);
+};

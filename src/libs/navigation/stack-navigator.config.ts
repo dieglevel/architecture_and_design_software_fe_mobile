@@ -19,6 +19,7 @@ export type RootStackParamList = {
 	UserFavoriteTourScreen: undefined;
 	OtpInputScreen: { email: string };
 	ResetPasswordScreen: { email: string; otp: string };
+	SearchScreen: undefined;
 	SearchResultsScreen: {
 		departure?: string;
 		destination?: string;
