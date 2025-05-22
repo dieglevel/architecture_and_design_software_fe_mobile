@@ -10,3 +10,4 @@ export * from "./category-detail/category-detail";
 export * from "./payment/payment-screen";
 export * from "./payment/payment-success";
 export * from "./payment/payment-form-booking";
+export * from "./user-favorite-tour";

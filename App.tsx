@@ -16,10 +16,12 @@ export default function App() {
 	}
 
 	return (
-		<PaperProvider>
-			<Provider store={store}>
-				<RootScreenApp />
-			</Provider>
-		</PaperProvider>
+		<SafeAreaProvider>
+			<PaperProvider>
+				<Provider store={store}>
+					<RootScreenApp />
+				</Provider>
+			</PaperProvider>
+		</SafeAreaProvider>
 	);
 }

@@ -31,7 +31,7 @@ api.interceptors.response.use(
 		// console.error("⛔ Axios: ", error.toJSON());
 
 		const errorResponse = error.response.data as BaseResponse<null>;
-		if ((errorResponse.statusCode === 401 &&  error.config?.url !== "user-service/auth/token")) {
+		if (errorResponse.statusCode === 401 && error.config?.url !== "user-service/auth/token") {
 			// Toast.show({
 			// 	type: "error",
 			// 	text1: errorResponse.message || "Đã xảy ra lỗi",
@@ -39,15 +39,13 @@ api.interceptors.response.use(
 
 			AsyncStorage.removeItem(AsyncStorageKey.TOKEN);
 			// eventEmitter.emit("logout"); // Gửi sự kiện logout
-		} else if (errorResponse.statusCode === 401 &&  error.config?.url === "user-service/auth/token"){
+		} else if (errorResponse.statusCode === 401 && error.config?.url === "user-service/auth/token") {
 			Toast.show({
 				type: "error",
 				text1: errorResponse.message || "Đã xảy ra lỗi",
 			});
-		}
-		else{
+		} else {
 			// console.error("⛔ Axios: ", error.status + " - " + error.config?.url);
-
 		}
 		return Promise.reject(error);
 	},

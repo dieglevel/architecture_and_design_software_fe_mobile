@@ -27,7 +27,8 @@ const SearchResults = ({ results, isSearching, onClose, searchText, isLoading = 
 	const renderTourItem = ({ item }: { item: Tour }) => (
 		<TouchableOpacity
 			style={styles.resultItem}
-			onPress={() => {
+			onPress={(e) => {
+				e.stopPropagation();
 				navigate("TourDetailScreen", { tourId: item.tourId });
 				onClose();
 			}}
@@ -67,7 +68,13 @@ const SearchResults = ({ results, isSearching, onClose, searchText, isLoading = 
 	);
 
 	return (
-		<View style={styles.container}>
+		<View
+			style={styles.container}
+			onStartShouldSetResponder={() => true}
+			onTouchEnd={(e) => {
+				e.stopPropagation();
+			}}
+		>
 			<View style={styles.header}>
 				<Text style={styles.resultsTitle}>
 					{isLoading
@@ -109,15 +116,14 @@ const SearchResults = ({ results, isSearching, onClose, searchText, isLoading = 
 					<Text style={styles.emptySubText}>Vui lòng thử lại với từ khóa khác</Text>
 				</View>
 			) : (
-				<TouchableWithoutFeedback onPress={onClose}>
-					<FlatList
-						data={results}
-						renderItem={renderTourItem}
-						keyExtractor={(item) => item.tourId?.toString() || Math.random().toString()}
-						contentContainerStyle={styles.listContent}
-						showsVerticalScrollIndicator={false}
-					/>
-				</TouchableWithoutFeedback>
+				<FlatList
+					data={results}
+					renderItem={renderTourItem}
+					keyExtractor={(item) => item.tourId?.toString() || Math.random().toString()}
+					contentContainerStyle={styles.listContent}
+					showsVerticalScrollIndicator={false}
+					onTouchEnd={(e) => e.stopPropagation()}
+				/>
 			)}
 		</View>
 	);

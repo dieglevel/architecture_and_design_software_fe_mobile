@@ -1,19 +1,18 @@
 import { Press, SafeAreaView } from "@/apps/components";
 import { Button, InputForm } from "@/apps/components/ui";
 import { Close, Eye, EyeOff } from "@/assets/svgs";
-import { Calendar } from "@/assets/svgs/calendar";
 import { Colors, Texts } from "@/constants";
-import { navigate } from "@/libs/navigation/navigationService";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, View } from "react-native";
-import DateTimePicker from "react-native-modal-datetime-picker";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale";
 import { registerApi } from "@/services/auth-service";
 import Toast from "react-native-toast-message";
+import { BaseResponse } from "@/types";
 
 export const SignupScreen = () => {
+	const navigate = useNavigation();
+
 	// Params
 	const [fullName, setFullName] = useState<string>("");
 	// const [dateOfBirth, setDateOfBirth] = useState<string>("");
@@ -126,7 +125,7 @@ export const SignupScreen = () => {
 						text1: "✅ Thành công",
 						text2: "Đăng ký tài khoản thành công!",
 					});
-					navigate("LoginScreen");
+					navigate.navigate("LoginScreen");
 				} else {
 					Toast.show({
 						type: "error",
@@ -134,8 +133,14 @@ export const SignupScreen = () => {
 						text2: result?.message || "Đã xảy ra lỗi!",
 					});
 				}
-			} catch (error) {
-				console.error("Register failed:", error);
+			} catch (error: any) {
+				console.log("Register error:", error.response?.data);
+				const errorResponse = error.response?.data;
+				Toast.show({
+					type: "error",
+					text1: "❌Lỗi",
+					text2: errorResponse?.message || "Đã xảy ra lỗi!",
+				});
 			}
 		} else {
 			console.log("Thông tin không hợp lệ");
@@ -144,9 +149,6 @@ export const SignupScreen = () => {
 
 	return (
 		<SafeAreaView>
-			<Press style={{ position: "absolute", backgroundColor: "transpert", padding: 4, top: 40, right: 20 }}>
-				<Close size={25} />
-			</Press>
 			<ScrollView style={{ flex: 1, width: "100%", paddingHorizontal: 10, gap: 10 }}>
 				<View style={{ flex: 1, justifyContent: "center", height: height }}>
 					<View style={{ marginVertical: 20 }}>
@@ -259,7 +261,7 @@ export const SignupScreen = () => {
 						<Text style={[Texts.regular16, { color: Colors.gray[500] }]}>Đã có tài khoản?</Text>
 						<Press
 							onPress={() => {
-								navigate("LoginScreen");
+								navigate.navigate("LoginScreen");
 							}}
 						>
 							<Text style={[Texts.regular16, { color: Colors.colorBrand.burntSienna[500] }]}>

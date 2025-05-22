@@ -14,6 +14,7 @@ interface Props extends React.PropsWithChildren<TextInputProps> {
 	style?: StyleProp<ViewStyle>;
 	inputContainerStyle?: StyleProp<ViewStyle>;
 	validator?: (text: string) => string | null; // Hàm kiểm tra
+	error?: string; // Thêm prop error để hiển thị lỗi từ bên ngoài
 }
 
 export const InputForm = ({
@@ -30,14 +31,18 @@ export const InputForm = ({
 	style,
 	inputContainerStyle,
 	validator,
+	error,
 }: Props) => {
 	const [isFocus, setIsFocus] = useState(false);
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [validationError, setValidationError] = useState<string | null>(null);
+
+	// Determine which error to display (external error takes precedence)
+	const errorMessage = error || validationError;
 
 	const validateInput = (text: string) => {
 		if (validator) {
-			const error = validator(text);
-			setErrorMessage(error);
+			const validationResult = validator(text);
+			setValidationError(validationResult);
 		}
 	};
 
@@ -79,7 +84,7 @@ export const InputForm = ({
 					placeholder={placeholder}
 					placeholderTextColor={Colors.gray[500]}
 					secureTextEntry={secureTextEntry}
-					style={[Styles.flex, {color: Colors.gray[950]}]}
+					style={[Styles.flex, { color: Colors.gray[950] }]}
 					onFocus={() => setIsFocus(true)}
 					onBlur={handleBlur}
 				/>

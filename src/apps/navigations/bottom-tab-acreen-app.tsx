@@ -1,7 +1,6 @@
 import { Tab } from "@/libs/navigation";
 import HomeStack from "../stacks/home-stack";
 import SearchStack from "../stacks/search-stack";
-import MessageStack from "../stacks/message-stack";
 import UserStack from "../stacks/user-stack";
 import HomeIcon from "@/assets/svgs/home";
 import SearchIcon from "@/assets/svgs/search";
@@ -10,6 +9,7 @@ import UserIcon from "@/assets/svgs/user";
 import { TouchableOpacity } from "react-native";
 import { Colors } from "@/constants";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import { MessageScreen } from "../screens";
 
 export const BottomTabScreenApp = () => {
 	return (
@@ -97,7 +97,7 @@ export const BottomTabScreenApp = () => {
 			/>
 			<Tab.Screen
 				name="MessageStack"
-				component={MessageStack}
+				component={MessageScreen}
 			/>
 			<Tab.Screen
 				name="UserStack"

@@ -36,9 +36,8 @@ const formatDateForApi = (dateStr: string): string => {
 };
 
 export const ProfileDetailsScreen = () => {
-	const isFocused = useIsFocused();
 	const user = useAppSelector((state) => state.user.data);
-	const dispatch = useAppDispatch<AppDispatch>();
+	const dispatch = useAppDispatch();
 	const navigation = useNavigation();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -53,28 +52,28 @@ export const ProfileDetailsScreen = () => {
 	const [phone, setPhone] = useState<string>(user?.phone ?? "");
 	const [email, setEmail] = useState<string>(user?.email ?? "");
 
-	useEffect(() => {
-		const fetchProfile = async () => {
-			try {
-				const response = await getProfile();
-				if (response && response.statusCode === 200) {
-					dispatch(setUser(response.data ?? null));
-				} else {
-					console.error("Error fetching profile:", response?.message ?? "Unknown error");
-				}
-			} catch (error) {
-				console.error("Error fetching profile:", error);
-			}
-		};
+	// useEffect(() => {
+	// 	const fetchProfile = async () => {
+	// 		try {
+	// 			const response = await getProfile();
+	// 			if (response && response.statusCode === 200) {
+	// 				dispatch(setUser(response.data ?? null));
+	// 			} else {
+	// 				console.error("Error fetching profile:", response?.message ?? "Unknown error");
+	// 			}
+	// 		} catch (error) {
+	// 			console.error("Error fetching profile:", error);
+	// 		}
+	// 	};
 
-		if (isFocused) {
-			setIsLoading(true);
-			fetchProfile();
-			setTimeout(() => {
-				setIsLoading(false);
-			}, 800);
-		}
-	}, [isFocused, dispatch]);
+	// 	if (isFocused) {
+	// 		setIsLoading(true);
+	// 		fetchProfile();
+	// 		setTimeout(() => {
+	// 			setIsLoading(false);
+	// 		}, 800);
+	// 	}
+	// }, [isFocused, dispatch]);
 
 	useEffect(() => {
 		if (user) {
@@ -115,7 +114,6 @@ export const ProfileDetailsScreen = () => {
 		const birthDate = new Date(year, month - 1, day);
 		const today = new Date();
 
-		// Calculate date 16 years ago
 		const sixteenYearsAgo = new Date();
 		sixteenYearsAgo.setFullYear(today.getFullYear() - 16);
 
@@ -163,6 +161,19 @@ export const ProfileDetailsScreen = () => {
 			const response = await updateInfo(userInfo);
 
 			if (response.success) {
+				if (user) {
+					dispatch(
+						setUser({
+							...user,
+							fullName: name,
+							phone: phone,
+							birthday: formatDateForApi(dateOfBirth),
+							gender: gender,
+							email: email,
+						}),
+					);
+				}
+
 				Alert.alert("Thành công", "Thông tin cá nhân đã được cập nhật", [
 					{ text: "OK", onPress: () => navigation.goBack() },
 				]);
@@ -246,7 +257,6 @@ export const ProfileDetailsScreen = () => {
 							onCancel={hideDatePicker}
 							maximumDate={new Date()}
 							minimumDate={new Date(1900, 0, 1)}
-							
 						/>
 
 						<ProfileInput

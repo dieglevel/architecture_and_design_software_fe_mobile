@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { addHistoryTour } from "@/libs/redux/thunks/tour.thunk";
 import { useAppDispatch } from "@/libs/redux/redux.config";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
 	tour: Tour;
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: Colors.gray[700],
 		marginLeft: 4,
-		fontWeight: "bold"
+		fontWeight: "bold",
 	},
 	priceContainer: {
 		flexDirection: "row",

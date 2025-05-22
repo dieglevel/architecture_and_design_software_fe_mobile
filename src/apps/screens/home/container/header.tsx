@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
 	View,
 	Text,
@@ -18,6 +18,7 @@ import { searchFullText } from "@/services/booking-service";
 import { Tour } from "@/types/implement";
 import SearchResults from "../components/search-results";
 import { useAppSelector } from "@/libs/redux/redux.config";
+import { navigate } from "@/libs/navigation/navigationService";
 
 const { width } = Dimensions.get("window");
 
@@ -38,6 +39,8 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 	const [isSearching, setIsSearching] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const user = useAppSelector((state) => state.user.data);
+	const favoriteTours = useAppSelector((state) => state.favorite.data);
+	const searchInputRef = useRef<TextInput>(null);
 
 	// Calculate the translation for the entire header
 	const headerTranslateY = scrollY.interpolate({
@@ -53,7 +56,6 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 		extrapolate: "clamp",
 	});
 
-	// Debounced search function
 	const debouncedSearch = useCallback(
 		(() => {
 			let timer: ReturnType<typeof setTimeout>;
@@ -61,7 +63,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 				clearTimeout(timer);
 				timer = setTimeout(() => {
 					performSearch(text);
-				}, 500); // Delay for 300ms
+				}, 500);
 			};
 		})(),
 		[],
@@ -110,9 +112,11 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 		setSearchText("");
 		setSearchResults([]);
 		setIsSearching(false);
+		searchInputRef.current?.blur();
 		if (onSearchStateChange) {
 			onSearchStateChange(false);
 		}
+		Keyboard.dismiss();
 	};
 
 	return (
@@ -139,12 +143,22 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 					</View>
 
 					<View style={styles.iconContainer}>
-						<TouchableOpacity style={styles.iconButton}>
+						<TouchableOpacity
+							style={styles.iconButton}
+							onPress={() => navigate("UserFavoriteTourScreen")}
+						>
 							<Ionicons
 								name="heart-outline"
 								size={24}
 								color={Colors.colorBrand.midnightBlue[800]}
 							/>
+							{favoriteTours && favoriteTours.length > 0 && (
+								<View style={styles.favoriteBadge}>
+									<Text style={styles.badgeText}>
+										{favoriteTours.length > 99 ? "99+" : favoriteTours.length}
+									</Text>
+								</View>
+							)}
 						</TouchableOpacity>
 						<TouchableOpacity style={styles.iconButton}>
 							<Ionicons
@@ -178,6 +192,7 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 									onSearchStateChange(true);
 								}
 							}}
+							ref={searchInputRef}
 						/>
 						{searchText.length > 0 && (
 							<TouchableOpacity onPress={clearSearch}>
@@ -200,7 +215,11 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 			</Animated.View>
 
 			{isSearching && (
-				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						clearSearch();
+					}}
+				>
 					<Animated.View
 						style={[
 							{
@@ -208,6 +227,8 @@ const Header = ({ scrollY, onSearchStateChange }: HeaderProps) => {
 								top: HEADER_HEIGHT,
 								left: 0,
 								right: 0,
+								bottom: 0,
+								backgroundColor: "rgba(0,0,0,0.3)",
 								zIndex: 5,
 							},
 							{ transform: [{ translateY: searchResultsTranslateY }] },
@@ -314,6 +335,22 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	favoriteBadge: {
+		position: "absolute",
+		top: 0,
+		right: -5,
+		width: 12,
+		height: 12,
+		borderRadius: 10,
+		backgroundColor: Colors.colorBrand.burntSienna[500],
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	badgeText: {
+		fontSize: 8,
+		fontWeight: "bold",
+		color: "#fff",
 	},
 });
 
