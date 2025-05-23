@@ -13,8 +13,8 @@ const apiTemp = axios.create({
 
 export const api = rateLimit(apiTemp.create(), {
   maxRequests: 5,
-  perMilliseconds: 1000,
-  maxRPS: 2, // tùy chọn, tương đương maxRequests / perMilliseconds * 1000
+  perMilliseconds: 10000,
+  maxRPS: 2,
 });
 // Interceptor trước khi gửi request
 api.interceptors.request.use(
@@ -35,7 +35,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(response) => response,
 	(error) => {
-		// console.error("⛔ Axios: ", error.toJSON());
+		console.error("⛔ Axios: ", error.toJSON());
 
 		const errorResponse = error.response.data as BaseResponse<null>;
 		if (errorResponse.statusCode === 401 && error.config?.url !== "user-service/auth/token") {

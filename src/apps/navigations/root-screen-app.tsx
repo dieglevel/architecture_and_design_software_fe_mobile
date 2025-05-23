@@ -1,4 +1,11 @@
-import { LoginScreen, PaymentFormBooking, PaymentScreen, PaymentSuccessPage, SignupScreen, TourDetailScreen } from "@/apps/screens";
+import {
+	LoginScreen,
+	PaymentFormBooking,
+	PaymentScreen,
+	PaymentSuccessPage,
+	SignupScreen,
+	TourDetailScreen,
+} from "@/apps/screens";
 import { ForgotPasswordScreen } from "@/apps/screens/forgot-password";
 import { OtpInputScreen } from "@/apps/screens/otp-input";
 import { ResetPasswordScreen } from "@/apps/screens/reset-password";
@@ -26,6 +33,7 @@ import { BookingHistoryDetailScreen } from "../screens/profile/booking-history/b
 import { BookingHistoryScreen } from "../screens/profile/booking-history/booking-history-screen";
 import { ProfileDetailsScreen } from "../screens/profile/profile-details";
 import { ProfileSecurityScreen } from "../screens/profile/profile-security";
+import LimiterScreen from "../screens/limiter-screen";
 const prefix = Linking.createURL("/");
 
 // Separate component for event listener logic inside NavigationContainer
@@ -111,7 +119,7 @@ export const RootScreenApp = () => {
 					linking={linking}
 				>
 					<Stack.Navigator
-						initialRouteName="LoginScreen"
+						initialRouteName="LimiterScreen"
 						screenOptions={{
 							headerShown: false,
 							animation: "fade_from_bottom",
@@ -120,6 +128,10 @@ export const RootScreenApp = () => {
 						<Stack.Screen
 							name="WelcomeScreen"
 							component={WelcomeScreen}
+						/>
+						<Stack.Screen
+							name="LimiterScreen"
+							component={LimiterScreen}
 						/>
 						<Stack.Screen
 							name="BottomTabScreenApp"
