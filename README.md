@@ -39,7 +39,6 @@ The Tour Booking and Management System mobile app provides users with a seamless
   <li>🔐 User authentication and profile management</li>
   <li>🗺️ Browse and filter tour packages</li>
   <li>💳 Secure online payment integration</li>
-  <li>🔔 Real-time notifications (push)</li>
   <li>📊 Order history and tour tracking</li>
 </ul>
 
