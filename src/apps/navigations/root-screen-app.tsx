@@ -33,7 +33,6 @@ import { BookingHistoryDetailScreen } from "../screens/profile/booking-history/b
 import { BookingHistoryScreen } from "../screens/profile/booking-history/booking-history-screen";
 import { ProfileDetailsScreen } from "../screens/profile/profile-details";
 import { ProfileSecurityScreen } from "../screens/profile/profile-security";
-import LimiterScreen from "../screens/limiter-screen";
 const prefix = Linking.createURL("/");
 
 // Separate component for event listener logic inside NavigationContainer
@@ -119,7 +118,7 @@ export const RootScreenApp = () => {
 					linking={linking}
 				>
 					<Stack.Navigator
-						initialRouteName="LimiterScreen"
+						initialRouteName="LoginScreen"
 						screenOptions={{
 							headerShown: false,
 							animation: "fade_from_bottom",
@@ -129,10 +128,7 @@ export const RootScreenApp = () => {
 							name="WelcomeScreen"
 							component={WelcomeScreen}
 						/>
-						<Stack.Screen
-							name="LimiterScreen"
-							component={LimiterScreen}
-						/>
+
 						<Stack.Screen
 							name="BottomTabScreenApp"
 							component={BottomTabScreenApp}

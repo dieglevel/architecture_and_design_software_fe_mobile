@@ -13,8 +13,8 @@ const apiTemp = axios.create({
 
 export const api = rateLimit(apiTemp.create(), {
   maxRequests: 5,
-  perMilliseconds: 10000,
-  maxRPS: 2,
+  perMilliseconds: 1000,
+  maxRPS: 2, // requests per second
 });
 // Interceptor trước khi gửi request
 api.interceptors.request.use(

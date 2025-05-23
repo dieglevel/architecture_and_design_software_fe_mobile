@@ -6,7 +6,6 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-na
 export const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type RootStackParamList = {
-	LimiterScreen: undefined
 	BottomTabScreenApp: undefined;
 	LoginScreen: undefined;
 	RegisterScreen: undefined;
